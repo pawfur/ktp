@@ -1,0 +1,20 @@
+{
+  "name": "Kedai POS",
+  "short_name": "Kedai POS",
+  "description": "Lokalny system sprzedaży Kedai Seblak",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fffaf5",
+  "theme_color": "#f97316",
+  "lang": "pl",
+  "icons": [
+    {
+      "src": "modules/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

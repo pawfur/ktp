@@ -13,6 +13,10 @@ Kedai POS to lokalna aplikacja POS dla telefonu z Androidem. Działa jako strona
 - waluta IDR,
 - działanie lokalne i offline po pierwszym załadowaniu zasobów.
 
+## PWA na Androidzie
+
+Aplikacja zawiera `manifest.json` z trybem `standalone` oraz `service-worker.js`. Po publikacji przez GitHub Pages należy otworzyć adres HTTPS w Chrome, usunąć wcześniejszy skrót z ekranu głównego i dodać aplikację ponownie przez **Dodaj do ekranu głównego**. Nowy skrót uruchomi Kedai POS bez paska adresu.
+
 ## Struktura projektu
 
 - `index.html` – widok aplikacji, formularze, zakładki i obsługa interakcji.
