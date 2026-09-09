@@ -106,6 +106,8 @@ Wersja lokalna jest zapisana w `config/default-state.js`, a wersja serwera w `ve
 
 Jeżeli wersja serwerowa jest większa według kolejności `YY.MM.DD.hhmm`, aplikacja pokazuje przycisk **Aktualizuj aplikację**. Kliknięcie wymusza aktualizację service workera i przeładowanie plików PWA.
 
+Aktualizacja pokazuje pasek postępu. Aplikacja czeka na zakończenie instalacji nowego service workera i przejęcie kontroli nad stroną. Dopiero po ukończeniu wyświetla prośbę o ponowne uruchomienie aplikacji. Ponowne uruchomienie oznacza przeładowanie aplikacji i nie usuwa danych z IndexedDB.
+
 Po każdej publikacji należy:
 
 1. zmienić numer w `config/default-state.js`,

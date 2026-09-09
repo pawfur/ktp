@@ -17,6 +17,11 @@ const defaultState = window.KedaiConfig.defaultState;
           appVersionLabel: 'Wersja aplikacji',
           checkUpdates: 'Sprawdź aktualizacje',
           updateApp: 'Aktualizuj aplikację',
+          updateProgress: 'Przygotowywanie aktualizacji...',
+          updateDownloading: 'Pobieranie nowej wersji...',
+          updateInstalling: 'Instalowanie nowej wersji...',
+          updateReady: 'Aktualizacja gotowa. Uruchomić aplikację ponownie?',
+          updateRestart: 'Uruchom ponownie',
           updateAvailable: 'Dostępna jest nowsza wersja: {version}',
           upToDate: 'Aplikacja jest aktualna.',
           updateCheckFailed: 'Nie udało się sprawdzić aktualizacji.',
@@ -89,6 +94,11 @@ const defaultState = window.KedaiConfig.defaultState;
           appVersionLabel: 'App version',
           checkUpdates: 'Check for updates',
           updateApp: 'Update app',
+          updateProgress: 'Preparing update...',
+          updateDownloading: 'Downloading new version...',
+          updateInstalling: 'Installing new version...',
+          updateReady: 'Update ready. Restart the app?',
+          updateRestart: 'Restart',
           updateAvailable: 'A newer version is available: {version}',
           upToDate: 'The app is up to date.',
           updateCheckFailed: 'Could not check for updates.',
@@ -161,6 +171,11 @@ const defaultState = window.KedaiConfig.defaultState;
           appVersionLabel: 'Versi aplikasi',
           checkUpdates: 'Periksa pembaruan',
           updateApp: 'Perbarui aplikasi',
+          updateProgress: 'Menyiapkan pembaruan...',
+          updateDownloading: 'Mengunduh versi baru...',
+          updateInstalling: 'Memasang versi baru...',
+          updateReady: 'Pembaruan siap. Mulai ulang aplikasi?',
+          updateRestart: 'Mulai ulang',
           updateAvailable: 'Versi baru tersedia: {version}',
           upToDate: 'Aplikasi sudah terbaru.',
           updateCheckFailed: 'Pembaruan tidak dapat diperiksa.',
@@ -373,14 +388,62 @@ const defaultState = window.KedaiConfig.defaultState;
 
       async function updateApplication() {
         const status = document.getElementById('updateStatus');
+        const updateButton = document.getElementById('updateAppBtn');
+        const checkButton = document.getElementById('checkUpdatesBtn');
+        const progressPanel = document.getElementById('updateProgressPanel');
+        const progressLabel = document.getElementById('updateProgressLabel');
+        const progressValue = document.getElementById('updateProgressValue');
+        const progressBar = document.getElementById('updateProgressBar');
+        const setProgress = (value, label) => {
+          progressPanel.classList.remove('hidden');
+          progressLabel.textContent = label;
+          progressValue.textContent = `${value}%`;
+          progressBar.style.width = `${value}%`;
+        };
+
+        updateButton.disabled = true;
+        checkButton.disabled = true;
+        setProgress(10, translate('updateProgress'));
         status.textContent = translate('updating');
         status.classList.remove('hidden');
-        const registration = await navigator.serviceWorker?.getRegistration();
-        if (registration) {
+
+        try {
+          const registration = await navigator.serviceWorker?.getRegistration();
+          if (!registration) throw new Error('Service worker unavailable');
+
+          setProgress(35, translate('updateDownloading'));
           await registration.update();
-          if (registration.waiting) registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+
+          let installingWorker = registration.installing;
+          if (installingWorker) {
+            await new Promise((resolve, reject) => {
+              installingWorker.addEventListener('statechange', () => {
+                if (installingWorker.state === 'installed') resolve();
+                if (installingWorker.state === 'redundant') reject(new Error('Installation cancelled'));
+              });
+            });
+          }
+
+          const waitingWorker = registration.waiting;
+          if (!waitingWorker) throw new Error('New service worker was not installed');
+
+          setProgress(75, translate('updateInstalling'));
+          const controllerChanged = new Promise(resolve => {
+            navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
+            setTimeout(resolve, 5000);
+          });
+          waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+          await controllerChanged;
+
+          setProgress(100, translate('updateReady'));
+          showConfirmDialog(translate('updateReady'), () => window.location.reload());
+        } catch (error) {
+          console.error('Błąd aktualizacji aplikacji:', error);
+          progressPanel.classList.add('hidden');
+          status.textContent = translate('updateCheckFailed');
+          updateButton.disabled = false;
+          checkButton.disabled = false;
         }
-        window.location.reload();
       }
 
       function renderMenu() {
