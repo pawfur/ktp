@@ -9,6 +9,11 @@ const defaultState = window.KedaiConfig.defaultState;
           orders: 'Zamówienia',
           archive: 'Archiwum',
           settings: 'Ustawienia',
+          menuElementType: 'Typ elementu',
+          productType: 'Pozycja menu',
+          sectionType: 'Zakładka / kategoria',
+          addSection: 'Dodaj zakładkę',
+          editSection: 'Zapisz zakładkę',
           appVersionLabel: 'Wersja aplikacji',
           checkUpdates: 'Sprawdź aktualizacje',
           updateApp: 'Aktualizuj aplikację',
@@ -76,6 +81,11 @@ const defaultState = window.KedaiConfig.defaultState;
           orders: 'Orders',
           archive: 'Archive',
           settings: 'Settings',
+          menuElementType: 'Element type',
+          productType: 'Menu item',
+          sectionType: 'Tab / category',
+          addSection: 'Add category',
+          editSection: 'Save category',
           appVersionLabel: 'App version',
           checkUpdates: 'Check for updates',
           updateApp: 'Update app',
@@ -143,6 +153,11 @@ const defaultState = window.KedaiConfig.defaultState;
           orders: 'Pesanan',
           archive: 'Arsip',
           settings: 'Pengaturan',
+          menuElementType: 'Jenis elemen',
+          productType: 'Item menu',
+          sectionType: 'Tab / kategori',
+          addSection: 'Tambah kategori',
+          editSection: 'Simpan kategori',
           appVersionLabel: 'Versi aplikasi',
           checkUpdates: 'Periksa pembaruan',
           updateApp: 'Perbarui aplikasi',
@@ -211,6 +226,7 @@ const defaultState = window.KedaiConfig.defaultState;
       let editingOrderId = null;
 
       const productForm = document.getElementById('productForm');
+      const menuElementTypeSelect = document.getElementById('menuElementType');
       const productNameInput = document.getElementById('productName');
       const productPriceInput = document.getElementById('productPrice');
       const menuList = document.getElementById('menuList');
@@ -294,6 +310,17 @@ const defaultState = window.KedaiConfig.defaultState;
         return [...state.menu].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
       }
 
+      function isMenuSection(item) {
+        return item.type === 'section';
+      }
+
+      function updateMenuFormType() {
+        const isSection = menuElementTypeSelect.value === 'section';
+        productPriceInput.disabled = isSection;
+        productPriceInput.required = !isSection;
+        productPriceInput.parentElement.classList.toggle('opacity-50', isSection);
+      }
+
       function renderTabs() {
         document.querySelectorAll('.tab-panel').forEach(panel => {
           panel.classList.toggle('active', panel.id === `panel-${activeTab}`);
@@ -358,7 +385,8 @@ const defaultState = window.KedaiConfig.defaultState;
 
       function renderMenu() {
         const menu = getSortedMenu();
-        menuCountBadge.textContent = getCounterLabel(menu.length, 'item', 'items');
+        const productCount = menu.filter(item => !isMenuSection(item)).length;
+        menuCountBadge.textContent = getCounterLabel(productCount, 'item', 'items');
 
         if (!menu.length) {
           menuList.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${translate('noProduct')}</div>`;
@@ -367,12 +395,13 @@ const defaultState = window.KedaiConfig.defaultState;
 
         menuList.innerHTML = menu
           .map((item, index) => {
+            const section = isMenuSection(item);
             return `
-              <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+              <div class="rounded-2xl border ${section ? 'border-orange-200 bg-orange-50' : 'border-slate-200 bg-white'} p-3 shadow-sm">
                 <div class="flex items-center justify-between gap-3">
                   <div>
-                    <p class="text-base font-bold text-slate-800">${escapeHtml(item.name)}</p>
-                    <p class="text-sm font-semibold text-orange-600">${formatCurrency(item.price)}</p>
+                    <p class="text-base font-bold text-slate-800">${section ? '▰ ' : ''}${escapeHtml(item.name)}</p>
+                    ${section ? `<p class="text-xs font-semibold uppercase tracking-wide text-orange-600">${translate('sectionType')}</p>` : `<p class="text-sm font-semibold text-orange-600">${formatCurrency(item.price)}</p>`}
                   </div>
                   <div class="flex gap-2">
                     <button data-action="move-up" data-id="${item.id}" class="touch-btn menu-move-btn rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-xs font-bold text-slate-700 ${index === 0 ? 'opacity-40' : ''}" ${index === 0 ? 'disabled' : ''}>↑</button>
@@ -381,7 +410,7 @@ const defaultState = window.KedaiConfig.defaultState;
                 </div>
 
                 <div class="mt-3 grid grid-cols-2 gap-2">
-                  <button data-action="edit-product" data-id="${item.id}" class="touch-btn rounded-xl bg-amber-100 px-3 py-2 text-sm font-bold text-amber-700">${translate('edit')}</button>
+                  <button data-action="edit-product" data-id="${item.id}" class="touch-btn rounded-xl bg-amber-100 px-3 py-2 text-sm font-bold text-amber-700">${section ? translate('editSection') : translate('edit')}</button>
                   <button data-action="delete-product" data-id="${item.id}" class="touch-btn rounded-xl bg-rose-100 px-3 py-2 text-sm font-bold text-rose-700">${translate('delete')}</button>
                 </div>
               </div>
@@ -391,7 +420,8 @@ const defaultState = window.KedaiConfig.defaultState;
 
         const saveButton = document.getElementById('saveProductBtn');
         if (editingProductId) {
-          saveButton.textContent = translate('saveChanges');
+          const editingItem = state.menu.find(item => item.id === editingProductId);
+          saveButton.textContent = editingItem && isMenuSection(editingItem) ? translate('editSection') : translate('saveChanges');
           document.getElementById('cancelProductEditBtn').textContent = translate('cancel');
           document.getElementById('cancelProductEditBtn').classList.remove('hidden');
         } else {
@@ -406,6 +436,9 @@ const defaultState = window.KedaiConfig.defaultState;
 
         customerItems.innerHTML = menu
           .map(item => {
+            if (isMenuSection(item)) {
+              return `<div class="mt-5 border-b-2 border-orange-200 pb-2 text-sm font-black uppercase tracking-[0.12em] text-orange-600">${escapeHtml(item.name)}</div>`;
+            }
             const qty = Number(currentSelection[item.id] || 0);
             return `
               <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
@@ -426,6 +459,7 @@ const defaultState = window.KedaiConfig.defaultState;
           .join('');
 
         const details = menu
+          .filter(item => !isMenuSection(item))
           .filter(item => Number(currentSelection[item.id] || 0) > 0)
           .map(item => {
             const qty = Number(currentSelection[item.id] || 0);
@@ -549,10 +583,11 @@ const defaultState = window.KedaiConfig.defaultState;
       function handleProductFormSubmit(event) {
         event.preventDefault();
         const formData = new FormData(productForm);
+        const type = formData.get('type') === 'section' ? 'section' : 'product';
         const name = (formData.get('name') || '').toString().trim();
         const price = Number(formData.get('price'));
 
-        if (!name || !Number.isFinite(price) || price < 0) {
+        if (!name || (type === 'product' && (!Number.isFinite(price) || price < 0))) {
           showToast(translate('fillProduct'), 'warning');
           return;
         }
@@ -561,7 +596,8 @@ const defaultState = window.KedaiConfig.defaultState;
           const product = state.menu.find(item => item.id === editingProductId);
           if (product) {
             product.name = name;
-            product.price = Number(price.toFixed(2));
+            product.type = type;
+            product.price = type === 'section' ? 0 : Number(price.toFixed(2));
           }
           showToast(translate('productUpdated'), 'success');
           editingProductId = null;
@@ -569,7 +605,8 @@ const defaultState = window.KedaiConfig.defaultState;
           state.menu.push({
             id: makeId('prod'),
             name,
-            price: Number(price.toFixed(2)),
+            type,
+            price: type === 'section' ? 0 : Number(price.toFixed(2)),
             order: state.menu.length
           });
           showToast(translate('productAdded'), 'success');
@@ -585,8 +622,10 @@ const defaultState = window.KedaiConfig.defaultState;
         if (!product) return;
 
         editingProductId = productId;
+        menuElementTypeSelect.value = isMenuSection(product) ? 'section' : 'product';
         productNameInput.value = product.name;
         productPriceInput.value = product.price.toFixed(2);
+        updateMenuFormType();
         productNameInput.focus();
         renderMenu();
       }
@@ -595,6 +634,8 @@ const defaultState = window.KedaiConfig.defaultState;
         showConfirmDialog(translate('confirmCancelSelection'), () => {
           editingProductId = null;
           productForm.reset();
+          menuElementTypeSelect.value = 'product';
+          updateMenuFormType();
           renderMenu();
         });
       }
@@ -611,6 +652,8 @@ const defaultState = window.KedaiConfig.defaultState;
             editingProductId = null;
             productForm.reset();
           }
+          menuElementTypeSelect.value = 'product';
+          updateMenuFormType();
           renderAll();
           showToast(translate('productRemoved'), 'success');
         });
@@ -861,6 +904,7 @@ const defaultState = window.KedaiConfig.defaultState;
 
       document.getElementById('checkUpdatesBtn').addEventListener('click', checkForUpdates);
       document.getElementById('updateAppBtn').addEventListener('click', updateApplication);
+      menuElementTypeSelect.addEventListener('change', updateMenuFormType);
 
       document.addEventListener('dblclick', event => {
         event.preventDefault();
@@ -868,6 +912,10 @@ const defaultState = window.KedaiConfig.defaultState;
 
       async function initializeApp() {
         try {
+          updateMenuFormType();
+          if (screen.orientation?.lock) {
+            screen.orientation.lock('portrait').catch(() => {});
+          }
           document.getElementById('settingsAppVersion').textContent = `v${window.KedaiConfig.version}`;
           state = await window.KedaiDatabase.initialize(defaultState);
           renderAll();

@@ -45,7 +45,7 @@ Przechowuje domyślne menu, początkowy stan aplikacji i numer lokalnej wersji. 
 YY.MM.DD.hhmm
 ```
 
-Przykład: `26.09.09.2125` oznacza rok 2026, 9 września, godzinę 21:25.
+Przykład: `26.09.09.2138` oznacza rok 2026, 9 września, godzinę 21:38.
 
 ### `app.js`
 
@@ -59,8 +59,6 @@ Jest głównym kontrolerem aplikacji. Odpowiada za:
 - archiwizację i usuwanie zamówień,
 - komunikaty i potwierdzenia,
 - sprawdzanie wersji serwerowej.
-
-### `database.js`
 
 Udostępnia `window.KedaiDatabase`. Otwiera bazę IndexedDB, wykonuje migracje w `onupgradeneeded` i zapisuje stan aplikacji oraz zamówienia.
 
@@ -84,7 +82,13 @@ Cache'uje pliki aplikacji, umożliwia uruchomienie offline i pobiera nowe wersje
 
 Jest publicznym źródłem aktualnej wersji opublikowanej na serwerze. Aplikacja porównuje tę wartość z wersją w `config/default-state.js`.
 
-## 4. IndexedDB
+## 4. Kategorie menu i orientacja
+
+Menu jest listą uporządkowanych elementów dwóch typów: `product` oraz `section`. Element `section` jest nagłówkiem kategorii, np. „Dania główne” albo „Napoje”. Można go przesuwać, edytować i usuwać tak samo jak produkt, ale nie ma ceny ani kontroli ilości. W zakładce Obsługa jest widoczny jako separator grupujący produkty.
+
+Aplikacja jest przeznaczona wyłącznie do pracy w pionie. `manifest.json` ustawia `portrait-primary`, a przy uruchomieniu aplikacja próbuje zablokować orientację ekranu przez Screen Orientation API.
+
+## 5. IndexedDB
 
 Baza nazywa się `KedaiPOS` i jest wersjonowana. Obecnie zawiera:
 
@@ -96,7 +100,7 @@ Baza nazywa się `KedaiPOS` i jest wersjonowana. Obecnie zawiera:
 
 `Orders` ma autoinkrementowane `id`, kwotę, tablicę pozycji, dokładną datę ISO i status `active` albo `archived`.
 
-## 5. Aktualizacje aplikacji
+## 6. Aktualizacje aplikacji
 
 Wersja lokalna jest zapisana w `config/default-state.js`, a wersja serwera w `version.json`. W Ustawieniach użytkownik może sprawdzić aktualizacje.
 
@@ -109,7 +113,7 @@ Po każdej publikacji należy:
 3. zwiększyć `CACHE_NAME` w `service-worker.js`,
 4. wykonać commit i push na GitHub.
 
-## 6. Publikacja
+## 7. Publikacja
 
 GitHub Pages udostępnia aplikację pod adresem:
 

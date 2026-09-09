@@ -46,6 +46,13 @@
             </div>
 
             <form id="productForm" class="space-y-3">
+              <label class="block">
+                <span class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" data-i18n="menuElementType">Typ elementu</span>
+                <select id="menuElementType" name="type" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-base outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200">
+                  <option value="product" data-i18n="productType">Pozycja menu</option>
+                  <option value="section" data-i18n="sectionType">Zakładka / kategoria</option>
+                </select>
+              </label>
               <div class="grid grid-cols-1 gap-3 sm:grid-cols-[1.7fr_1fr]">
                 <label class="block">
                   <span class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" data-i18n="productName">Nama</span>
@@ -54,7 +61,7 @@
 
                 <label class="block">
                   <span class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" data-i18n="productPrice">Harga (IDR)</span>
-                  <input id="productPrice" name="price" type="number" step="500" min="0" placeholder="12.500" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-base outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200" required />
+                  <input id="productPrice" name="price" type="number" step="500" min="0" placeholder="12.500" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-base outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200" />
                 </label>
               </div>
 
