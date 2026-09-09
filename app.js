@@ -785,6 +785,10 @@ const defaultState = window.KedaiConfig.defaultState;
         button.addEventListener('click', () => setActiveTab(button.dataset.tab));
       });
 
+      document.addEventListener('dblclick', event => {
+        event.preventDefault();
+      }, { passive: false });
+
       async function initializeApp() {
         try {
           state = await window.KedaiDatabase.initialize(defaultState);

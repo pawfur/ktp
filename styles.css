@@ -5,6 +5,7 @@ html {
 body {
   background: radial-gradient(circle at top, #fff7ed 0%, #f8fafc 26%, #e2e8f0 100%);
   color: #0f172a;
+  touch-action: manipulation;
 }
 
 .tab-panel {
