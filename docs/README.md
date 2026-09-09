@@ -21,12 +21,13 @@ Aplikacja zawiera `manifest.json` z trybem `standalone` oraz `service-worker.js`
 
 - `index.html` – widok aplikacji, formularze, zakładki i obsługa interakcji.
 - `styles.css` – własne style aplikacji, niezależne od struktury HTML.
-- `config.js` – domyślne menu i początkowy stan aplikacji.
+- `config/default-state.js` – domyślne menu, początkowy stan aplikacji i numer wersji.
 - `database.js` – warstwa IndexedDB: otwieranie bazy, `onupgradeneeded`, migracje, transakcje i operacje na zamówieniach.
 - `modules/ui.js` – formatowanie waluty i dat, bezpieczne HTML oraz generowanie identyfikatorów.
 - `modules/dialogs.js` – wspólny mobilny dialog potwierdzeń.
 - `README.md` – opis techniczny aplikacji i bazy.
 - `PWA-Lokalny-zapis.md` – decyzje dotyczące PWA i lokalnego przechowywania danych.
+- `BUDOWA-APLIKACJI.md` – pełny opis budowy, wersjonowania i aktualizacji aplikacji.
 
 `index.html` korzysta z publicznego API `window.KedaiDatabase`, dlatego logika bazy nie jest wymieszana z widokiem. Dzięki temu kolejne moduły, np. magazyn i receptury, można dodawać bez umieszczania operacji IndexedDB w HTML.
 

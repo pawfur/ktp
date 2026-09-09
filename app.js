@@ -9,6 +9,13 @@ const defaultState = window.KedaiConfig.defaultState;
           orders: 'Zamówienia',
           archive: 'Archiwum',
           settings: 'Ustawienia',
+          appVersionLabel: 'Wersja aplikacji',
+          checkUpdates: 'Sprawdź aktualizacje',
+          updateApp: 'Aktualizuj aplikację',
+          updateAvailable: 'Dostępna jest nowsza wersja: {version}',
+          upToDate: 'Aplikacja jest aktualna.',
+          updateCheckFailed: 'Nie udało się sprawdzić aktualizacji.',
+          updating: 'Aktualizowanie aplikacji...',
           editMenu: 'Edytuj menu',
           orderArchive: 'Archiwum zamówień',
           clear: 'Wyczyść',
@@ -69,6 +76,13 @@ const defaultState = window.KedaiConfig.defaultState;
           orders: 'Orders',
           archive: 'Archive',
           settings: 'Settings',
+          appVersionLabel: 'App version',
+          checkUpdates: 'Check for updates',
+          updateApp: 'Update app',
+          updateAvailable: 'A newer version is available: {version}',
+          upToDate: 'The app is up to date.',
+          updateCheckFailed: 'Could not check for updates.',
+          updating: 'Updating app...',
           editMenu: 'Edit menu',
           orderArchive: 'Order archive',
           clear: 'Clear',
@@ -129,6 +143,13 @@ const defaultState = window.KedaiConfig.defaultState;
           orders: 'Pesanan',
           archive: 'Arsip',
           settings: 'Pengaturan',
+          appVersionLabel: 'Versi aplikasi',
+          checkUpdates: 'Periksa pembaruan',
+          updateApp: 'Perbarui aplikasi',
+          updateAvailable: 'Versi baru tersedia: {version}',
+          upToDate: 'Aplikasi sudah terbaru.',
+          updateCheckFailed: 'Pembaruan tidak dapat diperiksa.',
+          updating: 'Memperbarui aplikasi...',
           editMenu: 'Edit menu',
           orderArchive: 'Arsip pesanan',
           clear: 'Hapus',
@@ -290,6 +311,49 @@ const defaultState = window.KedaiConfig.defaultState;
       function setActiveTab(tab) {
         activeTab = tab;
         renderTabs();
+        if (tab === 'settings') checkForUpdates();
+      }
+
+      function compareVersions(firstVersion, secondVersion) {
+        const first = firstVersion.split('.').map(Number);
+        const second = secondVersion.split('.').map(Number);
+        for (let index = 0; index < 4; index += 1) {
+          const firstPart = first[index] || 0;
+          const secondPart = second[index] || 0;
+          if (firstPart !== secondPart) return firstPart - secondPart;
+        }
+        return 0;
+      }
+
+      async function checkForUpdates() {
+        const status = document.getElementById('updateStatus');
+        const updateButton = document.getElementById('updateAppBtn');
+        try {
+          const response = await fetch(`./version.json?check=${Date.now()}`, { cache: 'no-store' });
+          if (!response.ok) throw new Error(`Status ${response.status}`);
+          const serverVersion = (await response.json()).version;
+          updateButton.classList.toggle('hidden', compareVersions(serverVersion, window.KedaiConfig.version) <= 0);
+          status.textContent = compareVersions(serverVersion, window.KedaiConfig.version) > 0
+            ? translate('updateAvailable', { version: serverVersion })
+            : translate('upToDate');
+          status.classList.remove('hidden');
+        } catch (error) {
+          updateButton.classList.add('hidden');
+          status.textContent = translate('updateCheckFailed');
+          status.classList.remove('hidden');
+        }
+      }
+
+      async function updateApplication() {
+        const status = document.getElementById('updateStatus');
+        status.textContent = translate('updating');
+        status.classList.remove('hidden');
+        const registration = await navigator.serviceWorker?.getRegistration();
+        if (registration) {
+          await registration.update();
+          if (registration.waiting) registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+        window.location.reload();
       }
 
       function renderMenu() {
@@ -795,13 +859,16 @@ const defaultState = window.KedaiConfig.defaultState;
         button.addEventListener('click', () => setActiveTab(button.dataset.settingsTab));
       });
 
+      document.getElementById('checkUpdatesBtn').addEventListener('click', checkForUpdates);
+      document.getElementById('updateAppBtn').addEventListener('click', updateApplication);
+
       document.addEventListener('dblclick', event => {
         event.preventDefault();
       }, { passive: false });
 
       async function initializeApp() {
         try {
-          document.getElementById('appVersion').textContent = `v${window.KedaiConfig.version}`;
+          document.getElementById('settingsAppVersion').textContent = `v${window.KedaiConfig.version}`;
           state = await window.KedaiDatabase.initialize(defaultState);
           renderAll();
         } catch (error) {
