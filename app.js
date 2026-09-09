@@ -791,6 +791,7 @@ const defaultState = window.KedaiConfig.defaultState;
 
       async function initializeApp() {
         try {
+          document.getElementById('appVersion').textContent = `v${window.KedaiConfig.version}`;
           state = await window.KedaiDatabase.initialize(defaultState);
           renderAll();
         } catch (error) {
