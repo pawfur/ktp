@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Kedai POS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="text-slate-800 antialiased">
+    <div class="mx-auto app-shell bg-white shadow-2xl relative">
+      <header class="sticky top-0 z-20 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 px-4 py-4 text-white shadow-lg shadow-orange-500/20">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs uppercase tracking-[0.2em] text-orange-100" data-i18n="cashRegister">Kasa fiskalna</p>
+            <h1 class="text-xl font-black tracking-tight">Kedai POS</h1>
+          </div>
+        </div>
+      </header>
+
+      <main class="px-4 pb-28 pt-4">
+        <div id="toast" class="hidden rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700 shadow-sm"></div>
+
+        <div id="confirmModal" class="fixed inset-0 z-50 hidden bg-slate-900/50 p-4">
+          <div class="mx-auto mt-28 max-w-sm rounded-2xl bg-white p-4 shadow-2xl ring-1 ring-slate-200">
+            <p id="confirmMessage" class="text-base font-bold text-slate-800"></p>
+            <div class="mt-5 grid grid-cols-2 gap-3">
+              <button id="confirmNoBtn" type="button" class="confirm-btn-no touch-btn rounded-xl bg-sky-500 px-4 py-3 text-sm font-bold text-white shadow-sm">Nie</button>
+              <button id="confirmYesBtn" type="button" class="confirm-btn-yes touch-btn rounded-xl bg-slate-300 px-4 py-3 text-sm font-bold text-slate-700 shadow-sm">Tak</button>
+            </div>
+          </div>
+        </div>
+
+        <section id="panel-menu" class="tab-panel active">
+          <div class="premium-card mb-4 rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-200">
+            <div class="mb-3 flex items-center justify-between">
+              <h2 class="text-lg font-bold text-slate-800" data-i18n="menu">Menu</h2>
+              <span id="menuCountBadge" class="rounded-full bg-slate-200 px-2 py-1 text-xs font-semibold text-slate-700">0 pozycji</span>
+            </div>
+
+            <form id="productForm" class="space-y-3">
+              <div class="grid grid-cols-1 gap-3 sm:grid-cols-[1.7fr_1fr]">
+                <label class="block">
+                  <span class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" data-i18n="productName">Nama</span>
+                  <input id="productName" name="name" type="text" placeholder="cth. Seblak Biasa" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-base outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200" required />
+                </label>
+
+                <label class="block">
+                  <span class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" data-i18n="productPrice">Harga (IDR)</span>
+                  <input id="productPrice" name="price" type="number" step="1000" min="0" placeholder="12.500" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-base outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200" required />
+                </label>
+              </div>
+
+              <div class="flex gap-2">
+                <button id="saveProductBtn" type="submit" class="touch-btn flex-1 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white shadow-sm transition active:scale-[0.98]" data-i18n="addProduct">Dodaj pozycję</button>
+                <button id="cancelProductEditBtn" type="button" class="hidden touch-btn rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700" data-i18n="cancel">Anuluj</button>
+              </div>
+            </form>
+          </div>
+
+          <div id="menuList" class="space-y-3"></div>
+        </section>
+
+        <section id="panel-customer" class="tab-panel">
+          <div class="premium-card mb-4 rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-200">
+            <h2 class="text-lg font-bold text-slate-800" data-i18n="customerService">ObsL�uga klienta</h2>
+          </div>
+
+          <div id="customerItems" class="space-y-3"></div>
+
+          <div class="mt-5 rounded-2xl bg-slate-900 p-4 text-white shadow-lg">
+            <div class="mb-3 flex items-center justify-between">
+              <h3 class="text-base font-bold" data-i18n="summary">Podsumowanie</h3>
+              <span id="customerSummaryCount" class="rounded-full bg-white/10 px-2 py-1 text-xs font-semibold text-slate-100">0 pozycji</span>
+            </div>
+
+            <div id="customerSummaryDetails" class="space-y-2 text-sm text-slate-200"></div>
+
+            <div class="mt-4 border-t border-white/10 pt-3">
+              <div class="flex items-center justify-between text-lg font-black">
+                <span data-i18n="totalToPay">Do zapL�aty</span>
+                <span id="customerTotal">0,00 zL�</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5 grid grid-cols-2 gap-3">
+            <button id="saveOrderBtn" type="button" class="touch-btn rounded-xl bg-emerald-500 px-4 py-3 text-sm font-bold text-white shadow-sm transition active:scale-[0.98]" data-i18n="saveOrder">Zapisz</button>
+            <button id="cancelCustomerBtn" type="button" class="touch-btn rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm transition active:scale-[0.98]" data-i18n="cancel">Anuluj</button>
+          </div>
+        </section>
+
+        <section id="panel-orders" class="tab-panel">
+          <div class="premium-card mb-4 rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-200">
+            <h2 class="text-lg font-bold text-slate-800" data-i18n="activeOrdersLabel">Aktywne zamAlwienia</h2>
+          </div>
+          <div id="activeOrdersList" class="space-y-3"></div>
+        </section>
+
+        <section id="panel-archive" class="tab-panel">
+          <div class="premium-card mb-4 rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-200">
+            <div class="flex items-center justify-between gap-3">
+              <h2 class="text-lg font-bold text-slate-800" data-i18n="archive">Archiwum</h2>
+              <button id="clearArchiveBtn" type="button" class="rounded-xl border border-rose-300 bg-rose-50 px-3 py-2 text-xs font-bold text-rose-700" data-i18n="clear">WyczyL�ć</button>
+            </div>
+          </div>
+
+          <div class="mb-4 rounded-2xl bg-emerald-50 p-3 ring-1 ring-emerald-200">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-semibold text-emerald-700" data-i18n="totalSales">Suma sprzedaLLy</span>
+              <span id="archiveTotal" class="text-lg font-black text-emerald-800">0,00 zL�</span>
+            </div>
+          </div>
+
+          <div id="archiveList" class="space-y-3"></div>
+        </section>
+
+        <section id="panel-settings" class="tab-panel">
+          <div class="mb-4 rounded-2xl bg-slate-50 p-3 shadow-sm ring-1 ring-slate-200">
+            <h2 class="text-lg font-bold text-slate-800" data-i18n="settings">Ustawienia</h2>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+            <label class="mb-2 block text-sm font-bold text-slate-700" data-i18n="language">Język</label>
+            <select id="languageSelect" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-base outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200">
+              <option value="pl">Polski</option>
+              <option value="en">English</option>
+              <option value="id">Bahasa Indonesia</option>
+            </select>
+          </div>
+        </section>
+      </main>
+
+      <nav class="premium-nav fixed bottom-0 left-1/2 z-30 w-full max-w-[480px] -translate-x-1/2 border-t border-slate-200 bg-white/90 px-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-md">
+        <div class="grid grid-cols-5 gap-2">
+          <button data-tab="menu" class="tab-btn rounded-xl bg-orange-500 px-2 py-3 text-center text-[11px] font-bold text-white shadow-md shadow-orange-500/20"><span data-i18n="menu">Menu</span></button>
+          <button data-tab="customer" class="tab-btn rounded-xl bg-slate-100 px-2 py-3 text-center text-[11px] font-bold text-slate-700 shadow-sm"><span data-i18n="customer">Obsługa</span></button>
+          <button data-tab="orders" class="tab-btn rounded-xl bg-slate-100 px-2 py-3 text-center text-[11px] font-bold text-slate-700 shadow-sm"><span data-i18n="orders">Zamówienia</span></button>
+          <button data-tab="archive" class="tab-btn rounded-xl bg-slate-100 px-2 py-3 text-center text-[11px] font-bold text-slate-700 shadow-sm"><span data-i18n="archive">Archiwum</span></button>
+          <button data-tab="settings" class="tab-btn rounded-xl bg-slate-100 px-2 py-3 text-center text-[11px] font-bold text-slate-700 shadow-sm"><span class="text-base">⚙️</span><span class="sr-only" data-i18n="settings">Ustawienia</span></button>
+        </div>
+      </nav>
+    </div>
+
+    <script src="config/default-state.js"></script>
+    <script src="database.js"></script>
+    <script src="modules/ui.js"></script>
+    <script src="modules/dialogs.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
+
+
