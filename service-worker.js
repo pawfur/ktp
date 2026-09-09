@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kedai-pos-v7';
+const CACHE_NAME = 'kedai-pos-v8';
 const APP_SHELL = [
   './',
   './index.html',
@@ -9,7 +9,8 @@ const APP_SHELL = [
   './modules/ui.js',
   './modules/dialogs.js',
   './manifest.json',
-  './modules/icon.svg'
+  './modules/icon.svg',
+  './logo.jpeg'
 ];
 
 self.addEventListener('install', event => {
