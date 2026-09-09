@@ -22,7 +22,7 @@
             <p class="text-xs uppercase tracking-[0.2em] text-orange-100" data-i18n="cashRegister">Kasa fiskalna</p>
             <h1 class="text-xl font-black tracking-tight">Kedai POS</h1>
           </div>
-          <span id="appVersion" class="rounded-full border border-white/30 bg-white/15 px-2.5 py-1 text-[11px] font-bold tracking-wide text-white">v26.09.2029</span>
+          <span id="appVersion" class="rounded-full border border-white/30 bg-white/15 px-2.5 py-1 text-[11px] font-bold tracking-wide text-white">v26.09.2029.1</span>
         </div>
       </header>
 
@@ -55,7 +55,7 @@
 
                 <label class="block">
                   <span class="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500" data-i18n="productPrice">Harga (IDR)</span>
-                  <input id="productPrice" name="price" type="number" step="1000" min="0" placeholder="12.500" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-base outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200" required />
+                  <input id="productPrice" name="price" type="number" step="500" min="0" placeholder="12.500" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-base outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-200" required />
                 </label>
               </div>
 
@@ -136,15 +136,18 @@
               <option value="id">Bahasa Indonesia</option>
             </select>
           </div>
+
+          <div class="mt-4 grid grid-cols-2 gap-3">
+            <button data-settings-tab="menu" type="button" class="touch-btn rounded-xl bg-orange-500 px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-500/25" data-i18n="editMenu">Edytuj menu</button>
+            <button data-settings-tab="archive" type="button" class="touch-btn rounded-xl bg-orange-500 px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-500/25" data-i18n="orderArchive">Archiwum zamówień</button>
+          </div>
         </section>
       </main>
 
       <nav class="premium-nav fixed bottom-0 left-1/2 z-30 w-full max-w-[480px] -translate-x-1/2 border-t border-slate-200 bg-white/90 px-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-md">
-        <div class="grid grid-cols-5 gap-2">
-          <button data-tab="menu" class="tab-btn rounded-xl bg-orange-500 px-2 py-3 text-center text-[11px] font-bold text-white shadow-md shadow-orange-500/20"><span data-i18n="menu">Menu</span></button>
+        <div class="grid grid-cols-3 gap-2">
           <button data-tab="customer" class="tab-btn rounded-xl bg-slate-100 px-2 py-3 text-center text-[11px] font-bold text-slate-700 shadow-sm"><span data-i18n="customer">Obsługa</span></button>
           <button data-tab="orders" class="tab-btn rounded-xl bg-slate-100 px-2 py-3 text-center text-[11px] font-bold text-slate-700 shadow-sm"><span data-i18n="orders">Zamówienia</span></button>
-          <button data-tab="archive" class="tab-btn rounded-xl bg-slate-100 px-2 py-3 text-center text-[11px] font-bold text-slate-700 shadow-sm"><span data-i18n="archive">Archiwum</span></button>
           <button data-tab="settings" class="tab-btn rounded-xl bg-slate-100 px-2 py-3 text-center text-[11px] font-bold text-slate-700 shadow-sm"><span class="text-base">⚙️</span><span class="sr-only" data-i18n="settings">Ustawienia</span></button>
         </div>
       </nav>

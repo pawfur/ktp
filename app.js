@@ -9,6 +9,8 @@ const defaultState = window.KedaiConfig.defaultState;
           orders: 'Zamówienia',
           archive: 'Archiwum',
           settings: 'Ustawienia',
+          editMenu: 'Edytuj menu',
+          orderArchive: 'Archiwum zamówień',
           clear: 'Wyczyść',
           totalSales: 'Suma sprzedaży',
           language: 'Język',
@@ -67,6 +69,8 @@ const defaultState = window.KedaiConfig.defaultState;
           orders: 'Orders',
           archive: 'Archive',
           settings: 'Settings',
+          editMenu: 'Edit menu',
+          orderArchive: 'Order archive',
           clear: 'Clear',
           totalSales: 'Total sales',
           language: 'Language',
@@ -125,6 +129,8 @@ const defaultState = window.KedaiConfig.defaultState;
           orders: 'Pesanan',
           archive: 'Arsip',
           settings: 'Pengaturan',
+          editMenu: 'Edit menu',
+          orderArchive: 'Arsip pesanan',
           clear: 'Hapus',
           totalSales: 'Total penjualan',
           language: 'Bahasa',
@@ -783,6 +789,10 @@ const defaultState = window.KedaiConfig.defaultState;
 
       document.querySelectorAll('.tab-btn').forEach(button => {
         button.addEventListener('click', () => setActiveTab(button.dataset.tab));
+      });
+
+      document.querySelectorAll('[data-settings-tab]').forEach(button => {
+        button.addEventListener('click', () => setActiveTab(button.dataset.settingsTab));
       });
 
       document.addEventListener('dblclick', event => {
