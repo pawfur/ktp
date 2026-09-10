@@ -115,6 +115,18 @@
     );
   }
 
+  /**
+   * Wprowadza przykładowe składniki tylko raz. Dzięki temu użytkownik, który
+   * celowo usunie wszystkie pozycje, nie zobaczy ich ponownie po restarcie.
+   */
+  function seedIngredients(state, defaultState, savedState) {
+    const alreadySeeded = savedState?.ingredientsSeeded === true;
+    const isEmpty = !Array.isArray(state.ingredients) || state.ingredients.length === 0;
+    if (alreadySeeded || !isEmpty) return false;
+    state.ingredients = JSON.parse(JSON.stringify(defaultState.ingredients || []));
+    return true;
+  }
+
   async function initialize(defaultState) {
     database = await openDatabase();
     const transaction = database.transaction(['AppState', 'Orders', 'Ingredients', 'PurchaseOrders'], 'readonly');
@@ -134,7 +146,11 @@
 
     if (hasStoredData) {
       const stored = buildState(defaultState, savedState, orders, ingredients, purchaseOrders);
-      writeBackup(stored);
+      if (seedIngredients(stored, defaultState, savedState)) {
+        await saveState(stored);
+      } else {
+        writeBackup(stored);
+      }
       return stored;
     }
 
@@ -149,6 +165,7 @@
     }
 
     const fresh = buildState(defaultState, {}, [], [], []);
+    seedIngredients(fresh, defaultState, {});
     await saveState(fresh);
     return fresh;
   }
@@ -158,7 +175,7 @@
     const transaction = database.transaction(['AppState', 'Orders', 'Ingredients', 'PurchaseOrders'], 'readwrite');
     transaction.objectStore('AppState').put({
       id: APP_STATE_KEY,
-      value: { menu: state.menu, language: state.language, savedAt: new Date().toISOString() }
+      value: { menu: state.menu, language: state.language, ingredientsSeeded: true, savedAt: new Date().toISOString() }
     });
 
     const ordersStore = transaction.objectStore('Orders');

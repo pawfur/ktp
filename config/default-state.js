@@ -1,5 +1,5 @@
 window.KedaiConfig = {
-  version: '26.09.10.2334',
+  version: '26.09.10.2351',
   defaultState: {
     menu: [
       { id: 'prod_1', name: 'Seblak Biasa', price: 8000, order: 0 },
@@ -17,7 +17,14 @@ window.KedaiConfig = {
     ],
     activeOrders: [],
     archive: [],
-    ingredients: [],
+    ingredients: [
+      { id: 'ing_bulki', name: 'Bułki', unit: 'szt', stock: 24, unit_price: 800, min_stock: 20, target_stock: 60, min_order_quantity: 10, unit_step: 10 },
+      { id: 'ing_ceker', name: 'Mięso cekier', unit: 'g', stock: 3000, unit_price: 45, min_stock: 4000, target_stock: 15000, min_order_quantity: 1000, unit_step: 500 },
+      { id: 'ing_maka', name: 'Mąka pszenna', unit: 'g', stock: 9000, unit_price: 8, min_stock: 5000, target_stock: 25000, min_order_quantity: 5000, unit_step: 1000 },
+      { id: 'ing_jajka', name: 'Jajka', unit: 'szt', stock: 18, unit_price: 2500, min_stock: 24, target_stock: 60, min_order_quantity: 12, unit_step: 6 },
+      { id: 'ing_olej', name: 'Olej', unit: 'ml', stock: 1200, unit_price: 20, min_stock: 1000, target_stock: 5000, min_order_quantity: 1000, unit_step: 500 },
+      { id: 'ing_przyprawa', name: 'Przyprawa do seblak', unit: 'g', stock: 400, unit_price: 120, min_stock: 500, target_stock: 2000, min_order_quantity: 500, unit_step: 100 }
+    ],
     purchaseOrders: [],
     language: 'id'
   }

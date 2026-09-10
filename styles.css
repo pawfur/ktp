@@ -68,6 +68,13 @@ body {
   backdrop-filter: blur(14px);
 }
 
+/* Pozycje magazynowe poniżej stanu minimalnego. */
+.stock-low {
+  box-shadow: 0 0 18px rgba(244, 63, 94, 0.45);
+  border-color: #fda4af;
+  background: #fff1f2;
+}
+
 .tab-btn {
   min-height: 52px;
   box-shadow: 0 8px 18px rgba(249, 115, 22, 0.2);

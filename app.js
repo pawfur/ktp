@@ -42,6 +42,7 @@ const defaultState = window.KedaiConfig.defaultState;
           orderArchive: 'Archiwum zamówień',
           editWarehouse: 'Edycja magazynu',
           warehouse: 'Magazyn',
+          warehouseHint: 'Podgląd stanu magazynu. Aby dodać lub zmienić składniki, użyj przycisku Edycja magazynu w Ustawieniach.',
           ingredients: 'Składniki',
           addIngredient: 'Dodaj składnik',
           ingredientName: 'Nazwa',
@@ -170,6 +171,7 @@ const defaultState = window.KedaiConfig.defaultState;
           orderArchive: 'Order archive',
           editWarehouse: 'Edit warehouse',
           warehouse: 'Warehouse',
+          warehouseHint: 'Warehouse preview. To add or change ingredients, use the Edit warehouse button in Settings.',
           ingredients: 'Ingredients',
           addIngredient: 'Add ingredient',
           ingredientName: 'Name',
@@ -298,6 +300,7 @@ const defaultState = window.KedaiConfig.defaultState;
           orderArchive: 'Arsip pesanan',
           editWarehouse: 'Ubah gudang',
           warehouse: 'Gudang',
+          warehouseHint: 'Pratinjau gudang. Untuk menambah atau mengubah bahan, gunakan tombol Ubah gudang di Pengaturan.',
           ingredients: 'Bahan',
           addIngredient: 'Tambah bahan',
           ingredientName: 'Nama',
@@ -424,6 +427,8 @@ const defaultState = window.KedaiConfig.defaultState;
       const ingredientMoqInput = document.getElementById('ingredientMoq');
       const ingredientStepInput = document.getElementById('ingredientStep');
       const ingredientList = document.getElementById('ingredientList');
+      const ingredientEditList = document.getElementById('ingredientEditList');
+      const ingredientEditCountBadge = document.getElementById('ingredientEditCountBadge');
       const ingredientCountBadge = document.getElementById('ingredientCountBadge');
       const warehouseValueBadge = document.getElementById('warehouseValueBadge');
       const purchaseItems = document.getElementById('purchaseItems');
@@ -851,8 +856,43 @@ const defaultState = window.KedaiConfig.defaultState;
 
         if (!ingredients.length) {
           ingredientList.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${translate('noIngredients')}</div>`;
+          return;
+        }
+
+        ingredientList.innerHTML = ingredients
+          .slice()
+          .sort((a, b) => String(a.name).localeCompare(String(b.name)))
+          .map(ingredient => {
+            const belowMinimum = Number(ingredient.stock || 0) < Number(ingredient.min_stock || 0);
+            const stockValue = Number(ingredient.stock || 0) * Number(ingredient.unit_price || 0);
+
+            return `
+              <div class="rounded-2xl border p-3 ${belowMinimum ? 'stock-low border-rose-300' : 'border-slate-200 bg-white shadow-sm'}">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <p class="text-base font-bold text-slate-800">${escapeHtml(ingredient.name)}</p>
+                    <p class="text-sm font-semibold text-slate-700">${formatNumber(ingredient.stock)} ${escapeHtml(ingredient.unit)}</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-sm font-bold text-orange-600">${formatCurrency(ingredient.unit_price)} / ${escapeHtml(ingredient.unit)}</p>
+                    <p class="text-xs text-slate-500">${formatCurrency(stockValue)}</p>
+                  </div>
+                </div>
+                ${belowMinimum ? `<p class="mt-2 text-xs font-bold uppercase tracking-wide text-rose-600">${translate('belowMin')} · ${translate('ingredientMinStock')}: ${formatNumber(ingredient.min_stock)} ${escapeHtml(ingredient.unit)}</p>` : ''}
+              </div>
+            `;
+          })
+          .join('');
+      }
+
+      function renderWarehouseEdit() {
+        const ingredients = state.ingredients || [];
+        ingredientEditCountBadge.textContent = getCounterLabel(ingredients.length, 'item', 'items');
+
+        if (!ingredients.length) {
+          ingredientEditList.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${translate('noIngredients')}</div>`;
         } else {
-          ingredientList.innerHTML = ingredients
+          ingredientEditList.innerHTML = ingredients
             .slice()
             .sort((a, b) => String(a.name).localeCompare(String(b.name)))
             .map(ingredient => {
@@ -860,7 +900,7 @@ const defaultState = window.KedaiConfig.defaultState;
               const stockValue = Number(ingredient.stock || 0) * Number(ingredient.unit_price || 0);
 
               return `
-                <div class="rounded-2xl border ${belowMinimum ? 'border-rose-200 bg-rose-50' : 'border-slate-200 bg-white'} p-3 shadow-sm">
+                <div class="rounded-2xl border p-3 ${belowMinimum ? 'stock-low border-rose-300' : 'border-slate-200 bg-white shadow-sm'}">
                   <div class="flex items-start justify-between gap-3">
                     <div>
                       <p class="text-base font-bold text-slate-800">${escapeHtml(ingredient.name)}</p>
@@ -992,6 +1032,7 @@ const defaultState = window.KedaiConfig.defaultState;
         renderActiveOrders();
         renderArchive();
         renderWarehouse();
+        renderWarehouseEdit();
         renderPurchase();
         renderPurchaseOrders();
         renderTabs();
@@ -1335,13 +1376,13 @@ const defaultState = window.KedaiConfig.defaultState;
         ingredientMoqInput.value = ingredient.min_order_quantity;
         ingredientStepInput.value = ingredient.unit_step;
         ingredientNameInput.focus();
-        renderWarehouse();
+        renderWarehouseEdit();
       }
 
       function cancelIngredientEdit() {
         showConfirmDialog(translate('confirmCancelSelection'), () => {
           resetIngredientForm();
-          renderWarehouse();
+          renderWarehouseEdit();
         });
       }
 

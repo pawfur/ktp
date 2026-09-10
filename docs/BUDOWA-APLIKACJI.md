@@ -97,25 +97,37 @@ Aplikacja jest przeznaczona wyłącznie do pracy w pionie. `manifest.json` ustaw
 
 ### Magazyn
 
-Zakładka Magazyn przechowuje składniki i pozwala je zamawiać. Każdy składnik ma pola:
+Moduł magazynu jest podzielony na dwa osobne widoki, które mają różne zadania.
+
+**Zakładka Magazyn** to widok tylko do odczytu. Pokazuje:
+
+- łączną wartość magazynu,
+- listę składników z aktualną ilością i jednostką,
+- cenę jednostkową i wartość stanu danej pozycji,
+- wyróżnienie pozycji poniżej stanu minimalnego czerwoną poświatą.
+
+W tym widoku nie ma możliwości edycji. Dostępne są wyłącznie przyciski **Zamów** i **Lista zamówień**.
+
+**Edycja magazynu** to osobny ekran otwierany przyciskiem w Ustawieniach. Zawiera formularz dodawania i edycji składników oraz listę z przyciskami **Edytuj** i **Usuń**.
+
+Każdy składnik ma pola:
 
 - `name` – nazwa,
 - `unit` – jednostka: `szt`, `g` albo `ml`,
 - `stock` – aktualna ilość,
 - `unit_price` – cena jednostkowa,
-- `min_stock` – stan minimalny, poniżej którego pozycja jest wyróżniona na czerwono,
+- `min_stock` – stan minimalny,
 - `target_stock` – stan zalecany, do którego dąży uzupełnienie,
 - `min_order_quantity` – minimalna ilość zamówienia,
 - `unit_step` – krok zamówienia, np. pieczywo zamawia się po 10 sztuk.
 
-Zakładka udostępnia dwa przyciski:
+Przy pierwszym uruchomieniu aplikacja wprowadza przykładowe składniki ułatwiające start. Wprowadzenie odbywa się tylko raz i jest zapamiętywane flagą `ingredientsSeeded` w `AppState`. Dzięki temu użytkownik, który celowo usunie wszystkie składniki, nie zobaczy ich ponownie.
 
-- **Zamów** – ekran zamawiania wzorowany na obsłudze klienta. Przyciski `−` i `+` zmieniają ilość o `unit_step`, więc nie da się zamówić ilości spoza kroku. Pod listą znajduje się podsumowanie z wartością zamówienia. Przycisk **Akceptuj** zapisuje zamówienie, a **Anuluj** czyści wybór. Jeżeli ilość nie jest wielokrotnością kroku lub jest mniejsza niż minimalna ilość zamówienia, aplikacja pokazuje odpowiedni komunikat i nie zapisuje zamówienia.
-- **Lista zamówień** – historia zapisanych zamówień zakupowych z możliwością usunięcia.
+Ekran **Zamów** działa podobnie do obsługi klienta. Przyciski `−` i `+` zmieniają ilość o `unit_step`, więc nie da się zamówić ilości spoza kroku. Pod listą znajduje się podsumowanie z wartością zamówienia. Przycisk **Akceptuj** zapisuje zamówienie, a **Anuluj** czyści wybór. Jeżeli ilość nie jest wielokrotnością kroku lub jest mniejsza niż minimalna ilość zamówienia, aplikacja pokazuje komunikat i nie zapisuje zamówienia.
 
-Dla każdego składnika wyświetlana jest także proponowana ilość do zamówienia, wyliczana ze stanu zalecanego, kroku zamówienia i minimalnej ilości zamówienia.
+Dla każdego składnika wyświetlana jest proponowana ilość do zamówienia, wyliczana ze stanu zalecanego, kroku zamówienia i minimalnej ilości zamówienia.
 
-Edycja i usuwanie składników działa tak samo jak w menu: przycisk **Edytuj** wypełnia formularz, a **Usuń** wymaga potwierdzenia. Skrót **Edycja magazynu** znajduje się także w Ustawieniach.
+**Lista zamówień** pokazuje historię zapisanych zamówień zakupowych z możliwością usunięcia.
 
 ## 5. IndexedDB
 
