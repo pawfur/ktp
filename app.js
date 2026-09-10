@@ -40,6 +40,45 @@ const defaultState = window.KedaiConfig.defaultState;
           dbOpenFailed: 'Nie udało się otworzyć lokalnej bazy danych.',
           editMenu: 'Edytuj menu',
           orderArchive: 'Archiwum zamówień',
+          editWarehouse: 'Edycja magazynu',
+          warehouse: 'Magazyn',
+          ingredients: 'Składniki',
+          addIngredient: 'Dodaj składnik',
+          ingredientName: 'Nazwa',
+          ingredientUnit: 'Jednostka',
+          ingredientStock: 'Ilość',
+          ingredientPrice: 'Cena jedn.',
+          ingredientMinStock: 'Stan min.',
+          ingredientTargetStock: 'Stan zalecany',
+          ingredientMoq: 'Min. zamówienie',
+          ingredientStep: 'Krok zamówienia',
+          noIngredients: 'Brak składników. Dodaj pierwszy składnik.',
+          fillIngredient: 'Uzupełnij poprawnie nazwę, ilość i cenę.',
+          ingredientAdded: 'Składnik został dodany.',
+          ingredientUpdated: 'Składnik został zaktualizowany.',
+          ingredientRemoved: 'Składnik został usunięty.',
+          confirmDeleteIngredient: 'Usunąć składnik "{name}" z magazynu?',
+          warehouseValue: 'Wartość magazynu',
+          stockValue: 'Wartość stanu',
+          belowMin: 'Poniżej stanu min.',
+          orderIngredients: 'Zamów',
+          purchaseTitle: 'Zamawianie składników',
+          purchaseList: 'Lista zamówień',
+          purchaseTotal: 'Wartość zamówienia',
+          acceptOrder: 'Akceptuj',
+          noPurchaseItems: 'Nie wybrano składników.',
+          chooseIngredient: 'Wybierz co najmniej jeden składnik.',
+          purchaseSaved: 'Zamówienie zostało zapisane.',
+          purchaseEmpty: 'Brak zamówień.',
+          purchaseDeleted: 'Zamówienie zostało usunięte.',
+          confirmDeletePurchase: 'Usunąć to zamówienie?',
+          confirmCancelPurchase: 'Czy na pewno chcesz anulować zamówienie?',
+          purchaseCleared: 'Zamówienie zostało anulowane.',
+          recommended: 'Zalecane',
+          useRecommended: 'Ustaw zalecane',
+          moqWarning: '{name}: minimalne zamówienie to {moq} {unit}.',
+          stepWarning: '{name}: ilość musi być wielokrotnością {step} {unit}.',
+          ordered: 'Zamówione',
           clear: 'Wyczyść',
           totalSales: 'Suma sprzedaży',
           language: 'Język',
@@ -129,6 +168,45 @@ const defaultState = window.KedaiConfig.defaultState;
           dbOpenFailed: 'Could not open the local database.',
           editMenu: 'Edit menu',
           orderArchive: 'Order archive',
+          editWarehouse: 'Edit warehouse',
+          warehouse: 'Warehouse',
+          ingredients: 'Ingredients',
+          addIngredient: 'Add ingredient',
+          ingredientName: 'Name',
+          ingredientUnit: 'Unit',
+          ingredientStock: 'Quantity',
+          ingredientPrice: 'Unit price',
+          ingredientMinStock: 'Min. level',
+          ingredientTargetStock: 'Target level',
+          ingredientMoq: 'Min. order',
+          ingredientStep: 'Order step',
+          noIngredients: 'No ingredients yet. Add the first one.',
+          fillIngredient: 'Please enter a valid name, quantity and price.',
+          ingredientAdded: 'Ingredient added.',
+          ingredientUpdated: 'Ingredient updated.',
+          ingredientRemoved: 'Ingredient removed.',
+          confirmDeleteIngredient: 'Delete the "{name}" ingredient from the warehouse?',
+          warehouseValue: 'Warehouse value',
+          stockValue: 'Stock value',
+          belowMin: 'Below minimum',
+          orderIngredients: 'Order',
+          purchaseTitle: 'Order ingredients',
+          purchaseList: 'Order list',
+          purchaseTotal: 'Order value',
+          acceptOrder: 'Accept',
+          noPurchaseItems: 'No ingredients selected.',
+          chooseIngredient: 'Please select at least one ingredient.',
+          purchaseSaved: 'Order saved.',
+          purchaseEmpty: 'No orders yet.',
+          purchaseDeleted: 'Order deleted.',
+          confirmDeletePurchase: 'Delete this order?',
+          confirmCancelPurchase: 'Are you sure you want to cancel the order?',
+          purchaseCleared: 'Order cancelled.',
+          recommended: 'Recommended',
+          useRecommended: 'Use recommended',
+          moqWarning: '{name}: minimum order is {moq} {unit}.',
+          stepWarning: '{name}: quantity must be a multiple of {step} {unit}.',
+          ordered: 'Ordered',
           clear: 'Clear',
           totalSales: 'Total sales',
           language: 'Language',
@@ -218,6 +296,45 @@ const defaultState = window.KedaiConfig.defaultState;
           dbOpenFailed: 'Tidak dapat membuka basis data lokal.',
           editMenu: 'Ubah menu',
           orderArchive: 'Arsip pesanan',
+          editWarehouse: 'Ubah gudang',
+          warehouse: 'Gudang',
+          ingredients: 'Bahan',
+          addIngredient: 'Tambah bahan',
+          ingredientName: 'Nama',
+          ingredientUnit: 'Satuan',
+          ingredientStock: 'Jumlah',
+          ingredientPrice: 'Harga satuan',
+          ingredientMinStock: 'Stok minimum',
+          ingredientTargetStock: 'Stok ideal',
+          ingredientMoq: 'Min. pesan',
+          ingredientStep: 'Langkah pesan',
+          noIngredients: 'Belum ada bahan. Tambahkan yang pertama.',
+          fillIngredient: 'Isi nama, jumlah, dan harga dengan benar.',
+          ingredientAdded: 'Bahan ditambahkan.',
+          ingredientUpdated: 'Bahan diperbarui.',
+          ingredientRemoved: 'Bahan dihapus.',
+          confirmDeleteIngredient: 'Hapus bahan "{name}" dari gudang?',
+          warehouseValue: 'Nilai gudang',
+          stockValue: 'Nilai stok',
+          belowMin: 'Di bawah minimum',
+          orderIngredients: 'Pesan',
+          purchaseTitle: 'Pesan bahan',
+          purchaseList: 'Daftar pesanan',
+          purchaseTotal: 'Nilai pesanan',
+          acceptOrder: 'Terima',
+          noPurchaseItems: 'Belum ada bahan dipilih.',
+          chooseIngredient: 'Pilih minimal satu bahan.',
+          purchaseSaved: 'Pesanan disimpan.',
+          purchaseEmpty: 'Belum ada pesanan.',
+          purchaseDeleted: 'Pesanan dihapus.',
+          confirmDeletePurchase: 'Hapus pesanan ini?',
+          confirmCancelPurchase: 'Apakah Anda yakin ingin membatalkan pesanan?',
+          purchaseCleared: 'Pesanan dibatalkan.',
+          recommended: 'Disarankan',
+          useRecommended: 'Pakai disarankan',
+          moqWarning: '{name}: pesanan minimum {moq} {unit}.',
+          stepWarning: '{name}: jumlah harus kelipatan {step} {unit}.',
+          ordered: 'Dipesan',
           clear: 'Bersihkan',
           totalSales: 'Total penjualan',
           language: 'Bahasa',
@@ -273,8 +390,10 @@ const defaultState = window.KedaiConfig.defaultState;
       let state = JSON.parse(JSON.stringify(defaultState));
       let activeTab = 'menu';
       let currentSelection = {};
+      let currentPurchaseSelection = {};
       let editingProductId = null;
       let editingOrderId = null;
+      let editingIngredientId = null;
 
       const productForm = document.getElementById('productForm');
       const menuElementTypeSelect = document.getElementById('menuElementType');
@@ -295,6 +414,23 @@ const defaultState = window.KedaiConfig.defaultState;
       const customerSummaryDetails = document.getElementById('customerSummaryDetails');
       const customerTotal = document.getElementById('customerTotal');
       const languageSelect = document.getElementById('languageSelect');
+      const ingredientForm = document.getElementById('ingredientForm');
+      const ingredientNameInput = document.getElementById('ingredientName');
+      const ingredientUnitSelect = document.getElementById('ingredientUnit');
+      const ingredientStockInput = document.getElementById('ingredientStock');
+      const ingredientPriceInput = document.getElementById('ingredientPrice');
+      const ingredientMinStockInput = document.getElementById('ingredientMinStock');
+      const ingredientTargetStockInput = document.getElementById('ingredientTargetStock');
+      const ingredientMoqInput = document.getElementById('ingredientMoq');
+      const ingredientStepInput = document.getElementById('ingredientStep');
+      const ingredientList = document.getElementById('ingredientList');
+      const ingredientCountBadge = document.getElementById('ingredientCountBadge');
+      const warehouseValueBadge = document.getElementById('warehouseValueBadge');
+      const purchaseItems = document.getElementById('purchaseItems');
+      const purchaseSummaryCount = document.getElementById('purchaseSummaryCount');
+      const purchaseSummaryDetails = document.getElementById('purchaseSummaryDetails');
+      const purchaseTotalLabel = document.getElementById('purchaseTotal');
+      const purchaseOrderList = document.getElementById('purchaseOrderList');
 
       function translate(key, replacements = {}) {
         const lang = state.language || 'pl';
@@ -316,6 +452,11 @@ const defaultState = window.KedaiConfig.defaultState;
 
       function formatDateTime(value) {
         return formatUiDateTime(value, state.language);
+      }
+
+      function formatNumber(value) {
+        const number = Number(value || 0);
+        return Number.isInteger(number) ? String(number) : number.toFixed(2);
       }
 
       function setLanguage(lang) {
@@ -683,12 +824,176 @@ const defaultState = window.KedaiConfig.defaultState;
           .join('');
       }
 
+      function getStep(ingredient) {
+        const step = Number(ingredient.unit_step);
+        return Number.isFinite(step) && step > 0 ? step : 1;
+      }
+
+      function isStepAligned(quantity, step) {
+        const ratio = quantity / step;
+        return Math.abs(ratio - Math.round(ratio)) < 1e-6;
+      }
+
+      function getRecommendedQuantity(ingredient) {
+        const step = getStep(ingredient);
+        const missing = Number(ingredient.target_stock || 0) - Number(ingredient.stock || 0);
+        if (missing <= 0) return 0;
+        const quantity = Math.ceil(missing / step) * step;
+        const moq = Math.max(1, Number(ingredient.min_order_quantity) || 1);
+        return quantity < moq ? Math.ceil(moq / step) * step : quantity;
+      }
+
+      function renderWarehouse() {
+        const ingredients = state.ingredients || [];
+        const totalValue = ingredients.reduce((sum, item) => sum + Number(item.stock || 0) * Number(item.unit_price || 0), 0);
+        warehouseValueBadge.textContent = formatCurrency(totalValue);
+        ingredientCountBadge.textContent = getCounterLabel(ingredients.length, 'item', 'items');
+
+        if (!ingredients.length) {
+          ingredientList.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${translate('noIngredients')}</div>`;
+        } else {
+          ingredientList.innerHTML = ingredients
+            .slice()
+            .sort((a, b) => String(a.name).localeCompare(String(b.name)))
+            .map(ingredient => {
+              const belowMinimum = Number(ingredient.stock || 0) < Number(ingredient.min_stock || 0);
+              const stockValue = Number(ingredient.stock || 0) * Number(ingredient.unit_price || 0);
+
+              return `
+                <div class="rounded-2xl border ${belowMinimum ? 'border-rose-200 bg-rose-50' : 'border-slate-200 bg-white'} p-3 shadow-sm">
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                      <p class="text-base font-bold text-slate-800">${escapeHtml(ingredient.name)}</p>
+                      <p class="text-sm font-semibold text-orange-600">${formatCurrency(ingredient.unit_price)} / ${escapeHtml(ingredient.unit)}</p>
+                    </div>
+                    ${belowMinimum ? `<span class="rounded-full bg-rose-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-rose-700">${translate('belowMin')}</span>` : ''}
+                  </div>
+
+                  <div class="mt-2 grid grid-cols-2 gap-1 text-xs text-slate-600">
+                    <span>${translate('ingredientStock')}: <b>${formatNumber(ingredient.stock)} ${escapeHtml(ingredient.unit)}</b></span>
+                    <span>${translate('stockValue')}: <b>${formatCurrency(stockValue)}</b></span>
+                    <span>${translate('ingredientMinStock')}: <b>${formatNumber(ingredient.min_stock)}</b></span>
+                    <span>${translate('ingredientTargetStock')}: <b>${formatNumber(ingredient.target_stock)}</b></span>
+                    <span>${translate('ingredientMoq')}: <b>${formatNumber(ingredient.min_order_quantity)}</b></span>
+                    <span>${translate('ingredientStep')}: <b>${formatNumber(ingredient.unit_step)}</b></span>
+                  </div>
+
+                  <div class="mt-3 grid grid-cols-2 gap-2">
+                    <button data-action="edit-ingredient" data-id="${ingredient.id}" class="touch-btn rounded-xl bg-amber-100 px-3 py-2 text-sm font-bold text-amber-700">${translate('edit')}</button>
+                    <button data-action="delete-ingredient" data-id="${ingredient.id}" class="touch-btn rounded-xl bg-rose-100 px-3 py-2 text-sm font-bold text-rose-700">${translate('delete')}</button>
+                  </div>
+                </div>
+              `;
+            })
+            .join('');
+        }
+
+        const saveButton = document.getElementById('saveIngredientBtn');
+        if (editingIngredientId) {
+          saveButton.textContent = translate('saveChanges');
+          document.getElementById('cancelIngredientEditBtn').textContent = translate('cancel');
+          document.getElementById('cancelIngredientEditBtn').classList.remove('hidden');
+        } else {
+          saveButton.textContent = translate('addIngredient');
+          document.getElementById('cancelIngredientEditBtn').classList.add('hidden');
+        }
+      }
+
+      function renderPurchase() {
+        const ingredients = state.ingredients || [];
+
+        if (!ingredients.length) {
+          purchaseItems.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${translate('noIngredients')}</div>`;
+        } else {
+          purchaseItems.innerHTML = ingredients
+            .slice()
+            .sort((a, b) => String(a.name).localeCompare(String(b.name)))
+            .map(ingredient => {
+              const quantity = Number(currentPurchaseSelection[ingredient.id] || 0);
+              const recommended = getRecommendedQuantity(ingredient);
+
+              return `
+                <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+                  <div class="flex items-center justify-between gap-3">
+                    <div>
+                      <p class="text-base font-bold text-slate-800">${escapeHtml(ingredient.name)}</p>
+                      <p class="text-sm font-semibold text-orange-600">${formatCurrency(ingredient.unit_price)} / ${escapeHtml(ingredient.unit)}</p>
+                      <p class="text-xs text-slate-500">${translate('ingredientStock')}: ${formatNumber(ingredient.stock)} ${escapeHtml(ingredient.unit)} · ${translate('ingredientStep')}: ${formatNumber(ingredient.unit_step)}</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <button data-action="purchase-decrease" data-id="${ingredient.id}" class="qty-btn border border-slate-200 bg-slate-100 text-slate-700">−</button>
+                      <span class="min-w-[2rem] text-center text-lg font-black text-slate-800">${formatNumber(quantity)}</span>
+                      <button data-action="purchase-increase" data-id="${ingredient.id}" class="qty-btn border border-orange-200 bg-orange-50 text-orange-600">+</button>
+                    </div>
+                  </div>
+                  ${recommended > 0 ? `<button data-action="purchase-recommended" data-id="${ingredient.id}" class="mt-2 w-full rounded-xl bg-slate-100 px-3 py-2 text-xs font-bold text-slate-600">${translate('recommended')}: ${formatNumber(recommended)} ${escapeHtml(ingredient.unit)}</button>` : ''}
+                </div>
+              `;
+            })
+            .join('');
+        }
+
+        const details = ingredients
+          .filter(ingredient => Number(currentPurchaseSelection[ingredient.id] || 0) > 0)
+          .map(ingredient => {
+            const quantity = Number(currentPurchaseSelection[ingredient.id] || 0);
+            return { ...ingredient, quantity, lineTotal: quantity * Number(ingredient.unit_price || 0) };
+          });
+
+        const total = details.reduce((sum, item) => sum + item.lineTotal, 0);
+        purchaseSummaryCount.textContent = getCounterLabel(details.length, 'item', 'items');
+
+        purchaseSummaryDetails.innerHTML = details.length
+          ? details
+            .map(item => `<div class="flex items-center justify-between gap-2"><span>${formatNumber(item.quantity)} ${escapeHtml(item.unit)} ${escapeHtml(item.name)}</span><span>${formatCurrency(item.lineTotal)}</span></div>`)
+            .join('')
+          : `<p class="text-sm text-slate-300">${translate('noPurchaseItems')}</p>`;
+
+        purchaseTotalLabel.textContent = formatCurrency(total);
+      }
+
+      function renderPurchaseOrders() {
+        const orders = state.purchaseOrders || [];
+
+        if (!orders.length) {
+          purchaseOrderList.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${translate('purchaseEmpty')}</div>`;
+          return;
+        }
+
+        purchaseOrderList.innerHTML = orders
+          .slice()
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .map(order => {
+            const summary = order.items
+              .map(item => `${formatNumber(item.quantity)} ${item.unit} ${item.name}`)
+              .join(', ') || translate('noPurchaseItems');
+
+            return `
+              <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+                <div class="mb-2 flex items-start justify-between gap-3">
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">${formatDateTime(order.createdAt)}</p>
+                    <p class="text-lg font-black text-slate-800">${formatCurrency(order.total_price)}</p>
+                  </div>
+                  <span class="rounded-full bg-sky-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-sky-700">${translate('ordered')}</span>
+                </div>
+                <p class="mb-3 text-sm text-slate-600">${escapeHtml(summary)}</p>
+                <button data-action="delete-purchase" data-id="${order.id}" class="touch-btn w-full rounded-xl bg-rose-100 px-3 py-2 text-sm font-bold text-rose-700">${translate('delete')}</button>
+              </div>
+            `;
+          })
+          .join('');
+      }
+
       function renderAll() {
         applyTranslations();
         renderMenu();
         renderCustomer();
         renderActiveOrders();
         renderArchive();
+        renderWarehouse();
+        renderPurchase();
+        renderPurchaseOrders();
         renderTabs();
       }
 
@@ -965,7 +1270,214 @@ const defaultState = window.KedaiConfig.defaultState;
         });
       }
 
+      function resetIngredientForm() {
+        ingredientForm.reset();
+        ingredientUnitSelect.value = 'szt';
+        editingIngredientId = null;
+        document.getElementById('cancelIngredientEditBtn').classList.add('hidden');
+      }
+
+      function handleIngredientFormSubmit(event) {
+        event.preventDefault();
+        const name = ingredientNameInput.value.trim();
+        const unit = ingredientUnitSelect.value;
+        const stock = Number(ingredientStockInput.value);
+        const unitPrice = Number(ingredientPriceInput.value);
+        const minStock = Number(ingredientMinStockInput.value);
+        const targetStock = Number(ingredientTargetStockInput.value);
+        const moq = Number(ingredientMoqInput.value);
+        const unitStep = Number(ingredientStepInput.value);
+
+        const numbersValid = [stock, unitPrice, minStock, targetStock, moq, unitStep]
+          .every(value => Number.isFinite(value) && value >= 0);
+
+        if (!name || !numbersValid || moq < 1 || unitStep < 1) {
+          showToast(translate('fillIngredient'), 'warning');
+          return;
+        }
+
+        const payload = {
+          name,
+          unit,
+          stock,
+          unit_price: unitPrice,
+          min_stock: minStock,
+          target_stock: targetStock,
+          min_order_quantity: moq,
+          unit_step: unitStep
+        };
+
+        if (editingIngredientId) {
+          const ingredient = state.ingredients.find(item => item.id === editingIngredientId);
+          if (ingredient) Object.assign(ingredient, payload);
+          showToast(translate('ingredientUpdated'), 'success');
+        } else {
+          state.ingredients.push({ id: makeId('ing'), ...payload });
+          showToast(translate('ingredientAdded'), 'success');
+        }
+
+        resetIngredientForm();
+        saveState();
+        renderAll();
+      }
+
+      function startIngredientEdit(ingredientId) {
+        const ingredient = (state.ingredients || []).find(item => item.id === ingredientId);
+        if (!ingredient) return;
+
+        editingIngredientId = ingredientId;
+        ingredientNameInput.value = ingredient.name;
+        ingredientUnitSelect.value = ingredient.unit;
+        ingredientStockInput.value = ingredient.stock;
+        ingredientPriceInput.value = ingredient.unit_price;
+        ingredientMinStockInput.value = ingredient.min_stock;
+        ingredientTargetStockInput.value = ingredient.target_stock;
+        ingredientMoqInput.value = ingredient.min_order_quantity;
+        ingredientStepInput.value = ingredient.unit_step;
+        ingredientNameInput.focus();
+        renderWarehouse();
+      }
+
+      function cancelIngredientEdit() {
+        showConfirmDialog(translate('confirmCancelSelection'), () => {
+          resetIngredientForm();
+          renderWarehouse();
+        });
+      }
+
+      function deleteIngredient(ingredientId) {
+        const ingredient = (state.ingredients || []).find(item => item.id === ingredientId);
+        if (!ingredient) return;
+
+        showConfirmDialog(translate('confirmDeleteIngredient', { name: ingredient.name }), () => {
+          state.ingredients = state.ingredients.filter(item => item.id !== ingredientId);
+          delete currentPurchaseSelection[ingredientId];
+          window.KedaiDatabase.deleteIngredient(ingredientId);
+          if (editingIngredientId === ingredientId) resetIngredientForm();
+          saveState();
+          renderAll();
+          showToast(translate('ingredientRemoved'), 'success');
+        });
+      }
+
+      function updatePurchaseQuantity(ingredientId, direction) {
+        const ingredient = (state.ingredients || []).find(item => item.id === ingredientId);
+        if (!ingredient) return;
+
+        const step = getStep(ingredient);
+        const current = Number(currentPurchaseSelection[ingredientId] || 0);
+        const next = Number((current + direction * step).toFixed(3));
+
+        if (next <= 0) {
+          delete currentPurchaseSelection[ingredientId];
+        } else {
+          currentPurchaseSelection[ingredientId] = next;
+        }
+        renderPurchase();
+      }
+
+      function setPurchaseQuantity(ingredientId, quantity) {
+        if (!quantity || quantity <= 0) {
+          delete currentPurchaseSelection[ingredientId];
+        } else {
+          currentPurchaseSelection[ingredientId] = quantity;
+        }
+        renderPurchase();
+      }
+
+      async function acceptPurchaseOrder() {
+        const selected = (state.ingredients || [])
+          .filter(ingredient => Number(currentPurchaseSelection[ingredient.id] || 0) > 0)
+          .map(ingredient => ({
+            ingredient,
+            quantity: Number(currentPurchaseSelection[ingredient.id] || 0),
+            step: getStep(ingredient),
+            moq: Math.max(1, Number(ingredient.min_order_quantity) || 1)
+          }));
+
+        if (!selected.length) {
+          showToast(translate('chooseIngredient'), 'warning');
+          return;
+        }
+
+        const misaligned = selected.find(item => !isStepAligned(item.quantity, item.step));
+        if (misaligned) {
+          showToast(translate('stepWarning', {
+            name: misaligned.ingredient.name,
+            step: formatNumber(misaligned.step),
+            unit: misaligned.ingredient.unit
+          }), 'warning');
+          return;
+        }
+
+        const tooSmall = selected.find(item => item.quantity < item.moq);
+        if (tooSmall) {
+          showToast(translate('moqWarning', {
+            name: tooSmall.ingredient.name,
+            moq: formatNumber(tooSmall.moq),
+            unit: tooSmall.ingredient.unit
+          }), 'warning');
+          return;
+        }
+
+        const items = selected.map(item => ({
+          ingredient_id: item.ingredient.id,
+          name: item.ingredient.name,
+          unit: item.ingredient.unit,
+          quantity: item.quantity,
+          unit_price: Number(item.ingredient.unit_price || 0),
+          line_total: Number((item.quantity * Number(item.ingredient.unit_price || 0)).toFixed(2))
+        }));
+
+        const createdAt = new Date().toISOString();
+        const order = {
+          createdAt,
+          date: createdAt,
+          items,
+          total_price: items.reduce((sum, item) => sum + item.line_total, 0),
+          total_quantity: items.reduce((sum, item) => sum + item.quantity, 0)
+        };
+
+        const orderId = await window.KedaiDatabase.addPurchaseOrder(order);
+        state.purchaseOrders.push({ id: orderId, ...order });
+
+        currentPurchaseSelection = {};
+        saveState();
+        renderAll();
+        setActiveTab('purchaseList');
+        showToast(translate('purchaseSaved'), 'success');
+      }
+
+      function cancelPurchaseSelection() {
+        showConfirmDialog(translate('confirmCancelPurchase'), () => {
+          currentPurchaseSelection = {};
+          renderPurchase();
+          showToast(translate('purchaseCleared'), 'warning');
+        });
+      }
+
+      function deletePurchaseOrder(orderId) {
+        const order = (state.purchaseOrders || []).find(item => String(item.id) === String(orderId));
+        if (!order) return;
+
+        showConfirmDialog(translate('confirmDeletePurchase'), () => {
+          state.purchaseOrders = state.purchaseOrders.filter(item => String(item.id) !== String(orderId));
+          window.KedaiDatabase.deletePurchaseOrder(order.id);
+          saveState();
+          renderPurchaseOrders();
+          showToast(translate('purchaseDeleted'), 'success');
+        });
+      }
+
       productForm.addEventListener('submit', handleProductFormSubmit);
+
+      ingredientForm.addEventListener('submit', handleIngredientFormSubmit);
+      document.getElementById('cancelIngredientEditBtn').addEventListener('click', cancelIngredientEdit);
+      document.getElementById('acceptPurchaseBtn').addEventListener('click', acceptPurchaseOrder);
+      document.getElementById('cancelPurchaseBtn').addEventListener('click', cancelPurchaseSelection);
+      document.querySelectorAll('[data-warehouse-view]').forEach(button => {
+        button.addEventListener('click', () => setActiveTab(button.dataset.warehouseView));
+      });
 
       document.getElementById('cancelProductEditBtn').addEventListener('click', cancelMenuEdit);
 
@@ -1020,6 +1532,31 @@ const defaultState = window.KedaiConfig.defaultState;
 
         if (action === 'delete-order') {
           deleteOrder(id);
+        }
+
+        if (action === 'edit-ingredient') {
+          startIngredientEdit(id);
+        }
+
+        if (action === 'delete-ingredient') {
+          deleteIngredient(id);
+        }
+
+        if (action === 'purchase-increase') {
+          updatePurchaseQuantity(id, 1);
+        }
+
+        if (action === 'purchase-decrease') {
+          updatePurchaseQuantity(id, -1);
+        }
+
+        if (action === 'purchase-recommended') {
+          const ingredient = (state.ingredients || []).find(item => item.id === id);
+          if (ingredient) setPurchaseQuantity(id, getRecommendedQuantity(ingredient));
+        }
+
+        if (action === 'delete-purchase') {
+          deletePurchaseOrder(id);
         }
 
         const tab = button.dataset.tab;

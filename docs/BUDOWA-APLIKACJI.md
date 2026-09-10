@@ -89,23 +89,48 @@ Jest publicznym źródłem aktualnej wersji opublikowanej na serwerze. Aplikacja
 
 Sprawdza spójność tłumaczeń PL/EN/ID bez uruchamiania przeglądarki: kompletność kluczy, symbole zastępcze, duplikaty oraz użycie kluczy w HTML i w kodzie. Uruchamianie i szczegóły opisuje [TESTS.md](TESTS.md).
 
-## 4. Kategorie menu i orientacja
+## 4. Menu, orientacja i magazyn
 
 Menu jest listą uporządkowanych elementów dwóch typów: `product` oraz `section`. Element `section` jest nagłówkiem kategorii, np. „Dania główne” albo „Napoje”. Można go przesuwać, edytować i usuwać tak samo jak produkt, ale nie ma ceny ani kontroli ilości. W zakładce Obsługa jest widoczny jako separator grupujący produkty.
 
 Aplikacja jest przeznaczona wyłącznie do pracy w pionie. `manifest.json` ustawia `portrait-primary`, a przy uruchomieniu aplikacja próbuje zablokować orientację ekranu przez Screen Orientation API.
 
+### Magazyn
+
+Zakładka Magazyn przechowuje składniki i pozwala je zamawiać. Każdy składnik ma pola:
+
+- `name` – nazwa,
+- `unit` – jednostka: `szt`, `g` albo `ml`,
+- `stock` – aktualna ilość,
+- `unit_price` – cena jednostkowa,
+- `min_stock` – stan minimalny, poniżej którego pozycja jest wyróżniona na czerwono,
+- `target_stock` – stan zalecany, do którego dąży uzupełnienie,
+- `min_order_quantity` – minimalna ilość zamówienia,
+- `unit_step` – krok zamówienia, np. pieczywo zamawia się po 10 sztuk.
+
+Zakładka udostępnia dwa przyciski:
+
+- **Zamów** – ekran zamawiania wzorowany na obsłudze klienta. Przyciski `−` i `+` zmieniają ilość o `unit_step`, więc nie da się zamówić ilości spoza kroku. Pod listą znajduje się podsumowanie z wartością zamówienia. Przycisk **Akceptuj** zapisuje zamówienie, a **Anuluj** czyści wybór. Jeżeli ilość nie jest wielokrotnością kroku lub jest mniejsza niż minimalna ilość zamówienia, aplikacja pokazuje odpowiedni komunikat i nie zapisuje zamówienia.
+- **Lista zamówień** – historia zapisanych zamówień zakupowych z możliwością usunięcia.
+
+Dla każdego składnika wyświetlana jest także proponowana ilość do zamówienia, wyliczana ze stanu zalecanego, kroku zamówienia i minimalnej ilości zamówienia.
+
+Edycja i usuwanie składników działa tak samo jak w menu: przycisk **Edytuj** wypełnia formularz, a **Usuń** wymaga potwierdzenia. Skrót **Edycja magazynu** znajduje się także w Ustawieniach.
+
 ## 5. IndexedDB
 
-Baza nazywa się `KedaiPOS` i jest wersjonowana. Obecnie zawiera:
+Baza nazywa się `KedaiPOS` i jest wersjonowana. Obecna wersja to `3`. Zawiera:
 
-- `Ingredients` – surowce i stany magazynowe,
+- `Ingredients` – składniki magazynowe,
 - `Recipes` – powiązania dań z surowcami,
 - `StockOperations` – historię dostaw, strat, sprzedaży i korekt,
-- `Orders` – aktywne i zarchiwizowane zamówienia,
+- `Orders` – aktywne i zarchiwizowane zamówienia klientów,
+- `PurchaseOrders` – zamówienia zakupowe składników,
 - `AppState` – menu i język interfejsu.
 
 `Orders` ma autoinkrementowane `id`, kwotę, tablicę pozycji, dokładną datę ISO i status `active` albo `archived`.
+
+`PurchaseOrders` ma autoinkrementowane `id`, pozycje z ilością i ceną jednostkową, łączną wartość, datę ISO oraz status `ordered`. Wersja 3 bazy dodała właśnie ten magazyn.
 
 ## 6. Ochrona danych przed utratą
 
@@ -114,7 +139,7 @@ Dane są zapisywane lokalnie na telefonie, dlatego aplikacja stosuje kilka zabez
 1. **Brak zapisu przy starcie** – `initialize()` tylko odczytuje bazę. Zapis następuje wyłącznie po działaniu użytkownika. Wcześniej aplikacja zapisywała stan przy każdym uruchomieniu, przez co błędny lub pusty odczyt natychmiast zastępował prawdziwe dane domyślnym menu.
 2. **Trwały magazyn** – przy starcie aplikacja wywołuje `navigator.storage.persist()`, aby system nie usuwał danych przy braku miejsca.
 3. **Kopia zapasowa w `localStorage`** – po każdym zapisie aktualizowana jest kopia pod kluczem `kedai_pos_backup_v1`. Jeżeli IndexedDB zostanie wyczyszczona, a kopia istnieje, aplikacja automatycznie odtworzy menu, zamówienia i archiwum.
-4. **Eksport i import** – w Ustawieniach znajduje się sekcja kopii zapasowej, która pozwala zapisać dane do pliku JSON i wczytać je na innym telefonie. To najbezpieczniejszy sposób przenoszenia danych.
+4. **Eksport i import** – w Ustawieniach znajduje się sekcja kopii zapasowej, która pozwala zapisać dane do pliku JSON i wczytać je na innym telefonie. Kopia obejmuje menu, składniki magazynowe, zamówienia klientów i zamówienia zakupowe. To najbezpieczniejszy sposób przenoszenia danych.
 5. **Zmiana języka nie nadpisuje menu** – język zapisuje się osobnym rekordem (`saveLanguage`), więc stare okno aplikacji nie może cofnąć zmian w menu.
 6. **Pusta lista menu nie jest resetowana** – jeżeli użytkownik celowo usunie wszystkie pozycje, aplikacja nie przywraca domyślnego menu.
 
