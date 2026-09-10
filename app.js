@@ -37,6 +37,7 @@ const defaultState = window.KedaiConfig.defaultState;
           storagePersistent: 'Pamięć trwała: włączona',
           storageNotPersistent: 'Pamięć trwała: wyłączona (system może usunąć dane przy braku miejsca)',
           storageLabel: 'Wykorzystanie pamięci',
+          dbOpenFailed: 'Nie udało się otworzyć lokalnej bazy danych.',
           editMenu: 'Edytuj menu',
           orderArchive: 'Archiwum zamówień',
           clear: 'Wyczyść',
@@ -125,6 +126,7 @@ const defaultState = window.KedaiConfig.defaultState;
           storagePersistent: 'Persistent storage: enabled',
           storageNotPersistent: 'Persistent storage: disabled (the system may clear data when space is low)',
           storageLabel: 'Storage usage',
+          dbOpenFailed: 'Could not open the local database.',
           editMenu: 'Edit menu',
           orderArchive: 'Order archive',
           clear: 'Clear',
@@ -142,7 +144,7 @@ const defaultState = window.KedaiConfig.defaultState;
           totalToPay: 'Total',
           saveOrder: 'Save',
           clearSelection: 'Cancel',
-          noItems: 'No selected items.',
+          noItems: 'No items selected.',
           activeOrders: 'Active orders',
           noActiveOrders: 'No active orders.',
           noArchive: 'No archived orders.',
@@ -213,9 +215,10 @@ const defaultState = window.KedaiConfig.defaultState;
           storagePersistent: 'Penyimpanan permanen: aktif',
           storageNotPersistent: 'Penyimpanan permanen: nonaktif (sistem dapat menghapus data saat ruang menipis)',
           storageLabel: 'Penggunaan penyimpanan',
-          editMenu: 'Edit menu',
+          dbOpenFailed: 'Tidak dapat membuka basis data lokal.',
+          editMenu: 'Ubah menu',
           orderArchive: 'Arsip pesanan',
-          clear: 'Hapus',
+          clear: 'Bersihkan',
           totalSales: 'Total penjualan',
           language: 'Bahasa',
           item: 'item',
@@ -237,7 +240,7 @@ const defaultState = window.KedaiConfig.defaultState;
           edit: 'Edit',
           delete: 'Hapus',
           archiveLabel: 'Arsipkan',
-          closed: 'Tutup',
+          closed: 'Selesai',
           active: 'Aktif',
           statusReady: 'Siap',
           noProduct: 'Belum ada item menu. Tambahkan yang pertama.',
@@ -972,6 +975,8 @@ const defaultState = window.KedaiConfig.defaultState;
       document.getElementById('languageSelect').addEventListener('change', event => {
         setLanguage(event.target.value);
         renderAll();
+        renderStorageInfo();
+        checkForUpdates();
       });
 
       document.addEventListener('click', event => {
@@ -1096,7 +1101,7 @@ const defaultState = window.KedaiConfig.defaultState;
           renderStorageInfo();
         } catch (error) {
           console.error('Błąd uruchamiania IndexedDB:', error);
-          showToast('Nie udało się otworzyć lokalnej bazy danych.', 'error');
+          showToast(translate('dbOpenFailed'), 'error');
         }
       }
 
