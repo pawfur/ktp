@@ -121,6 +121,10 @@ Jeżeli wersja serwerowa jest większa według kolejności `YY.MM.DD.hhmm`, apli
 
 Aktualizacja pokazuje pasek postępu. Aplikacja czeka na zakończenie instalacji nowego service workera i przejęcie kontroli nad stroną. Dopiero po ukończeniu wyświetla prośbę o ponowne uruchomienie aplikacji. Ponowne uruchomienie oznacza przeładowanie aplikacji i nie usuwa danych z IndexedDB.
 
+Service worker działa w trybie **najpierw sieć, cache jako tryb offline**. Pliki aplikacji są pobierane z rewalidacją (`cache: 'no-cache'`), dzięki czemu przeglądarka nie podaje starej wersji z cache HTTP. Gdy nie ma internetu, aplikacja korzysta z zapisanej kopii. Plik `version.json` jest zawsze pobierany z pominięciem cache.
+
+Jeżeli mimo to wersja się nie zmienia, przyczyną jest zwykle cache przeglądarki lub systemu. Wtedy warto wyczyścić dane witryny albo użyć przycisku aktualizacji, który dodatkowo usuwa cache `kedai-pos-*`.
+
 Po każdej publikacji należy:
 
 1. zmienić numer w `config/default-state.js`,
