@@ -21,10 +21,13 @@ Kedai/
 │   ├── dialogs.js
 │   ├── icon.svg
 │   └── ui.js
+├── tests/
+│   └── check-translations.mjs
 └── docs/
     ├── README.md
     ├── PWA-Lokalny-zapis.md
-    └── BUDOWA-APLIKACJI.md
+    ├── BUDOWA-APLIKACJI.md
+    └── TESTS.md
 ```
 
 ## 3. Odpowiedzialność plików
@@ -82,6 +85,10 @@ Cache'uje pliki aplikacji, umożliwia uruchomienie offline i pobiera nowe wersje
 
 Jest publicznym źródłem aktualnej wersji opublikowanej na serwerze. Aplikacja porównuje tę wartość z wersją w `config/default-state.js`.
 
+### `tests/check-translations.mjs`
+
+Sprawdza spójność tłumaczeń PL/EN/ID bez uruchamiania przeglądarki: kompletność kluczy, symbole zastępcze, duplikaty oraz użycie kluczy w HTML i w kodzie. Uruchamianie i szczegóły opisuje [TESTS.md](TESTS.md).
+
 ## 4. Kategorie menu i orientacja
 
 Menu jest listą uporządkowanych elementów dwóch typów: `product` oraz `section`. Element `section` jest nagłówkiem kategorii, np. „Dania główne” albo „Napoje”. Można go przesuwać, edytować i usuwać tak samo jak produkt, ale nie ma ceny ani kontroli ilości. W zakładce Obsługa jest widoczny jako separator grupujący produkty.
@@ -133,6 +140,12 @@ Po każdej publikacji należy:
 4. wykonać commit i push na GitHub.
 
 ## 8. Publikacja
+
+Przed publikacją warto uruchomić sprawdzanie tłumaczeń:
+
+```powershell
+node tests/check-translations.mjs
+```
 
 GitHub Pages udostępnia aplikację pod adresem:
 
