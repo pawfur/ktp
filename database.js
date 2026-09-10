@@ -2,6 +2,7 @@
   const DB_NAME = 'KedaiPOS';
   const DB_VERSION = 2;
   const APP_STATE_KEY = 'main';
+  const BACKUP_KEY = 'kedai_pos_backup_v1';
   let database;
 
   function requestToPromise(request) {
@@ -59,22 +60,76 @@
     });
   }
 
-  async function initialize(defaultState) {
-    database = await openDatabase();
-    const transaction = database.transaction(['AppState', 'Orders'], 'readonly');
-    const appState = await requestToPromise(transaction.objectStore('AppState').get(APP_STATE_KEY));
-    const orders = await requestToPromise(transaction.objectStore('Orders').getAll());
-    const savedState = appState?.value || {};
-    const state = {
+  function buildState(defaultState, savedState, orders) {
+    return {
       ...JSON.parse(JSON.stringify(defaultState)),
       ...savedState,
-      menu: Array.isArray(savedState.menu) && savedState.menu.length ? savedState.menu : defaultState.menu,
+      menu: Array.isArray(savedState.menu) ? savedState.menu : JSON.parse(JSON.stringify(defaultState.menu)),
       activeOrders: orders.filter(order => order.status === 'active'),
       archive: orders.filter(order => order.status === 'archived')
     };
+  }
 
-    await saveState(state);
-    return state;
+  function readBackup() {
+    try {
+      const raw = localStorage.getItem(BACKUP_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writeBackup(state) {
+    try {
+      localStorage.setItem(BACKUP_KEY, JSON.stringify({
+        savedAt: new Date().toISOString(),
+        menu: state.menu,
+        language: state.language,
+        activeOrders: state.activeOrders,
+        archive: state.archive
+      }));
+    } catch (error) {
+      console.warn('Nie udało się zapisać kopii zapasowej:', error);
+    }
+  }
+
+  function hasData(payload) {
+    return Boolean(payload) && (
+      (Array.isArray(payload.menu) && payload.menu.length > 0)
+      || (Array.isArray(payload.activeOrders) && payload.activeOrders.length > 0)
+      || (Array.isArray(payload.archive) && payload.archive.length > 0)
+    );
+  }
+
+  async function initialize(defaultState) {
+    database = await openDatabase();
+    const transaction = database.transaction(['AppState', 'Orders'], 'readonly');
+    const appStateRequest = transaction.objectStore('AppState').get(APP_STATE_KEY);
+    const ordersRequest = transaction.objectStore('Orders').getAll();
+    const appState = await requestToPromise(appStateRequest);
+    const orders = await requestToPromise(ordersRequest);
+    const savedState = appState?.value || {};
+    const hasStoredData = Array.isArray(savedState.menu) || orders.length > 0;
+
+    if (hasStoredData) {
+      const stored = buildState(defaultState, savedState, orders);
+      writeBackup(stored);
+      return stored;
+    }
+
+    const backup = readBackup();
+    if (hasData(backup)) {
+      const restored = buildState(defaultState, backup, [
+        ...((backup.activeOrders || []).map(order => ({ ...order, status: 'active' }))),
+        ...((backup.archive || []).map(order => ({ ...order, status: 'archived' })))
+      ]);
+      await saveState(restored);
+      return restored;
+    }
+
+    const fresh = buildState(defaultState, {}, []);
+    await saveState(fresh);
+    return fresh;
   }
 
   async function saveState(state) {
@@ -82,12 +137,74 @@
     const transaction = database.transaction(['AppState', 'Orders'], 'readwrite');
     transaction.objectStore('AppState').put({
       id: APP_STATE_KEY,
-      value: { menu: state.menu, language: state.language }
+      value: { menu: state.menu, language: state.language, savedAt: new Date().toISOString() }
     });
 
     const ordersStore = transaction.objectStore('Orders');
     state.activeOrders.forEach(order => ordersStore.put({ ...order, status: 'active' }));
     state.archive.forEach(order => ordersStore.put({ ...order, status: 'archived' }));
+    writeBackup(state);
+  }
+
+  async function saveLanguage(language) {
+    if (!database) return;
+    const current = await requestToPromise(database.transaction('AppState', 'readonly').objectStore('AppState').get(APP_STATE_KEY));
+    const value = { ...(current?.value || {}), language, savedAt: new Date().toISOString() };
+    await requestToPromise(database.transaction('AppState', 'readwrite').objectStore('AppState').put({ id: APP_STATE_KEY, value }));
+    const backup = readBackup();
+    if (backup) {
+      backup.language = language;
+      try {
+        localStorage.setItem(BACKUP_KEY, JSON.stringify(backup));
+      } catch (error) {
+        console.warn('Nie udało się zaktualizować kopii zapasowej:', error);
+      }
+    }
+  }
+
+  async function requestPersistence() {
+    if (!navigator.storage?.persist) return false;
+    try {
+      if (await navigator.storage.persisted()) return true;
+      return await navigator.storage.persist();
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async function getStorageInfo() {
+    const info = { persistent: false, usage: 0, quota: 0 };
+    try {
+      if (navigator.storage?.persisted) info.persistent = await navigator.storage.persisted();
+      if (navigator.storage?.estimate) {
+        const estimate = await navigator.storage.estimate();
+        info.usage = estimate.usage || 0;
+        info.quota = estimate.quota || 0;
+      }
+    } catch (error) {
+      // Informacje o magazynie są opcjonalne.
+    }
+    return info;
+  }
+
+  function exportState(state) {
+    return JSON.stringify({
+      app: 'KedaiPOS',
+      exportedAt: new Date().toISOString(),
+      menu: state.menu,
+      language: state.language,
+      activeOrders: state.activeOrders,
+      archive: state.archive
+    }, null, 2);
+  }
+
+  async function importState(defaultState, payload) {
+    const restored = buildState(defaultState, payload, [
+      ...((payload.activeOrders || []).map(order => ({ ...order, status: 'active' }))),
+      ...((payload.archive || []).map(order => ({ ...order, status: 'archived' })))
+    ]);
+    await saveState(restored);
+    return restored;
   }
 
   function addOrder(order) {
@@ -106,5 +223,17 @@
     return requestToPromise(database.transaction('Orders', 'readwrite').objectStore('Orders').clear());
   }
 
-  window.KedaiDatabase = { initialize, saveState, addOrder, updateOrder, deleteOrder, clearOrders };
+  window.KedaiDatabase = {
+    initialize,
+    saveState,
+    saveLanguage,
+    addOrder,
+    updateOrder,
+    deleteOrder,
+    clearOrders,
+    requestPersistence,
+    getStorageInfo,
+    exportState,
+    importState
+  };
 })();

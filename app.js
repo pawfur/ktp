@@ -26,6 +26,16 @@ const defaultState = window.KedaiConfig.defaultState;
           upToDate: 'Aplikacja jest aktualna.',
           updateCheckFailed: 'Nie udało się sprawdzić aktualizacji.',
           updating: 'Aktualizowanie aplikacji...',
+          backupTitle: 'Kopia zapasowa danych',
+          backupDescription: 'Zapisz menu i zamówienia do pliku, aby móc je odtworzyć na tym lub innym telefonie.',
+          exportBackup: 'Eksportuj dane',
+          importBackup: 'Importuj dane',
+          exportDone: 'Kopia zapasowa została zapisana.',
+          importDone: 'Dane zostały wczytane.',
+          importFailed: 'Nie udało się wczytać pliku z danymi.',
+          storagePersistent: 'Pamięć trwała: włączona',
+          storageNotPersistent: 'Pamięć trwała: wyłączona (system może usunąć dane przy braku miejsca)',
+          storageLabel: 'Wykorzystanie pamięci',
           editMenu: 'Edytuj menu',
           orderArchive: 'Archiwum zamówień',
           clear: 'Wyczyść',
@@ -103,6 +113,16 @@ const defaultState = window.KedaiConfig.defaultState;
           upToDate: 'The app is up to date.',
           updateCheckFailed: 'Could not check for updates.',
           updating: 'Updating app...',
+          backupTitle: 'Data backup',
+          backupDescription: 'Save the menu and orders to a file so you can restore them on this or another phone.',
+          exportBackup: 'Export data',
+          importBackup: 'Import data',
+          exportDone: 'Backup file has been saved.',
+          importDone: 'Data has been loaded.',
+          importFailed: 'Could not read the data file.',
+          storagePersistent: 'Persistent storage: enabled',
+          storageNotPersistent: 'Persistent storage: disabled (the system may clear data when space is low)',
+          storageLabel: 'Storage usage',
           editMenu: 'Edit menu',
           orderArchive: 'Order archive',
           clear: 'Clear',
@@ -180,6 +200,16 @@ const defaultState = window.KedaiConfig.defaultState;
           upToDate: 'Aplikasi sudah terbaru.',
           updateCheckFailed: 'Pembaruan tidak dapat diperiksa.',
           updating: 'Memperbarui aplikasi...',
+          backupTitle: 'Cadangan data',
+          backupDescription: 'Simpan menu dan pesanan ke file agar dapat dipulihkan di ponsel ini atau ponsel lain.',
+          exportBackup: 'Ekspor data',
+          importBackup: 'Impor data',
+          exportDone: 'File cadangan telah disimpan.',
+          importDone: 'Data berhasil dimuat.',
+          importFailed: 'File data tidak dapat dibaca.',
+          storagePersistent: 'Penyimpanan permanen: aktif',
+          storageNotPersistent: 'Penyimpanan permanen: nonaktif (sistem dapat menghapus data saat ruang menipis)',
+          storageLabel: 'Penggunaan penyimpanan',
           editMenu: 'Edit menu',
           orderArchive: 'Arsip pesanan',
           clear: 'Hapus',
@@ -284,7 +314,7 @@ const defaultState = window.KedaiConfig.defaultState;
 
       function setLanguage(lang) {
         state.language = lang;
-        saveState();
+        window.KedaiDatabase.saveLanguage(lang);
         applyTranslations();
       }
 
@@ -967,11 +997,55 @@ const defaultState = window.KedaiConfig.defaultState;
 
       document.getElementById('checkUpdatesBtn').addEventListener('click', checkForUpdates);
       document.getElementById('updateAppBtn').addEventListener('click', updateApplication);
+      document.getElementById('exportBackupBtn').addEventListener('click', exportData);
+      document.getElementById('importBackupBtn').addEventListener('click', () => document.getElementById('importBackupInput').click());
+      document.getElementById('importBackupInput').addEventListener('change', event => {
+        const file = event.target.files?.[0];
+        if (file) importDataFile(file);
+        event.target.value = '';
+      });
       menuElementTypeSelect.addEventListener('change', updateMenuFormType);
 
       document.addEventListener('dblclick', event => {
         event.preventDefault();
       }, { passive: false });
+
+      function formatMegabytes(bytes) {
+        return `${(Number(bytes || 0) / (1024 * 1024)).toFixed(1)} MB`;
+      }
+
+      async function renderStorageInfo() {
+        const label = document.getElementById('storageInfo');
+        if (!label) return;
+        const info = await window.KedaiDatabase.getStorageInfo();
+        const persistence = info.persistent ? translate('storagePersistent') : translate('storageNotPersistent');
+        label.textContent = `${persistence} · ${translate('storageLabel')}: ${formatMegabytes(info.usage)}`;
+      }
+
+      function exportData() {
+        const blob = new Blob([window.KedaiDatabase.exportState(state)], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `kedai-pos-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(link.href);
+        showToast(translate('exportDone'), 'success');
+      }
+
+      async function importDataFile(file) {
+        try {
+          const payload = JSON.parse(await file.text());
+          state = await window.KedaiDatabase.importState(defaultState, payload);
+          renderAll();
+          renderStorageInfo();
+          showToast(translate('importDone'), 'success');
+        } catch (error) {
+          console.error('Błąd importu danych:', error);
+          showToast(translate('importFailed'), 'error');
+        }
+      }
 
       async function initializeApp() {
         try {
@@ -980,8 +1054,10 @@ const defaultState = window.KedaiConfig.defaultState;
             screen.orientation.lock('portrait').catch(() => {});
           }
           document.getElementById('settingsAppVersion').textContent = `v${window.KedaiConfig.version}`;
+          await window.KedaiDatabase.requestPersistence();
           state = await window.KedaiDatabase.initialize(defaultState);
           renderAll();
+          renderStorageInfo();
         } catch (error) {
           console.error('Błąd uruchamiania IndexedDB:', error);
           showToast('Nie udało się otworzyć lokalnej bazy danych.', 'error');

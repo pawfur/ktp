@@ -100,7 +100,20 @@ Baza nazywa się `KedaiPOS` i jest wersjonowana. Obecnie zawiera:
 
 `Orders` ma autoinkrementowane `id`, kwotę, tablicę pozycji, dokładną datę ISO i status `active` albo `archived`.
 
-## 6. Aktualizacje aplikacji
+## 6. Ochrona danych przed utratą
+
+Dane są zapisywane lokalnie na telefonie, dlatego aplikacja stosuje kilka zabezpieczeń:
+
+1. **Brak zapisu przy starcie** – `initialize()` tylko odczytuje bazę. Zapis następuje wyłącznie po działaniu użytkownika. Wcześniej aplikacja zapisywała stan przy każdym uruchomieniu, przez co błędny lub pusty odczyt natychmiast zastępował prawdziwe dane domyślnym menu.
+2. **Trwały magazyn** – przy starcie aplikacja wywołuje `navigator.storage.persist()`, aby system nie usuwał danych przy braku miejsca.
+3. **Kopia zapasowa w `localStorage`** – po każdym zapisie aktualizowana jest kopia pod kluczem `kedai_pos_backup_v1`. Jeżeli IndexedDB zostanie wyczyszczona, a kopia istnieje, aplikacja automatycznie odtworzy menu, zamówienia i archiwum.
+4. **Eksport i import** – w Ustawieniach znajduje się sekcja kopii zapasowej, która pozwala zapisać dane do pliku JSON i wczytać je na innym telefonie. To najbezpieczniejszy sposób przenoszenia danych.
+5. **Zmiana języka nie nadpisuje menu** – język zapisuje się osobnym rekordem (`saveLanguage`), więc stare okno aplikacji nie może cofnąć zmian w menu.
+6. **Pusta lista menu nie jest resetowana** – jeżeli użytkownik celowo usunie wszystkie pozycje, aplikacja nie przywraca domyślnego menu.
+
+Stan magazynu jest widoczny w Ustawieniach razem z informacją, czy pamięć trwała jest włączona.
+
+## 7. Aktualizacje aplikacji
 
 Wersja lokalna jest zapisana w `config/default-state.js`, a wersja serwera w `version.json`. W Ustawieniach użytkownik może sprawdzić aktualizacje.
 
@@ -115,7 +128,7 @@ Po każdej publikacji należy:
 3. zwiększyć `CACHE_NAME` w `service-worker.js`,
 4. wykonać commit i push na GitHub.
 
-## 7. Publikacja
+## 8. Publikacja
 
 GitHub Pages udostępnia aplikację pod adresem:
 
