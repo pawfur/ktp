@@ -33,7 +33,7 @@ Aplikacja zawiera `manifest.json` z trybem `standalone` oraz `service-worker.js`
 
 ## Baza IndexedDB
 
-Baza ma nazwę `KedaiPOS` i wersję `2`. Schemat jest tworzony oraz aktualizowany w funkcji `onupgradeneeded`.
+Baza ma nazwę `KedaiPOS` i wersję `3`. Schemat jest tworzony oraz aktualizowany w funkcji `onupgradeneeded`.
 
 Wymagane sklepy obiektów:
 

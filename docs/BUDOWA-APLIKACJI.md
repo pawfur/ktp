@@ -79,7 +79,7 @@ Opisuje aplikację PWA: nazwę, ikonę, zakres, kolor i tryb `standalone`, dzię
 
 ### `service-worker.js`
 
-Cache'uje pliki aplikacji, umożliwia uruchomienie offline i pobiera nowe wersje zasobów po zmianie numeru cache. Plik `version.json` jest zawsze pobierany z sieci, aby sprawdzanie aktualizacji nie korzystało ze starej wersji.
+Cache'uje pliki aplikacji i umożliwia uruchomienie offline. Działa w trybie **najpierw cache**: aplikacja korzysta z wersji zapisanej w cache tak długo, aż użytkownik sam zatwierdzi aktualizację. Nowy service worker instaluje się w tle, pobiera pliki nowej wersji i czeka w stanie `waiting` – przejmuje kontrolę dopiero po komunikacie `SKIP_WAITING`. Plik `version.json` jest zawsze pobierany z sieci z pominięciem cache, dzięki czemu aplikacja wie o nowej wersji, ale jej nie instaluje.
 
 ### `version.json`
 
@@ -159,15 +159,17 @@ Stan magazynu jest widoczny w Ustawieniach razem z informacją, czy pamięć trw
 
 ## 7. Aktualizacje aplikacji
 
+Aktualizacje są **wyłącznie ręczne**. Aplikacja nigdy nie instaluje nowej wersji samoczynnie – dzięki temu wersja działająca w lokalu nie zmienia się w trakcie pracy.
+
 Wersja lokalna jest zapisana w `config/default-state.js`, a wersja serwera w `version.json`. W Ustawieniach użytkownik może sprawdzić aktualizacje.
 
-Jeżeli wersja serwerowa jest większa według kolejności `YY.MM.DD.hhmm`, aplikacja pokazuje przycisk **Aktualizuj aplikację**. Kliknięcie wymusza aktualizację service workera i przeładowanie plików PWA.
+Jeżeli wersja serwerowa jest większa według kolejności `YY.MM.DD.hhmm`, aplikacja pokazuje komunikat o nowszej wersji oraz przycisk **Aktualizuj aplikację**. Do tego momentu aplikacja nadal działa w starej wersji z cache, mimo nowego service workera czekającego w tle.
 
-Aktualizacja pokazuje pasek postępu. Aplikacja czeka na zakończenie instalacji nowego service workera i przejęcie kontroli nad stroną. Dopiero po ukończeniu wyświetla prośbę o ponowne uruchomienie aplikacji. Ponowne uruchomienie oznacza przeładowanie aplikacji i nie usuwa danych z IndexedDB.
+Kliknięcie przycisku wysyła do oczekującego service workera komunikat `SKIP_WAITING`. Aplikacja pokazuje pasek postępu, czeka na przejęcie kontroli nad stroną i dopiero wtedy proponuje ponowne uruchomienie. Ponowne uruchomienie oznacza przeładowanie aplikacji i **nie usuwa danych z IndexedDB**.
 
-Service worker działa w trybie **najpierw sieć, cache jako tryb offline**. Pliki aplikacji są pobierane z rewalidacją (`cache: 'no-cache'`), dzięki czemu przeglądarka nie podaje starej wersji z cache HTTP. Gdy nie ma internetu, aplikacja korzysta z zapisanej kopii. Plik `version.json` jest zawsze pobierany z pominięciem cache.
+W `service-worker.js` brak wywołania `skipWaiting()` jest celowy – to właśnie ono powodowało automatyczne aktualizacje. Nowy worker czeka na decyzję użytkownika.
 
-Jeżeli mimo to wersja się nie zmienia, przyczyną jest zwykle cache przeglądarki lub systemu. Wtedy warto wyczyścić dane witryny albo użyć przycisku aktualizacji, który dodatkowo usuwa cache `kedai-pos-*`.
+Jeżeli po kliknięciu aktualizacji wersja nadal się nie zmienia, przyczyną jest zwykle cache przeglądarki lub systemu. W takim wypadku wystarczy ponownie otworzyć aplikację i powtórzyć aktualizację.
 
 Po każdej publikacji należy:
 
@@ -175,6 +177,8 @@ Po każdej publikacji należy:
 2. wpisać tę samą wartość w `version.json`,
 3. zwiększyć `CACHE_NAME` w `service-worker.js`,
 4. wykonać commit i push na GitHub.
+
+Użytkownik zobaczy nową wersję dopiero po kliknięciu **Aktualizuj aplikację** w Ustawieniach.
 
 ## 8. Publikacja
 

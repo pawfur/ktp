@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kedai-pos-v18';
+const CACHE_NAME = 'kedai-pos-v20';
 const APP_SHELL = [
   './',
   './index.html',
@@ -13,18 +13,34 @@ const APP_SHELL = [
   './logo.jpeg'
 ];
 
+/**
+ * Pobiera pliki z pominięciem pamięci HTTP przeglądarki, żeby zatwierdzona
+ * aktualizacja rzeczywiście zawierała świeże pliki.
+ */
+async function preloadAppShell() {
+  const cache = await caches.open(CACHE_NAME);
+  await Promise.all(APP_SHELL.map(async url => {
+    try {
+      const response = await fetch(url, { cache: 'reload' });
+      if (response && response.ok) await cache.put(url, response);
+    } catch (error) {
+      // Pojedynczy plik może się nie pobrać – pozostałe nadal się zapiszą.
+    }
+  }));
+}
+
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
-  self.skipWaiting();
+  // Celowo bez skipWaiting(). Nowa wersja czeka na decyzję użytkownika,
+  // dzięki czemu aplikacja nie aktualizuje się samoczynnie.
+  event.waitUntil(preloadAppShell());
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-    ))
-  );
-  self.clients.claim();
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)));
+    await self.clients.claim();
+  })());
 });
 
 self.addEventListener('message', event => {
@@ -42,15 +58,20 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  // Najpierw wersja zapisana w cache. Aplikacja działa dokładnie w tej
+  // wersji, dopóki użytkownik nie zatwierdzi aktualizacji.
   event.respondWith(
-    fetch(event.request, { cache: 'no-cache' })
-      .then(response => {
-        if (response && response.ok) {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
-        }
-        return response;
-      })
-      .catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html')))
+    caches.match(event.request).then(cached => {
+      if (cached) return cached;
+      return fetch(event.request)
+        .then(response => {
+          if (response && response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match('./index.html'));
+    })
   );
 });

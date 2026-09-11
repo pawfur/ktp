@@ -21,7 +21,7 @@ const defaultState = window.KedaiConfig.defaultState;
           updateDownloading: 'Pobieranie nowej wersji...',
           updateInstalling: 'Instalowanie nowej wersji...',
           updateReady: 'Aktualizacja gotowa. Uruchomić aplikację ponownie?',
-          updatePartial: 'Pamięć podręczna odświeżona. Uruchom aplikację ponownie.',
+          manualUpdatesHint: 'Aktualizacje instalują się tylko po kliknięciu przycisku Aktualizuj aplikację. Aplikacja nigdy nie aktualizuje się samoczynnie.',
           updateRestart: 'Uruchom ponownie',
           updateAvailable: 'Dostępna jest nowsza wersja: {version}',
           upToDate: 'Aplikacja jest aktualna.',
@@ -150,7 +150,7 @@ const defaultState = window.KedaiConfig.defaultState;
           updateDownloading: 'Downloading new version...',
           updateInstalling: 'Installing new version...',
           updateReady: 'Update ready. Restart the app?',
-          updatePartial: 'Cache refreshed. Please restart the app.',
+          manualUpdatesHint: 'Updates are installed only after you tap Update app. The app never updates itself.',
           updateRestart: 'Restart',
           updateAvailable: 'A newer version is available: {version}',
           upToDate: 'The app is up to date.',
@@ -279,7 +279,7 @@ const defaultState = window.KedaiConfig.defaultState;
           updateDownloading: 'Mengunduh versi baru...',
           updateInstalling: 'Memasang versi baru...',
           updateReady: 'Pembaruan siap. Mulai ulang aplikasi?',
-          updatePartial: 'Cache diperbarui. Mulai ulang aplikasi.',
+          manualUpdatesHint: 'Pembaruan hanya dipasang setelah Anda menekan Perbarui aplikasi. Aplikasi tidak memperbarui sendiri.',
           updateRestart: 'Mulai ulang',
           updateAvailable: 'Versi baru tersedia: {version}',
           upToDate: 'Aplikasi sudah terbaru.',
@@ -585,16 +585,6 @@ const defaultState = window.KedaiConfig.defaultState;
         });
       }
 
-      async function clearApplicationCaches() {
-        if (!window.caches) return;
-        try {
-          const keys = await caches.keys();
-          await Promise.all(keys.filter(key => key.startsWith('kedai-pos-')).map(key => caches.delete(key)));
-        } catch (error) {
-          console.warn('Nie udało się wyczyścić pamięci podręcznej:', error);
-        }
-      }
-
       async function updateApplication() {
         const status = document.getElementById('updateStatus');
         const updateButton = document.getElementById('updateAppBtn');
@@ -609,13 +599,9 @@ const defaultState = window.KedaiConfig.defaultState;
           progressValue.textContent = `${value}%`;
           progressBar.style.width = `${value}%`;
         };
-        const finish = message => {
-          setProgress(100, translate('updateReady'));
-          status.textContent = message;
-          status.classList.remove('hidden');
+        const releaseButtons = () => {
           updateButton.disabled = false;
           checkButton.disabled = false;
-          showConfirmDialog(translate('updateReady'), () => window.location.reload());
         };
 
         updateButton.disabled = true;
@@ -627,37 +613,51 @@ const defaultState = window.KedaiConfig.defaultState;
         try {
           const registration = navigator.serviceWorker ? await navigator.serviceWorker.getRegistration() : null;
 
-          if (registration) {
-            setProgress(35, translate('updateDownloading'));
-            try {
-              await registration.update();
-            } catch (error) {
-              console.warn('Nie udało się pobrać nowego service workera:', error);
-            }
-
-            const pendingWorker = registration.installing || registration.waiting;
-            if (pendingWorker) {
-              setProgress(55, translate('updateDownloading'));
-              await waitForWorkerInstalled(pendingWorker);
-            }
-
-            if (registration.waiting) {
-              setProgress(75, translate('updateInstalling'));
-              const controllerChanged = new Promise(resolve => {
-                navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
-                setTimeout(resolve, 4000);
-              });
-              registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-              await controllerChanged;
-            }
+          if (!registration) {
+            progressPanel.classList.add('hidden');
+            status.textContent = translate('updateCheckFailed');
+            releaseButtons();
+            return;
           }
 
-          setProgress(90, translate('updateInstalling'));
-          await clearApplicationCaches();
-          finish(translate('updateReady'));
+          setProgress(35, translate('updateDownloading'));
+          try {
+            await registration.update();
+          } catch (error) {
+            console.warn('Nie udało się pobrać nowego service workera:', error);
+          }
+
+          const pendingWorker = registration.installing || registration.waiting;
+          if (pendingWorker) {
+            setProgress(55, translate('updateDownloading'));
+            await waitForWorkerInstalled(pendingWorker);
+          }
+
+          if (!registration.waiting) {
+            // Nie ma nowej wersji do zainstalowania – nie przeładowujemy aplikacji.
+            progressPanel.classList.add('hidden');
+            status.textContent = translate('upToDate');
+            releaseButtons();
+            return;
+          }
+
+          setProgress(80, translate('updateInstalling'));
+          const controllerChanged = new Promise(resolve => {
+            navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
+            setTimeout(resolve, 4000);
+          });
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+          await controllerChanged;
+
+          setProgress(100, translate('updateReady'));
+          status.textContent = translate('updateReady');
+          releaseButtons();
+          showConfirmDialog(translate('updateReady'), () => window.location.reload());
         } catch (error) {
           console.error('Błąd aktualizacji aplikacji:', error);
-          finish(translate('updatePartial'));
+          progressPanel.classList.add('hidden');
+          status.textContent = translate('updateCheckFailed');
+          releaseButtons();
         }
       }
 
