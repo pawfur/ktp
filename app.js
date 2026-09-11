@@ -488,6 +488,10 @@ const defaultState = window.KedaiConfig.defaultState;
       const archiveRangeModes = document.getElementById('archiveRangeModes');
       const archiveRangeHint = document.getElementById('archiveRangeHint');
       const archiveDateInput = document.getElementById('archiveDateInput');
+      const archiveWeekInput = document.getElementById('archiveWeekInput');
+      const archiveMonthInput = document.getElementById('archiveMonthInput');
+      const archiveWeekPickerSupported = supportsInputType('week');
+      const archiveMonthPickerSupported = supportsInputType('month');
       const menuCountBadge = document.getElementById('menuCountBadge');
       const customerSummaryCount = document.getElementById('customerSummaryCount');
       const customerSummaryDetails = document.getElementById('customerSummaryDetails');
@@ -896,6 +900,43 @@ const defaultState = window.KedaiConfig.defaultState;
         return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
       }
 
+      // Nie każda przeglądarka obsługuje pola "tydzień" i "miesiąc" (np. Firefox,
+      // starsze iOS). Wtedy zostaje zwykły kalendarz dzienny.
+      function supportsInputType(type) {
+        const input = document.createElement('input');
+        input.setAttribute('type', type);
+        return input.type === type;
+      }
+
+      function getIsoWeekStart(date) {
+        return addDays(date, -((date.getDay() + 6) % 7));
+      }
+
+      function toWeekInputValue(date) {
+        const weekStart = getIsoWeekStart(date);
+        const year = addDays(weekStart, 3).getFullYear();
+        const firstWeekStart = getIsoWeekStart(new Date(year, 0, 4));
+        const week = 1 + Math.round((weekStart - firstWeekStart) / 604800000);
+        return `${year}-W${String(week).padStart(2, '0')}`;
+      }
+
+      function parseWeekInputValue(value) {
+        const match = /^(\d{4})-W(\d{2})$/.exec(value || '');
+        if (!match) return null;
+        const firstWeekStart = getIsoWeekStart(new Date(Number(match[1]), 0, 4));
+        return addDays(firstWeekStart, (Number(match[2]) - 1) * 7);
+      }
+
+      function toMonthInputValue(date) {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      }
+
+      function parseArchiveAnchor() {
+        const parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(archiveFilter.date || '');
+        if (!parts) return null;
+        return new Date(Number(parts[1]), Number(parts[2]) - 1, Number(parts[3]));
+      }
+
       function getDateLocale() {
         const lang = state.language || 'pl';
         if (lang === 'en') return 'en-US';
@@ -917,26 +958,21 @@ const defaultState = window.KedaiConfig.defaultState;
       function getArchiveFilterRange() {
         if (archiveFilter.mode === 'all') return null;
 
-        const parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(archiveFilter.date || '');
-        if (!parts) return null;
-
-        const year = Number(parts[1]);
-        const month = Number(parts[2]) - 1;
-        const day = Number(parts[3]);
+        const anchor = parseArchiveAnchor();
+        if (!anchor) return null;
 
         if (archiveFilter.mode === 'week') {
-          const anchor = new Date(year, month, day);
-          const offset = (anchor.getDay() + 6) % 7;
-          const start = addDays(anchor, -offset);
+          const start = getIsoWeekStart(anchor);
           return { start: start.getTime(), end: addDays(start, 7).getTime() };
         }
 
         if (archiveFilter.mode === 'month') {
-          return { start: new Date(year, month, 1).getTime(), end: new Date(year, month + 1, 1).getTime() };
+          const start = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
+          const end = new Date(anchor.getFullYear(), anchor.getMonth() + 1, 1);
+          return { start: start.getTime(), end: end.getTime() };
         }
 
-        const start = new Date(year, month, day);
-        return { start: start.getTime(), end: addDays(start, 1).getTime() };
+        return { start: anchor.getTime(), end: addDays(anchor, 1).getTime() };
       }
 
       function getArchiveFilteredOrders() {
@@ -975,11 +1011,36 @@ const defaultState = window.KedaiConfig.defaultState;
           button.classList.toggle('text-slate-700', !active);
         });
 
+        const anchor = parseArchiveAnchor() || new Date();
+        const useWeekPicker = archiveFilter.mode === 'week' && archiveWeekPickerSupported;
+        const useMonthPicker = archiveFilter.mode === 'month' && archiveMonthPickerSupported;
+        const useDatePicker = archiveFilter.mode !== 'all' && !useWeekPicker && !useMonthPicker;
+
         if (archiveDateInput) {
-          if (archiveDateInput.value !== archiveFilter.date) {
+          if (useDatePicker && archiveDateInput.value !== archiveFilter.date) {
             archiveDateInput.value = archiveFilter.date;
           }
-          archiveDateInput.classList.toggle('hidden', archiveFilter.mode === 'all');
+          archiveDateInput.classList.toggle('hidden', !useDatePicker);
+        }
+
+        if (archiveWeekInput) {
+          if (useWeekPicker) {
+            const weekValue = toWeekInputValue(anchor);
+            if (archiveWeekInput.value !== weekValue) {
+              archiveWeekInput.value = weekValue;
+            }
+          }
+          archiveWeekInput.classList.toggle('hidden', !useWeekPicker);
+        }
+
+        if (archiveMonthInput) {
+          if (useMonthPicker) {
+            const monthValue = toMonthInputValue(anchor);
+            if (archiveMonthInput.value !== monthValue) {
+              archiveMonthInput.value = monthValue;
+            }
+          }
+          archiveMonthInput.classList.toggle('hidden', !useMonthPicker);
         }
 
         if (archiveRangeHint) {
@@ -1726,6 +1787,26 @@ const defaultState = window.KedaiConfig.defaultState;
             archiveFilter.date = event.target.value;
           }
           renderArchive();
+        });
+      }
+
+      if (archiveWeekInput) {
+        archiveWeekInput.addEventListener('change', event => {
+          const weekStart = parseWeekInputValue(event.target.value);
+          if (weekStart) {
+            archiveFilter.date = toDateInputValue(weekStart);
+            renderArchive();
+          }
+        });
+      }
+
+      if (archiveMonthInput) {
+        archiveMonthInput.addEventListener('change', event => {
+          const match = /^(\d{4})-(\d{2})$/.exec(event.target.value || '');
+          if (match) {
+            archiveFilter.date = `${match[1]}-${match[2]}-01`;
+            renderArchive();
+          }
         });
       }
 
