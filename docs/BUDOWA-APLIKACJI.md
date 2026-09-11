@@ -152,6 +152,13 @@ Dane są zapisywane lokalnie na telefonie, dlatego aplikacja stosuje kilka zabez
 2. **Trwały magazyn** – przy starcie aplikacja wywołuje `navigator.storage.persist()`, aby system nie usuwał danych przy braku miejsca.
 3. **Kopia zapasowa w `localStorage`** – po każdym zapisie aktualizowana jest kopia pod kluczem `kedai_pos_backup_v1`. Jeżeli IndexedDB zostanie wyczyszczona, a kopia istnieje, aplikacja automatycznie odtworzy menu, zamówienia i archiwum.
 4. **Eksport i import** – w Ustawieniach znajduje się sekcja kopii zapasowej, która pozwala zapisać dane do pliku JSON i wczytać je na innym telefonie. Kopia obejmuje menu, składniki magazynowe, zamówienia klientów i zamówienia zakupowe. To najbezpieczniejszy sposób przenoszenia danych.
+
+   Eksport działa dwutorowo, bo w zainstalowanej aplikacji PWA na Androidzie zwykłe pobieranie pliku bywa po cichu ignorowane:
+
+   - najpierw używany jest **arkusz udostępniania** (`navigator.share` z plikiem) – wtedy użytkownik sam wybiera, gdzie zapisać kopię (Pliki, Dysk, wysyłka na inny telefon),
+   - dopiero gdy udostępnianie jest niedostępne, plik jest pobierany przez link `download` do folderu Pobrane.
+
+   Adres `blob:` jest zwalniany **z opóźnieniem** (60 s), a nie od razu po kliknięciu. Natychmiastowe `revokeObjectURL` przerywało pobieranie na Androidzie, bo system przejmuje plik asynchronicznie – mimo to aplikacja pokazywała komunikat o powodzeniu. Teraz komunikat sukcesu pojawia się tylko po faktycznym udostępnieniu lub pobraniu, a niepowodzenie zgłasza osobny komunikat `exportFailed`.
 5. **Zmiana języka nie nadpisuje menu** – język zapisuje się osobnym rekordem (`saveLanguage`), więc stare okno aplikacji nie może cofnąć zmian w menu.
 6. **Pusta lista menu nie jest resetowana** – jeżeli użytkownik celowo usunie wszystkie pozycje, aplikacja nie przywraca domyślnego menu.
 

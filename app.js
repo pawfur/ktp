@@ -32,6 +32,7 @@ const defaultState = window.KedaiConfig.defaultState;
           exportBackup: 'Eksportuj dane',
           importBackup: 'Importuj dane',
           exportDone: 'Kopia zapasowa została zapisana.',
+          exportFailed: 'Nie udało się zapisać kopii zapasowej.',
           importDone: 'Dane zostały wczytane.',
           importFailed: 'Nie udało się wczytać pliku z danymi.',
           storagePersistent: 'Pamięć trwała: włączona',
@@ -161,6 +162,7 @@ const defaultState = window.KedaiConfig.defaultState;
           exportBackup: 'Export data',
           importBackup: 'Import data',
           exportDone: 'Backup file has been saved.',
+          exportFailed: 'Could not save the backup file.',
           importDone: 'Data has been loaded.',
           importFailed: 'Could not read the data file.',
           storagePersistent: 'Persistent storage: enabled',
@@ -290,6 +292,7 @@ const defaultState = window.KedaiConfig.defaultState;
           exportBackup: 'Ekspor data',
           importBackup: 'Impor data',
           exportDone: 'File cadangan telah disimpan.',
+          exportFailed: 'File cadangan tidak dapat disimpan.',
           importDone: 'Data berhasil dimuat.',
           importFailed: 'File data tidak dapat dibaca.',
           storagePersistent: 'Penyimpanan permanen: aktif',
@@ -1641,16 +1644,50 @@ const defaultState = window.KedaiConfig.defaultState;
         label.textContent = `${persistence} · ${translate('storageLabel')}: ${formatMegabytes(info.usage)}`;
       }
 
-      function exportData() {
-        const blob = new Blob([window.KedaiDatabase.exportState(state)], { type: 'application/json' });
+      /**
+       * Zapisuje plik kopii zapasowej. W zainstalowanej aplikacji PWA na Androidzie
+       * zwykłe pobieranie linku bywa po cichu ignorowane, dlatego najpierw proponujemy
+       * arkusz udostępniania, a pobieranie zostaje jako droga odwrotna.
+       * Zwraca 'shared', 'downloaded' lub 'cancelled'.
+       */
+      async function saveBackupFile(blob, filename) {
+        const file = new File([blob], filename, { type: 'application/json' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({ files: [file], title: filename });
+            return 'shared';
+          } catch (error) {
+            if (error && error.name === 'AbortError') return 'cancelled';
+            console.warn('Udostępnianie pliku nie powiodło się, próbuję pobrania:', error);
+          }
+        }
+
+        const objectUrl = URL.createObjectURL(blob);
         const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `kedai-pos-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        link.href = objectUrl;
+        link.download = filename;
+        link.rel = 'noopener';
         document.body.appendChild(link);
         link.click();
         link.remove();
-        URL.revokeObjectURL(link.href);
-        showToast(translate('exportDone'), 'success');
+        // Adresu nie zwalniamy od razu: na Androidzie pobieranie startuje
+        // asynchronicznie i przedwczesne zwolnienie przerywało je bez komunikatu.
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
+        return 'downloaded';
+      }
+
+      async function exportData() {
+        const filename = `kedai-pos-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        const blob = new Blob([window.KedaiDatabase.exportState(state)], { type: 'application/json' });
+        try {
+          const result = await saveBackupFile(blob, filename);
+          if (result === 'cancelled') return;
+          showToast(translate('exportDone'), 'success');
+        } catch (error) {
+          console.error('Błąd eksportu danych:', error);
+          showToast(translate('exportFailed'), 'error');
+        }
       }
 
       async function importDataFile(file) {
