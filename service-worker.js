@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kedai-pos-v22';
+const CACHE_NAME = 'kedai-pos-v25';
 const APP_SHELL = [
   './',
   './index.html',

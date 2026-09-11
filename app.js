@@ -99,7 +99,6 @@ const defaultState = window.KedaiConfig.defaultState;
           moqWarning: '{name}: minimalne zamówienie to {moq} {unit}.',
           stepWarning: '{name}: ilość musi być wielokrotnością {step} {unit}.',
           ordered: 'Zamówione',
-          clear: 'Wyczyść',
           totalSales: 'Suma sprzedaży',
           language: 'Język',
           item: 'pozycja',
@@ -118,6 +117,13 @@ const defaultState = window.KedaiConfig.defaultState;
           activeOrders: 'Aktywne zamówienia',
           noActiveOrders: 'Brak aktywnych zamówień.',
           noArchive: 'Brak zarchiwizowanych zamówień.',
+          noArchiveRange: 'Brak zamówień w wybranym zakresie.',
+          archiveRangeLabel: 'Zakres dat',
+          archiveRangeDay: 'Dzień',
+          archiveRangeWeek: 'Tydzień',
+          archiveRangeMonth: 'Miesiąc',
+          archiveRangeAll: 'Wszystkie',
+          archiveCount: 'Liczba zamówień: {count}',
           edit: 'Edytuj',
           delete: 'Usuń',
           archiveLabel: 'Archiwizuj',
@@ -135,13 +141,10 @@ const defaultState = window.KedaiConfig.defaultState;
           orderUpdated: 'Zamówienie zostało zaktualizowane.',
           archived: 'Zamówienie przeniesiono do archiwum.',
           orderDeleted: 'Zamówienie zostało usunięte.',
-          archiveCleared: 'Archiwum zostało wyczyszczone.',
-          archiveEmpty: 'Archiwum jest puste.',
           activeOrdersLabel: 'Aktywne zamówienia',
           archivedOrdersLabel: 'Zarchiwizowane zamówienia',
           confirmDeleteProduct: 'Usunąć pozycję "{name}" z menu?',
           confirmDeleteOrder: 'Usunąć aktywne zamówienie z dnia {date}?',
-          confirmClearArchive: 'Czy na pewno chcesz wyczyścić archiwum?',
           confirmCancelSelection: 'Czy na pewno chcesz anulować bieżące zamówienie?',
           confirmEditOrder: 'Aby edytować to zamówienie, obecne zamówienie w zakładce Obsługa zostanie usunięte. Kontynuować?',
           confirmDeleteOrderInList: 'Czy na pewno chcesz usunąć to zamówienie?',
@@ -247,7 +250,6 @@ const defaultState = window.KedaiConfig.defaultState;
           moqWarning: '{name}: minimum order is {moq} {unit}.',
           stepWarning: '{name}: quantity must be a multiple of {step} {unit}.',
           ordered: 'Ordered',
-          clear: 'Clear',
           totalSales: 'Total sales',
           language: 'Language',
           item: 'item',
@@ -266,6 +268,13 @@ const defaultState = window.KedaiConfig.defaultState;
           activeOrders: 'Active orders',
           noActiveOrders: 'No active orders.',
           noArchive: 'No archived orders.',
+          noArchiveRange: 'No orders in the selected range.',
+          archiveRangeLabel: 'Date range',
+          archiveRangeDay: 'Day',
+          archiveRangeWeek: 'Week',
+          archiveRangeMonth: 'Month',
+          archiveRangeAll: 'All',
+          archiveCount: 'Orders: {count}',
           edit: 'Edit',
           delete: 'Delete',
           archiveLabel: 'Archive',
@@ -283,13 +292,10 @@ const defaultState = window.KedaiConfig.defaultState;
           orderUpdated: 'Order updated.',
           archived: 'Order moved to archive.',
           orderDeleted: 'Order deleted.',
-          archiveCleared: 'Archive cleared.',
-          archiveEmpty: 'Archive is empty.',
           activeOrdersLabel: 'Active orders',
           archivedOrdersLabel: 'Archived orders',
           confirmDeleteProduct: 'Delete the "{name}" item from the menu?',
           confirmDeleteOrder: 'Delete the active order from {date}?',
-          confirmClearArchive: 'Are you sure you want to clear the archive?',
           confirmCancelSelection: 'Are you sure you want to cancel the current order?',
           confirmEditOrder: 'To edit this order, the current order in the Customer tab will be removed. Continue?',
           confirmDeleteOrderInList: 'Are you sure you want to delete this order?',
@@ -395,7 +401,6 @@ const defaultState = window.KedaiConfig.defaultState;
           moqWarning: '{name}: pesanan minimum {moq} {unit}.',
           stepWarning: '{name}: jumlah harus kelipatan {step} {unit}.',
           ordered: 'Dipesan',
-          clear: 'Bersihkan',
           totalSales: 'Total penjualan',
           language: 'Bahasa',
           item: 'item',
@@ -414,6 +419,13 @@ const defaultState = window.KedaiConfig.defaultState;
           activeOrders: 'Pesanan aktif',
           noActiveOrders: 'Belum ada pesanan aktif.',
           noArchive: 'Belum ada arsip pesanan.',
+          noArchiveRange: 'Tidak ada pesanan dalam rentang yang dipilih.',
+          archiveRangeLabel: 'Rentang tanggal',
+          archiveRangeDay: 'Hari',
+          archiveRangeWeek: 'Minggu',
+          archiveRangeMonth: 'Bulan',
+          archiveRangeAll: 'Semua',
+          archiveCount: 'Jumlah pesanan: {count}',
           edit: 'Edit',
           delete: 'Hapus',
           archiveLabel: 'Arsipkan',
@@ -431,13 +443,10 @@ const defaultState = window.KedaiConfig.defaultState;
           orderUpdated: 'Pesanan berhasil diperbarui.',
           archived: 'Pesanan dipindahkan ke arsip.',
           orderDeleted: 'Pesanan dihapus.',
-          archiveCleared: 'Arsip berhasil dibersihkan.',
-          archiveEmpty: 'Arsip masih kosong.',
           activeOrdersLabel: 'Pesanan aktif',
           archivedOrdersLabel: 'Pesanan arsip',
           confirmDeleteProduct: 'Hapus item "{name}" dari menu?',
           confirmDeleteOrder: 'Hapus pesanan aktif dari {date}?',
-          confirmClearArchive: 'Apakah Anda yakin ingin membersihkan arsip?',
           confirmCancelSelection: 'Apakah Anda yakin ingin membatalkan pesanan saat ini?',
           confirmEditOrder: 'Untuk mengedit pesanan ini, pesanan saat ini di tab Pelayanan akan dihapus. Lanjutkan?',
           confirmDeleteOrderInList: 'Apakah Anda yakin ingin menghapus pesanan ini?',
@@ -455,6 +464,12 @@ const defaultState = window.KedaiConfig.defaultState;
       let editingOrderId = null;
       let editingIngredientId = null;
 
+      // Filtr archiwum: domyślnie dzisiejszy dzień.
+      const archiveFilter = {
+        mode: 'day',
+        date: toDateInputValue(new Date())
+      };
+
       const productForm = document.getElementById('productForm');
       const menuElementTypeSelect = document.getElementById('menuElementType');
       const productNameInput = document.getElementById('productName');
@@ -469,6 +484,10 @@ const defaultState = window.KedaiConfig.defaultState;
       const confirmNoBtn = document.getElementById('confirmNoBtn');
       const confirmYesBtn = document.getElementById('confirmYesBtn');
       const archiveTotal = document.getElementById('archiveTotal');
+      const archiveCount = document.getElementById('archiveCount');
+      const archiveRangeModes = document.getElementById('archiveRangeModes');
+      const archiveRangeHint = document.getElementById('archiveRangeHint');
+      const archiveDateInput = document.getElementById('archiveDateInput');
       const menuCountBadge = document.getElementById('menuCountBadge');
       const customerSummaryCount = document.getElementById('customerSummaryCount');
       const customerSummaryDetails = document.getElementById('customerSummaryDetails');
@@ -605,6 +624,7 @@ const defaultState = window.KedaiConfig.defaultState;
         activeTab = tab;
         renderTabs();
         if (tab === 'settings') checkForUpdates();
+        if (tab === 'archive') renderArchive();
       }
 
       function compareVersions(firstVersion, secondVersion) {
@@ -865,16 +885,126 @@ const defaultState = window.KedaiConfig.defaultState;
           .join('');
       }
 
+      function toDateInputValue(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+
+      function addDays(date, days) {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
+      }
+
+      function getDateLocale() {
+        const lang = state.language || 'pl';
+        if (lang === 'en') return 'en-US';
+        if (lang === 'id') return 'id-ID';
+        return 'pl-PL';
+      }
+
+      function formatDateLabel(value) {
+        const date = value instanceof Date ? value : new Date(value);
+        return new Intl.DateTimeFormat(getDateLocale(), { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date);
+      }
+
+      function formatMonthLabel(value) {
+        const date = value instanceof Date ? value : new Date(value);
+        return new Intl.DateTimeFormat(getDateLocale(), { month: 'long', year: 'numeric' }).format(date);
+      }
+
+      // Zakres czasu dla archiwum: dzień, tydzień (poniedziałek-niedziela) lub miesiąc.
+      function getArchiveFilterRange() {
+        if (archiveFilter.mode === 'all') return null;
+
+        const parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(archiveFilter.date || '');
+        if (!parts) return null;
+
+        const year = Number(parts[1]);
+        const month = Number(parts[2]) - 1;
+        const day = Number(parts[3]);
+
+        if (archiveFilter.mode === 'week') {
+          const anchor = new Date(year, month, day);
+          const offset = (anchor.getDay() + 6) % 7;
+          const start = addDays(anchor, -offset);
+          return { start: start.getTime(), end: addDays(start, 7).getTime() };
+        }
+
+        if (archiveFilter.mode === 'month') {
+          return { start: new Date(year, month, 1).getTime(), end: new Date(year, month + 1, 1).getTime() };
+        }
+
+        const start = new Date(year, month, day);
+        return { start: start.getTime(), end: addDays(start, 1).getTime() };
+      }
+
+      function getArchiveFilteredOrders() {
+        const orders = Array.isArray(state.archive) ? state.archive : [];
+        const range = getArchiveFilterRange();
+        if (!range) return orders;
+
+        return orders.filter(order => {
+          const time = new Date(order.createdAt).getTime();
+          return Number.isFinite(time) && time >= range.start && time < range.end;
+        });
+      }
+
+      function describeArchiveRange() {
+        const range = getArchiveFilterRange();
+        if (!range) return translate('archiveRangeAll');
+
+        const start = new Date(range.start);
+        if (archiveFilter.mode === 'week') {
+          return `${formatDateLabel(start)} – ${formatDateLabel(addDays(start, 6))}`;
+        }
+        if (archiveFilter.mode === 'month') {
+          return formatMonthLabel(start);
+        }
+        return formatDateLabel(start);
+      }
+
+      function syncArchiveFilterUi() {
+        if (!archiveRangeModes) return;
+
+        archiveRangeModes.querySelectorAll('[data-archive-range]').forEach(button => {
+          const active = button.dataset.archiveRange === archiveFilter.mode;
+          button.classList.toggle('bg-orange-500', active);
+          button.classList.toggle('text-white', active);
+          button.classList.toggle('bg-slate-100', !active);
+          button.classList.toggle('text-slate-700', !active);
+        });
+
+        if (archiveDateInput) {
+          if (archiveDateInput.value !== archiveFilter.date) {
+            archiveDateInput.value = archiveFilter.date;
+          }
+          archiveDateInput.classList.toggle('hidden', archiveFilter.mode === 'all');
+        }
+
+        if (archiveRangeHint) {
+          archiveRangeHint.textContent = describeArchiveRange();
+        }
+      }
+
       function renderArchive() {
-        const total = state.archive.reduce((sum, order) => sum + Number(order.total || 0), 0);
+        syncArchiveFilterUi();
+
+        const orders = getArchiveFilteredOrders();
+        const total = orders.reduce((sum, order) => sum + Number(order.total || 0), 0);
         archiveTotal.textContent = formatCurrency(total);
 
-        if (!state.archive.length) {
-          archiveList.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${translate('noArchive')}</div>`;
+        if (archiveCount) {
+          archiveCount.textContent = translate('archiveCount', { count: orders.length });
+        }
+
+        if (!orders.length) {
+          const emptyMessage = archiveFilter.mode === 'all' ? translate('noArchive') : translate('noArchiveRange');
+          archiveList.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${emptyMessage}</div>`;
           return;
         }
 
-        archiveList.innerHTML = state.archive
+        archiveList.innerHTML = orders
           .slice()
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .map(order => {
@@ -1366,23 +1496,6 @@ const defaultState = window.KedaiConfig.defaultState;
         });
       }
 
-      function clearArchive() {
-        if (!state.archive.length) {
-          showToast(translate('archiveEmpty'), 'warning');
-          return;
-        }
-
-        showConfirmDialog(translate('confirmClearArchive'), async () => {
-          const removedIds = state.archive.map(order => order.id);
-          state.archive = [];
-          await window.KedaiDatabase.clearOrders();
-          await saveState();
-          window.KedaiSync?.deleteRows('clientOrders', removedIds);
-          renderArchive();
-          showToast(translate('archiveCleared'), 'success');
-        });
-      }
-
       function resetIngredientForm() {
         ingredientForm.reset();
         ingredientUnitSelect.value = 'szt';
@@ -1598,7 +1711,24 @@ const defaultState = window.KedaiConfig.defaultState;
 
       document.getElementById('saveOrderBtn').addEventListener('click', saveCurrentOrder);
       document.getElementById('cancelCustomerBtn').addEventListener('click', cancelCustomerSelection);
-      document.getElementById('clearArchiveBtn').addEventListener('click', clearArchive);
+      if (archiveRangeModes) {
+        archiveRangeModes.addEventListener('click', event => {
+          const button = event.target.closest('[data-archive-range]');
+          if (!button) return;
+          archiveFilter.mode = button.dataset.archiveRange;
+          renderArchive();
+        });
+      }
+
+      if (archiveDateInput) {
+        archiveDateInput.addEventListener('change', event => {
+          if (event.target.value) {
+            archiveFilter.date = event.target.value;
+          }
+          renderArchive();
+        });
+      }
+
       document.getElementById('languageSelect').addEventListener('change', event => {
         setLanguage(event.target.value);
         renderAll();
