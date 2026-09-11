@@ -47,11 +47,32 @@ Każdy wiersz ma dwie kolumny opisujące pochodzenie danych:
 
 ## Krok 3 — konto lokalu
 
+### Najpierw: GitHub to nie jest login aplikacji
+
+Połączenie z GitHubem dotyczy **właściciela projektu**, a nie osób, które korzystają z aplikacji w lokalu:
+
+| Co | Do czego służy |
+|---|---|
+| `Continue with GitHub` przy zakładaniu konta Supabase | Tak **Ty** logujesz się do panelu Supabase. Aplikacja nie używa tego konta. |
+| Integracja GitHub w ustawieniach projektu | Wdrażanie funkcji Edge i branchy z repozytorium. Też nie dotyczy logowania w aplikacji. |
+| GitHub Pages (`pawfur/ktp`) | Hosting samej aplikacji. Nie dotyczy logowania. |
+| **Authentication → Users** | **To** jest login aplikacji. Zupełnie osobny mechanizm. |
+
+Gdyby ktoś musiał tłumaczyć to jednym zdaniem: GitHub daje Ci dostęp do **panelu**, a użytkownik w `Authentication` daje dostęp do **danych**.
+
+W aplikacji polega się na zwykłym koncie **e-mail + hasło** utworzonym wewnątrz projektu. Nie musisz mieć hasła do Supabase, nie używasz tu swojego konta GitHub i nie musisz zakładać żadnego nowego konta w internecie.
+
+### Utworzenie konta
+
 Panel Supabase → **Authentication → Users → Add user → Create new user**:
 
-- e-mail, np. `kedai@twojadomena.pl`,
-- hasło,
-- włącz **Auto Confirm User** (bez tego logowanie poczeka na maila potwierdzającego).
+- **e-mail** — najlepiej taki, do którego masz dostęp (np. Twój zwykły adres). Nie musi być związany z GitHubem i nie musi być firmowy. Ważne jest tylko to, żebyś mógł na niego zajrzeć, gdybyś kiedyś zapomniał hasła.
+- **hasło** — wymyślone przez Ciebie, dowolne. To ono będzie wpisywane w aplikacji w Ustawieniach.
+- włącz **Auto Confirm User** — bez tego logowanie poczeka na maila potwierdzającego, którego możesz nie dostać.
+
+Po utworzeniu konto pojawi się na liście **Authentication → Users**. Te dane (e-mail i hasło) wpiszesz raz w aplikacji — w krokach niżej.
+
+Nie musisz podawać mi tego hasła ani nigdzie go zapisywać w plikach. Podajesz je wyłącznie w aplikacji na telefonie.
 
 ## Krok 4 — nazwa użytkownika w aplikacji
 
