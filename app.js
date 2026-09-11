@@ -628,7 +628,11 @@ const defaultState = window.KedaiConfig.defaultState;
         activeTab = tab;
         renderTabs();
         if (tab === 'settings') checkForUpdates();
-        if (tab === 'archive') renderArchive();
+        if (tab === 'archive') {
+          // Każde wejście do archiwum zaczyna od dnia dzisiejszego.
+          resetArchiveFilter();
+          renderArchive();
+        }
       }
 
       function compareVersions(firstVersion, secondVersion) {
@@ -998,6 +1002,12 @@ const defaultState = window.KedaiConfig.defaultState;
           return formatMonthLabel(start);
         }
         return formatDateLabel(start);
+      }
+
+      // Powrót do archiwum zawsze zaczyna od trybu "Dzień" i bieżącej daty.
+      function resetArchiveFilter() {
+        archiveFilter.mode = 'day';
+        archiveFilter.date = toDateInputValue(new Date());
       }
 
       function syncArchiveFilterUi() {
