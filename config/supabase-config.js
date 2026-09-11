@@ -24,8 +24,8 @@
  * dokładnie tak jak dotychczas – wyłącznie na danych lokalnych.
  */
 window.KedaiSupabaseConfig = {
-  url: '',
-  anonKey: '',
+  url: 'https://gbtiuowskxigyqvmaukw.supabase.co',
+  anonKey: 'sb_publishable_auYiI3QTVh9EZPSycQ7Qrw_bcZTIpEx',
 
   // Kolejność wysyłania. Można zostawić bez zmian.
   tables: {

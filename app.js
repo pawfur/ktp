@@ -35,6 +35,24 @@ const defaultState = window.KedaiConfig.defaultState;
           exportFailed: 'Nie udało się zapisać kopii zapasowej.',
           importDone: 'Dane zostały wczytane.',
           importFailed: 'Nie udało się wczytać pliku z danymi.',
+          cloudTitle: 'Chmura (Supabase)',
+          cloudDescription: 'Dane są wysyłane do chmury, aby móc robić raporty z komputera. Dane na telefonie pozostają najważniejsze i nic ich nie nadpisuje.',
+          userNameLabel: 'Nazwa użytkownika',
+          userNameHint: 'Ta nazwa podpisuje każdy wysłany wiersz, żeby w raportach było widać, skąd przyszły dane.',
+          userNameSaved: 'Nazwa użytkownika została zapisana.',
+          syncSignIn: 'Zaloguj do chmury',
+          syncSignOut: 'Wyloguj',
+          syncPushNow: 'Wyślij teraz',
+          syncNotConfigured: 'Brak konfiguracji chmury. Uzupełnij config/supabase-config.js.',
+          syncNeedsLogin: 'Nie zalogowano. Dane wysyłane są tylko po zalogowaniu.',
+          syncSignedInAs: 'Zalogowano jako {email}',
+          syncEnterCredentials: 'Podaj e-mail i hasło.',
+          syncSigningIn: 'Logowanie...',
+          syncSignInFailed: 'Nie udało się zalogować: {detail}',
+          syncPushInProgress: 'Wysyłanie danych do chmury...',
+          syncPushDone: 'Dane zostały wysłane do chmury.',
+          syncPushFailed: 'Nie udało się wysłać danych: {detail}',
+          syncAutoFailed: 'Wysyłka do chmury nie udała się. Kolejna zmiana spróbuje ponownie.',
           storagePersistent: 'Pamięć trwała: włączona',
           storageNotPersistent: 'Pamięć trwała: wyłączona (system może usunąć dane przy braku miejsca)',
           storageLabel: 'Wykorzystanie pamięci',
@@ -165,6 +183,24 @@ const defaultState = window.KedaiConfig.defaultState;
           exportFailed: 'Could not save the backup file.',
           importDone: 'Data has been loaded.',
           importFailed: 'Could not read the data file.',
+          cloudTitle: 'Cloud (Supabase)',
+          cloudDescription: 'Data is sent to the cloud so you can run reports from a computer. The data on the phone stays the most important and nothing overwrites it.',
+          userNameLabel: 'User name',
+          userNameHint: 'This name is attached to every row sent, so reports show where the data came from.',
+          userNameSaved: 'User name has been saved.',
+          syncSignIn: 'Sign in to cloud',
+          syncSignOut: 'Sign out',
+          syncPushNow: 'Send now',
+          syncNotConfigured: 'Cloud is not configured. Fill in config/supabase-config.js.',
+          syncNeedsLogin: 'Not signed in. Data is sent only after signing in.',
+          syncSignedInAs: 'Signed in as {email}',
+          syncEnterCredentials: 'Enter e-mail and password.',
+          syncSigningIn: 'Signing in...',
+          syncSignInFailed: 'Could not sign in: {detail}',
+          syncPushInProgress: 'Sending data to the cloud...',
+          syncPushDone: 'Data has been sent to the cloud.',
+          syncPushFailed: 'Could not send data: {detail}',
+          syncAutoFailed: 'Cloud upload failed. The next change will try again.',
           storagePersistent: 'Persistent storage: enabled',
           storageNotPersistent: 'Persistent storage: disabled (the system may clear data when space is low)',
           storageLabel: 'Storage usage',
@@ -295,6 +331,24 @@ const defaultState = window.KedaiConfig.defaultState;
           exportFailed: 'File cadangan tidak dapat disimpan.',
           importDone: 'Data berhasil dimuat.',
           importFailed: 'File data tidak dapat dibaca.',
+          cloudTitle: 'Cloud (Supabase)',
+          cloudDescription: 'Data dikirim ke cloud agar Anda bisa membuat laporan dari komputer. Data di ponsel tetap yang utama dan tidak ada yang menimpanya.',
+          userNameLabel: 'Nama pengguna',
+          userNameHint: 'Nama ini disertakan pada setiap baris yang dikirim, agar laporan menunjukkan asal datanya.',
+          userNameSaved: 'Nama pengguna telah disimpan.',
+          syncSignIn: 'Masuk ke cloud',
+          syncSignOut: 'Keluar',
+          syncPushNow: 'Kirim sekarang',
+          syncNotConfigured: 'Cloud belum dikonfigurasi. Isi config/supabase-config.js.',
+          syncNeedsLogin: 'Belum masuk. Data hanya dikirim setelah masuk.',
+          syncSignedInAs: 'Masuk sebagai {email}',
+          syncEnterCredentials: 'Masukkan email dan kata sandi.',
+          syncSigningIn: 'Sedang masuk...',
+          syncSignInFailed: 'Gagal masuk: {detail}',
+          syncPushInProgress: 'Mengirim data ke cloud...',
+          syncPushDone: 'Data telah dikirim ke cloud.',
+          syncPushFailed: 'Gagal mengirim data: {detail}',
+          syncAutoFailed: 'Pengiriman ke cloud gagal. Perubahan berikutnya akan mencoba lagi.',
           storagePersistent: 'Penyimpanan permanen: aktif',
           storageNotPersistent: 'Penyimpanan permanen: nonaktif (sistem dapat menghapus data saat ruang menipis)',
           storageLabel: 'Penggunaan penyimpanan',
@@ -439,6 +493,14 @@ const defaultState = window.KedaiConfig.defaultState;
       const purchaseSummaryDetails = document.getElementById('purchaseSummaryDetails');
       const purchaseTotalLabel = document.getElementById('purchaseTotal');
       const purchaseOrderList = document.getElementById('purchaseOrderList');
+      const syncUserNameInput = document.getElementById('syncUserName');
+      const syncStatusLabel = document.getElementById('syncStatus');
+      const syncLoginFields = document.getElementById('syncLoginFields');
+      const syncEmailInput = document.getElementById('syncEmail');
+      const syncPasswordInput = document.getElementById('syncPassword');
+      const syncSignInBtn = document.getElementById('syncSignInBtn');
+      const syncPushBtn = document.getElementById('syncPushBtn');
+      const syncSignOutBtn = document.getElementById('syncSignOutBtn');
 
       function translate(key, replacements = {}) {
         const lang = state.language || 'pl';
@@ -453,7 +515,10 @@ const defaultState = window.KedaiConfig.defaultState;
       }
 
       function saveState() {
-        return window.KedaiDatabase.saveState(state);
+        const result = window.KedaiDatabase.saveState(state);
+        // Wysyłka do chmury tylko ustawia licznik czasu - nigdy nie blokuje zapisu.
+        window.KedaiSync?.notifyChange(state);
+        return result;
       }
 
       const { formatCurrency, formatDateTime: formatUiDateTime, escapeHtml, makeId } = window.KedaiUi;
@@ -471,6 +536,7 @@ const defaultState = window.KedaiConfig.defaultState;
         state.language = lang;
         window.KedaiDatabase.saveLanguage(lang);
         applyTranslations();
+        renderSyncPanel();
       }
 
       function applyTranslations() {
@@ -1293,6 +1359,7 @@ const defaultState = window.KedaiConfig.defaultState;
         showConfirmDialog(translate('confirmDeleteOrder', { date: formatDateTime(order.createdAt) }), () => {
           state.activeOrders = state.activeOrders.filter(item => !sameOrderId(item.id, orderId));
           window.KedaiDatabase.deleteOrder(order.id);
+          window.KedaiSync?.deleteRows('clientOrders', [order.id]);
           saveState();
           renderAll();
           showToast(translate('orderDeleted'), 'success');
@@ -1306,9 +1373,11 @@ const defaultState = window.KedaiConfig.defaultState;
         }
 
         showConfirmDialog(translate('confirmClearArchive'), async () => {
+          const removedIds = state.archive.map(order => order.id);
           state.archive = [];
           await window.KedaiDatabase.clearOrders();
           await saveState();
+          window.KedaiSync?.deleteRows('clientOrders', removedIds);
           renderArchive();
           showToast(translate('archiveCleared'), 'success');
         });
@@ -1397,6 +1466,7 @@ const defaultState = window.KedaiConfig.defaultState;
           state.ingredients = state.ingredients.filter(item => item.id !== ingredientId);
           delete currentPurchaseSelection[ingredientId];
           window.KedaiDatabase.deleteIngredient(ingredientId);
+          window.KedaiSync?.deleteRows('ingredients', [ingredientId]);
           if (editingIngredientId === ingredientId) resetIngredientForm();
           saveState();
           renderAll();
@@ -1507,6 +1577,7 @@ const defaultState = window.KedaiConfig.defaultState;
         showConfirmDialog(translate('confirmDeletePurchase'), () => {
           state.purchaseOrders = state.purchaseOrders.filter(item => String(item.id) !== String(orderId));
           window.KedaiDatabase.deletePurchaseOrder(order.id);
+          window.KedaiSync?.deleteRows('purchaseOrders', [order.id]);
           saveState();
           renderPurchaseOrders();
           showToast(translate('purchaseDeleted'), 'success');
@@ -1626,6 +1697,10 @@ const defaultState = window.KedaiConfig.defaultState;
         if (file) importDataFile(file);
         event.target.value = '';
       });
+      syncUserNameInput.addEventListener('change', saveSyncUserName);
+      syncSignInBtn.addEventListener('click', signInToCloud);
+      syncPushBtn.addEventListener('click', pushToCloud);
+      syncSignOutBtn.addEventListener('click', signOutFromCloud);
       menuElementTypeSelect.addEventListener('change', updateMenuFormType);
 
       document.addEventListener('dblclick', event => {
@@ -1642,6 +1717,100 @@ const defaultState = window.KedaiConfig.defaultState;
         const info = await window.KedaiDatabase.getStorageInfo();
         const persistence = info.persistent ? translate('storagePersistent') : translate('storageNotPersistent');
         label.textContent = `${persistence} · ${translate('storageLabel')}: ${formatMegabytes(info.usage)}`;
+      }
+
+      function renderSyncPanel() {
+        if (!syncStatusLabel) return;
+        const sync = window.KedaiSync;
+
+        if (!sync || !sync.isConfigured()) {
+          syncStatusLabel.textContent = translate('syncNotConfigured');
+          syncLoginFields.classList.add('hidden');
+          syncSignInBtn.classList.add('hidden');
+          syncPushBtn.classList.add('hidden');
+          syncSignOutBtn.classList.add('hidden');
+          return;
+        }
+
+        const status = sync.getStatus();
+        syncLoginFields.classList.toggle('hidden', status.signedIn);
+        syncSignInBtn.classList.toggle('hidden', status.signedIn);
+        syncPushBtn.classList.toggle('hidden', !status.signedIn);
+        syncSignOutBtn.classList.toggle('hidden', !status.signedIn);
+        syncPushBtn.textContent = translate('syncPushNow');
+        syncPushBtn.disabled = false;
+
+        if (!status.signedIn) {
+          syncStatusLabel.textContent = translate('syncNeedsLogin');
+          return;
+        }
+
+        syncStatusLabel.textContent = status.code === 'failed'
+          ? translate('syncAutoFailed')
+          : translate('syncSignedInAs', { email: status.email });
+      }
+
+      function saveSyncUserName() {
+        const sync = window.KedaiSync;
+        if (!sync) return;
+        const saved = sync.setUserName(syncUserNameInput.value);
+        syncUserNameInput.value = saved;
+        syncUserNameInput.blur();
+        showToast(translate('userNameSaved'), 'success');
+      }
+
+      async function signInToCloud() {
+        const sync = window.KedaiSync;
+        if (!sync?.isConfigured()) return;
+
+        const email = syncEmailInput.value.trim();
+        const password = syncPasswordInput.value;
+        if (!email || !password) {
+          showToast(translate('syncEnterCredentials'), 'warning');
+          return;
+        }
+
+        syncSignInBtn.disabled = true;
+        syncSignInBtn.textContent = translate('syncSigningIn');
+        try {
+          const session = await sync.signIn(email, password);
+          syncPasswordInput.value = '';
+          showToast(translate('syncSignedInAs', { email: session.email }), 'success');
+        } catch (error) {
+          const detail = error?.message || String(error);
+          showToast(translate('syncSignInFailed', { detail }), 'error');
+        } finally {
+          syncSignInBtn.disabled = false;
+          syncSignInBtn.textContent = translate('syncSignIn');
+          renderSyncPanel();
+        }
+      }
+
+      async function pushToCloud() {
+        const sync = window.KedaiSync;
+        if (!sync?.isConfigured()) return;
+
+        syncPushBtn.disabled = true;
+        syncPushBtn.textContent = translate('syncPushInProgress');
+        let result;
+        try {
+          result = await sync.pushNow(state);
+        } finally {
+          syncPushBtn.disabled = false;
+          syncPushBtn.textContent = translate('syncPushNow');
+        }
+
+        if (result?.ok) {
+          showToast(translate('syncPushDone'), 'success');
+        } else {
+          showToast(translate('syncPushFailed', { detail: result?.detail || '' }), 'error');
+        }
+        renderSyncPanel();
+      }
+
+      function signOutFromCloud() {
+        window.KedaiSync?.signOut();
+        renderSyncPanel();
       }
 
       /**
@@ -1714,6 +1883,8 @@ const defaultState = window.KedaiConfig.defaultState;
           state = await window.KedaiDatabase.initialize(defaultState);
           renderAll();
           renderStorageInfo();
+          syncUserNameInput.value = window.KedaiSync?.getUserName() || '';
+          renderSyncPanel();
         } catch (error) {
           console.error('Błąd uruchamiania IndexedDB:', error);
           showToast(translate('dbOpenFailed'), 'error');

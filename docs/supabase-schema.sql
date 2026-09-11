@@ -17,6 +17,7 @@ create table if not exists public.menu_items (
   price       numeric     not null default 0,
   type        text        not null default 'product',
   sort_order  integer     not null default 0,
+  user_name   text        not null default '',
   updated_at  timestamptz not null default now(),
   primary key (device_id, local_id)
 );
@@ -35,6 +36,7 @@ create table if not exists public.ingredients (
   target_stock        numeric     not null default 0,
   min_order_quantity  numeric     not null default 0,
   unit_step           numeric     not null default 0,
+  user_name           text        not null default '',
   updated_at          timestamptz not null default now(),
   primary key (device_id, local_id)
 );
@@ -49,6 +51,7 @@ create table if not exists public.client_orders (
   created_at  timestamptz not null,
   total       numeric     not null default 0,
   items       jsonb       not null default '[]'::jsonb,
+  user_name   text        not null default '',
   updated_at  timestamptz not null default now(),
   primary key (device_id, local_id)
 );
@@ -66,11 +69,24 @@ create table if not exists public.purchase_orders (
   total_price     numeric     not null default 0,
   total_quantity  numeric     not null default 0,
   items           jsonb       not null default '[]'::jsonb,
+  user_name       text        not null default '',
   updated_at      timestamptz not null default now(),
   primary key (device_id, local_id)
 );
 
 create index if not exists purchase_orders_created_at_idx on public.purchase_orders (created_at desc);
+
+-- ---------------------------------------------------------------------------
+-- 4b. Kolumna user_name w tabelach, które powstały wcześniej
+--
+-- "create table if not exists" nie dodaje kolumn do istniejącej tabeli,
+-- dlatego te polecenia są potrzebne przy ponownym uruchomieniu pliku.
+-- Wypełniają istniejące wiersze pustym tekstem.
+-- ---------------------------------------------------------------------------
+alter table public.menu_items      add column if not exists user_name text not null default '';
+alter table public.ingredients     add column if not exists user_name text not null default '';
+alter table public.client_orders   add column if not exists user_name text not null default '';
+alter table public.purchase_orders add column if not exists user_name text not null default '';
 
 -- ---------------------------------------------------------------------------
 -- 5. Zabezpieczenia (RLS)

@@ -16,10 +16,12 @@ Kedai/
 ├── service-worker.js
 ├── version.json
 ├── config/
-│   └── default-state.js
+│   ├── default-state.js
+│   └── supabase-config.js
 ├── modules/
 │   ├── dialogs.js
 │   ├── icon.svg
+│   ├── sync.js
 │   └── ui.js
 ├── tests/
 │   └── check-translations.mjs
@@ -27,6 +29,8 @@ Kedai/
     ├── README.md
     ├── PWA-Lokalny-zapis.md
     ├── BUDOWA-APLIKACJI.md
+    ├── SUPABASE-SETUP.md
+    ├── supabase-schema.sql
     └── TESTS.md
 ```
 
@@ -84,6 +88,14 @@ Cache'uje pliki aplikacji i umożliwia uruchomienie offline. Działa w trybie **
 ### `version.json`
 
 Jest publicznym źródłem aktualnej wersji opublikowanej na serwerze. Aplikacja porównuje tę wartość z wersją w `config/default-state.js`.
+
+### `config/supabase-config.js`
+
+Przechowuje adres projektu Supabase i klucz publiczny oraz nazwy tabel. Klucz publiczny jest z założenia jawny — trafia do przeglądarki, a danych bronią reguły RLS w bazie.
+
+### `modules/sync.js`
+
+Wysyła dane do Supabase. Odsłania `window.KedaiSync` i spełnia cztery warunki: kierunek jest tylko jeden (telefon wysyła, chmura przyjmuje), wysyłka nigdy nie blokuje zapisu lokalnego, brak internetu nie zużywa prób, a po trzech nieudanych próbach moduł czeka na kolejną zmianę danych. Każdy wiersz podpisuje nazwą użytkownika z Ustawień. Szczegóły wdrożenia opisuje [SUPABASE-SETUP.md](SUPABASE-SETUP.md).
 
 ### `tests/check-translations.mjs`
 
@@ -187,7 +199,20 @@ Po każdej publikacji należy:
 
 Użytkownik zobaczy nową wersję dopiero po kliknięciu **Aktualizuj aplikację** w Ustawieniach.
 
-## 8. Publikacja
+## 8. Chmura (Supabase)
+
+Aplikacja może wysyłać dane do Supabase, żeby raporty ze sprzedaży i zamówień robić z komputera. Wysyłka jest **jednokierunkowa** i jest dodatkiem do pracy lokalnej, nie zamiennikiem: źródłem prawdy pozostają dane w telefonie.
+
+Każdy wiersz niesie dwie kolumny opisujące pochodzenie:
+
+- `device_id` — techniczny identyfikator telefonu. Chroni przed nadpisaniem dawnych zamówień po skasowaniu danych aplikacji, gdy lokalne identyfikatory liczą się od nowa.
+- `user_name` — nazwa użytkownika wpisana w Ustawieniach. To ona trafia do raportów.
+
+Zapis do chmury jest wykonywany przez `POST` z nagłówkiem `Prefer: resolution=merge-duplicates`, czyli **nadpisuje wiersz o tym samym kluczu**, a nie tworzy duplikatów. Usunięcie zamówienia, składnika albo zamówienia zakupowego usuwa też odpowiedni wiersz w chmurze.
+
+Zasady bezpieczeństwa: dostęp mają wyłącznie zalogowani użytkownicy (jedno wspólne konto lokalu), tabele mają włączone RLS, a w aplikacji jest tylko klucz publiczny. Wysyłka nie startuje, gdy brak konfiguracji lub gdy użytkownik nie jest zalogowany — wtedy aplikacja nie wykonuje żadnego zapytania do sieci.
+
+## 9. Publikacja
 
 Przed publikacją warto uruchomić sprawdzanie tłumaczeń:
 
