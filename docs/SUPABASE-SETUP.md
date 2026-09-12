@@ -231,6 +231,54 @@ where (co.created_at at time zone 'Asia/Jakarta')::date
       = (now() at time zone 'Asia/Jakarta')::date
 ```
 
+### Zamówienia jednego użytkownika
+
+Żeby zobaczyć tylko zamówienia osoby o wybranej nazwie — np. **Paul** — dopisz warunek `where`. Jedno zamówienie w jednym wierszu, dokładnie jak karty w aplikacji:
+
+```sql
+select
+  co.local_id                                                            as nr,
+  to_char(co.created_at at time zone 'Asia/Jakarta', 'DD.MM.YYYY HH24:MI') as data,
+  co.user_name                                                           as uzytkownik,
+  co.status                                                              as status,
+  (
+    select string_agg(
+             (item->>'qty') || '× ' || (item->>'name') || ' — Rp ' ||
+             to_char(coalesce((item->>'lineTotal')::numeric, 0), 'FM999G999G999'),
+             E'\n' order by t.ordinality
+           )
+    from jsonb_array_elements(co.items) with ordinality as t(item, ordinality)
+  )                                                                      as pozycje,
+  'Rp ' || to_char(co.total, 'FM999G999G999')                            as razem
+from public.client_orders co
+where co.user_name = 'Paul'
+order by co.created_at desc;
+```
+
+Ta sama lista, ale każda pozycja w osobnym wierszu — wygodniejsza do Excela:
+
+```sql
+select
+  to_char(co.created_at at time zone 'Asia/Jakarta', 'DD.MM.YYYY HH24:MI') as data,
+  co.user_name                                                           as uzytkownik,
+  item->>'name'                                                          as pozycja,
+  (item->>'qty')::numeric                                                as sztuk,
+  'Rp ' || to_char(coalesce((item->>'lineTotal')::numeric, 0), 'FM999G999G999') as wartosc
+from public.client_orders co,
+     jsonb_array_elements(co.items) as item
+where co.user_name = 'Paul'
+order by co.created_at desc, item->>'name';
+```
+
+Nazwa musi zgadzać się dokładnie z tym, co wpisano w Ustawieniach. Jeśli zapytanie zwróci zero wierszy, sprawdź, jakie nazwy naprawdę są w bazie:
+
+```sql
+select user_name, count(*) as zamowienia, max(created_at) as ostatnie
+from public.client_orders
+group by user_name
+order by 2 desc;
+```
+
 ### Kiedy dane są puste
 
 Gdy `client_orders` jest pusta, dane jeszcze nie dotarły. W aplikacji na telefonie: **Ustawienia → Chmura (Supabase) → Wyślij teraz**. Komunikat pod przyciskiem powie, czy wysyłka się udała.
