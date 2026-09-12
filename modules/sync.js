@@ -18,11 +18,27 @@
   const SESSION_KEY = 'kedai_pos_supabase_session';
   const DEVICE_KEY = 'kedai_pos_device_id';
   const USER_NAME_KEY = 'kedai_pos_user_name';
+  const SYNCED_PREFIX = 'kedai_pos_synced_';
 
   const MAX_ATTEMPTS = 3;
   const DEBOUNCE_MS = 2000;
   const RETRY_DELAY_MS = 6000;
   const NAME_MAX_LENGTH = 60;
+
+  /** Kolumna rozpoznająca wiersz. Musi zgadzać się z kluczem głównym tabeli. */
+  const IDENTITY_COLUMN = {
+    menu: 'local_id',
+    ingredients: 'local_id',
+    clientOrders: 'created_at',
+    purchaseOrders: 'created_at'
+  };
+
+  const TABLE_LIST = [
+    ['menu', TABLES.menu || 'menu_items'],
+    ['ingredients', TABLES.ingredients || 'ingredients'],
+    ['clientOrders', TABLES.clientOrders || 'client_orders'],
+    ['purchaseOrders', TABLES.purchaseOrders || 'purchase_orders']
+  ];
 
   let pendingTimer = null;
   let inFlight = false;
@@ -201,81 +217,156 @@
     };
   }
 
-  function menuRows(state, meta) {
-    return (state.menu || []).map((item, index) => ({
-      device_id: meta.deviceId,
-      local_id: String(item.id),
-      name: String(item.name || ''),
-      price: Number(item.price || 0),
-      type: item.type === 'section' ? 'section' : 'product',
-      sort_order: Number.isFinite(Number(item.order)) ? Number(item.order) : index,
-      user_name: meta.userName,
-      updated_at: meta.now
-    }));
+  /**
+   * Krótki odcisk treści wiersza. Pozwala poznać, co się zmieniło, bez
+   * tworzenia i porównywania pełnych obiektów.
+   */
+  function fingerprintOf(parts) {
+    const text = parts.join('|');
+    let hash = 5381;
+    for (let index = 0; index < text.length; index += 1) {
+      hash = ((hash * 33) ^ text.charCodeAt(index)) >>> 0;
+    }
+    return hash.toString(36);
   }
 
-  function ingredientRows(state, meta) {
-    return (state.ingredients || []).map(ingredient => ({
-      device_id: meta.deviceId,
-      local_id: String(ingredient.id),
-      name: String(ingredient.name || ''),
-      unit: String(ingredient.unit || ''),
-      stock: Number(ingredient.stock || 0),
-      unit_price: Number(ingredient.unit_price || 0),
-      min_stock: Number(ingredient.min_stock || 0),
-      target_stock: Number(ingredient.target_stock || 0),
-      min_order_quantity: Number(ingredient.min_order_quantity || 0),
-      unit_step: Number(ingredient.unit_step || 0),
-      user_name: meta.userName,
-      updated_at: meta.now
-    }));
+  function readSynced(name) {
+    const raw = readStorage(SYNCED_PREFIX + name);
+    if (!raw) return {};
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (error) {
+      return {};
+    }
   }
 
-  function clientOrderRows(state, meta) {
-    const rows = [];
-    const add = (order, orderStatus) => {
-      const createdAt = order.date || order.createdAt;
-      if (!createdAt || order.id === undefined || order.id === null) return;
-      rows.push({
-        device_id: meta.deviceId,
-        local_id: Number(order.id),
-        status: orderStatus,
-        created_at: createdAt,
-        total: Number(order.total ?? order.total_price ?? 0),
-        items: Array.isArray(order.items) ? order.items : [],
-        user_name: meta.userName,
-        updated_at: meta.now
-      });
-    };
-
-    (state.activeOrders || []).forEach(order => add(order, 'active'));
-    (state.archive || []).forEach(order => add(order, 'archived'));
-    return rows;
+  function writeSynced(name, map) {
+    writeStorage(SYNCED_PREFIX + name, JSON.stringify(map));
   }
 
-  function purchaseOrderRows(state, meta) {
-    return (state.purchaseOrders || []).map(order => {
-      const createdAt = order.date || order.createdAt;
-      return {
-        device_id: meta.deviceId,
-        local_id: Number(order.id),
-        status: order.status || 'ordered',
-        created_at: createdAt || meta.now,
-        total_price: Number(order.total_price || 0),
-        total_quantity: Number(order.total_quantity || 0),
-        items: Array.isArray(order.items) ? order.items : [],
-        user_name: meta.userName,
-        updated_at: meta.now
-      };
+  /** Czyści zapamiętane odciski, żeby następna wysyłka poszła w całości. */
+  function forgetSynced() {
+    TABLE_LIST.forEach(([name]) => {
+      try {
+        localStorage.removeItem(SYNCED_PREFIX + name);
+      } catch (error) {
+        // Brak wpisu to nie problem.
+      }
     });
   }
 
+  function orderTimestamp(order) {
+    return order.date || order.createdAt || '';
+  }
+
+  /**
+   * Opisuje, co i jak wysyłać. `identity` to nazwa wiersza po stronie bazy,
+   * `fingerprint` - odcisk treści, a `row` - gotowy wiersz do wysłania.
+   */
   function buildPlan(state, meta) {
     return [
-      [TABLES.menu || 'menu_items', menuRows(state, meta)],
-      [TABLES.ingredients || 'ingredients', ingredientRows(state, meta)],
-      [TABLES.clientOrders || 'client_orders', clientOrderRows(state, meta)],
-      [TABLES.purchaseOrders || 'purchase_orders', purchaseOrderRows(state, meta)]
+      {
+        name: 'menu',
+        table: TABLES.menu || 'menu_items',
+        entries: (state.menu || []).map((item, index) => ({ item, index })),
+        identity: entry => String(entry.item.id),
+        fingerprint: entry => fingerprintOf([
+          meta.userName,
+          entry.item.name,
+          entry.item.price,
+          entry.item.type === 'section' ? 'section' : 'product',
+          entry.item.order ?? entry.index
+        ]),
+        row: entry => ({
+          device_id: meta.deviceId,
+          local_id: String(entry.item.id),
+          name: String(entry.item.name || ''),
+          price: Number(entry.item.price || 0),
+          type: entry.item.type === 'section' ? 'section' : 'product',
+          sort_order: Number.isFinite(Number(entry.item.order)) ? Number(entry.item.order) : entry.index,
+          user_name: meta.userName,
+          updated_at: meta.now
+        })
+      },
+      {
+        name: 'ingredients',
+        table: TABLES.ingredients || 'ingredients',
+        entries: (state.ingredients || []).map(item => ({ item })),
+        identity: entry => String(entry.item.id),
+        fingerprint: entry => fingerprintOf([
+          meta.userName,
+          entry.item.name,
+          entry.item.unit,
+          entry.item.stock,
+          entry.item.unit_price,
+          entry.item.min_stock,
+          entry.item.target_stock,
+          entry.item.min_order_quantity,
+          entry.item.unit_step
+        ]),
+        row: entry => ({
+          device_id: meta.deviceId,
+          local_id: String(entry.item.id),
+          name: String(entry.item.name || ''),
+          unit: String(entry.item.unit || ''),
+          stock: Number(entry.item.stock || 0),
+          unit_price: Number(entry.item.unit_price || 0),
+          min_stock: Number(entry.item.min_stock || 0),
+          target_stock: Number(entry.item.target_stock || 0),
+          min_order_quantity: Number(entry.item.min_order_quantity || 0),
+          unit_step: Number(entry.item.unit_step || 0),
+          user_name: meta.userName,
+          updated_at: meta.now
+        })
+      },
+      {
+        name: 'clientOrders',
+        table: TABLES.clientOrders || 'client_orders',
+        entries: [
+          ...(state.activeOrders || []).map(item => ({ item, orderStatus: 'active' })),
+          ...(state.archive || []).map(item => ({ item, orderStatus: 'archived' }))
+        ],
+        identity: entry => orderTimestamp(entry.item),
+        fingerprint: entry => fingerprintOf([
+          meta.userName,
+          entry.orderStatus,
+          entry.item.total ?? entry.item.total_price ?? 0
+        ]),
+        row: entry => ({
+          device_id: meta.deviceId,
+          local_id: Number(entry.item.id),
+          status: entry.orderStatus,
+          created_at: orderTimestamp(entry.item),
+          total: Number(entry.item.total ?? entry.item.total_price ?? 0),
+          items: Array.isArray(entry.item.items) ? entry.item.items : [],
+          user_name: meta.userName,
+          updated_at: meta.now
+        })
+      },
+      {
+        name: 'purchaseOrders',
+        table: TABLES.purchaseOrders || 'purchase_orders',
+        entries: (state.purchaseOrders || []).map(item => ({ item })),
+        identity: entry => orderTimestamp(entry.item),
+        fingerprint: entry => fingerprintOf([
+          meta.userName,
+          entry.item.status || 'ordered',
+          entry.item.total_price,
+          entry.item.total_quantity
+        ]),
+        row: entry => ({
+          device_id: meta.deviceId,
+          local_id: Number(entry.item.id),
+          status: entry.item.status || 'ordered',
+          created_at: orderTimestamp(entry.item) || meta.now,
+          total_price: Number(entry.item.total_price || 0),
+          total_quantity: Number(entry.item.total_quantity || 0),
+          items: Array.isArray(entry.item.items) ? entry.item.items : [],
+          user_name: meta.userName,
+          updated_at: meta.now
+        })
+      }
     ];
   }
 
@@ -304,15 +395,35 @@
     }
 
     const meta = buildMeta();
-    for (const [table, rows] of buildPlan(state, meta)) {
-      if (!rows.length) continue;
-      await request(`${CONFIG.url}/rest/v1/${table}`, {
+    let sent = 0;
+
+    for (const plan of buildPlan(state, meta)) {
+      const synced = readSynced(plan.name);
+      const changed = plan.entries.filter(entry => {
+        const identity = plan.identity(entry);
+        return identity && synced[identity] !== plan.fingerprint(entry);
+      });
+      if (!changed.length) continue;
+
+      await request(`${CONFIG.url}/rest/v1/${plan.table}`, {
         method: 'POST',
         accessToken,
         prefer: 'resolution=merge-duplicates,return=minimal',
-        body: rows
+        body: changed.map(entry => plan.row(entry))
       });
+
+      // Odcisk zapisujemy dopiero po udanej wysyłce. Inaczej nieudana próba
+      // kazałaby aplikacji uznać, że dane są już w chmurze.
+      const updated = { ...synced };
+      plan.entries.forEach(entry => {
+        const identity = plan.identity(entry);
+        if (identity) updated[identity] = plan.fingerprint(entry);
+      });
+      writeSynced(plan.name, updated);
+      sent += changed.length;
     }
+
+    return sent;
   }
 
   function schedule(delay, attempt) {
@@ -367,9 +478,9 @@
       pendingTimer = null;
     }
     try {
-      await pushTables(state);
+      const sent = await pushTables(state);
       setStatus('ok');
-      return { ok: true };
+      return { ok: true, sent };
     } catch (error) {
       const detail = describe(error);
       setStatus('failed', detail);
@@ -383,18 +494,18 @@
    * Usuwa pojedyncze wiersze w chmurze. Wywoływane tylko wtedy, gdy
    * użytkownik sam coś skasował w aplikacji.
    */
-  async function deleteRows(key, localIds) {
+  async function deleteRows(key, values) {
     if (!isConfigured() || !isSignedIn()) return;
     const table = TABLES[key];
-    const ids = (localIds || []).filter(id => id !== undefined && id !== null);
-    if (!table || !ids.length) return;
+    const column = IDENTITY_COLUMN[key] || 'local_id';
+    const cleaned = (values || []).filter(value => value !== undefined && value !== null && value !== '');
+    if (!table || !cleaned.length) return;
 
     try {
       const accessToken = await getAccessToken();
       if (!accessToken) return;
-      const device = encodeURIComponent(getDeviceId());
-      for (const id of ids) {
-        const filter = `device_id=eq.${device}&local_id=eq.${encodeURIComponent(String(id))}`;
+      for (const value of cleaned) {
+        const filter = `${column}=eq.${encodeURIComponent(String(value))}`;
         await request(`${CONFIG.url}/rest/v1/${table}?${filter}`, {
           method: 'DELETE',
           accessToken,
@@ -405,6 +516,33 @@
       // Usuwanie jest pomocnicze: brak sieci nie może psuć pracy aplikacji.
       console.warn('Nie udało się usunąć wierszy w Supabase:', error);
     }
+  }
+
+  /**
+   * Ile wierszy jest w chmurze. Odpowiedź ma stały rozmiar niezależnie od
+   * liczby zamówień - liczba siedzi w nagłówku, a nie w treści.
+   */
+  async function countRows() {
+    if (!isConfigured() || !isSignedIn()) return null;
+    const accessToken = await getAccessToken();
+    if (!accessToken) return null;
+
+    const counts = {};
+    for (const [name, table] of TABLE_LIST) {
+      const response = await fetch(`${CONFIG.url}/rest/v1/${table}?select=local_id&limit=1`, {
+        headers: {
+          apikey: CONFIG.anonKey,
+          Authorization: `Bearer ${accessToken}`,
+          Prefer: 'count=exact'
+        },
+        cache: 'no-store'
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const range = response.headers.get('content-range') || '';
+      const total = range.includes('/') ? Number(range.split('/')[1]) : 0;
+      counts[name] = Number.isFinite(total) ? total : 0;
+    }
+    return counts;
   }
 
   function getStatus() {
@@ -431,6 +569,8 @@
     getStatus,
     notifyChange,
     pushNow,
-    deleteRows
+    countRows,
+    deleteRows,
+    forgetSynced
   };
 })();

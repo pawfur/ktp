@@ -8,6 +8,21 @@
 -- ============================================================================
 
 -- ---------------------------------------------------------------------------
+-- KLUCZE WIERSZY - najważniejsza decyzja w tym pliku
+--
+-- Klucz główny mówi bazie, kiedy dwa wiersze to TEN SAM wiersz. Od tego
+-- zależy, czy powtórna wysyłka nadpisze dane, czy je zdubluje.
+--
+--   zamówienia   -> kluczem jest moment powstania (created_at)
+--   menu, magazyn -> kluczem jest identyfikator pozycji (local_id)
+--
+-- Dzięki temu odtworzenie kopii zapasowej na innym telefonie nadpisuje te
+-- same zamówienia, zamiast dopisywać drugą kopię. Gdyby kluczem był numer
+-- nadawany przez telefon, po odtworzeniu danych liczyłby się od nowa
+-- i w raportach sprzedaż wyszłaby podwójnie.
+-- ---------------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------------
 -- 1. Menu (pozycje i kategorie)
 -- ---------------------------------------------------------------------------
 create table if not exists public.menu_items (
@@ -19,7 +34,7 @@ create table if not exists public.menu_items (
   sort_order  integer     not null default 0,
   user_name   text        not null default '',
   updated_at  timestamptz not null default now(),
-  primary key (device_id, local_id)
+  primary key (local_id)
 );
 
 -- ---------------------------------------------------------------------------
@@ -38,7 +53,7 @@ create table if not exists public.ingredients (
   unit_step           numeric     not null default 0,
   user_name           text        not null default '',
   updated_at          timestamptz not null default now(),
-  primary key (device_id, local_id)
+  primary key (local_id)
 );
 
 -- ---------------------------------------------------------------------------
@@ -53,10 +68,8 @@ create table if not exists public.client_orders (
   items       jsonb       not null default '[]'::jsonb,
   user_name   text        not null default '',
   updated_at  timestamptz not null default now(),
-  primary key (device_id, local_id)
+  primary key (created_at)
 );
-
-create index if not exists client_orders_created_at_idx on public.client_orders (created_at desc);
 
 -- ---------------------------------------------------------------------------
 -- 4. Zamówienia zakupowe składników
@@ -71,10 +84,8 @@ create table if not exists public.purchase_orders (
   items           jsonb       not null default '[]'::jsonb,
   user_name       text        not null default '',
   updated_at      timestamptz not null default now(),
-  primary key (device_id, local_id)
+  primary key (created_at)
 );
-
-create index if not exists purchase_orders_created_at_idx on public.purchase_orders (created_at desc);
 
 -- ---------------------------------------------------------------------------
 -- 4b. Kolumna user_name w tabelach, które powstały wcześniej
@@ -87,6 +98,34 @@ alter table public.menu_items      add column if not exists user_name text not n
 alter table public.ingredients     add column if not exists user_name text not null default '';
 alter table public.client_orders   add column if not exists user_name text not null default '';
 alter table public.purchase_orders add column if not exists user_name text not null default '';
+
+-- ---------------------------------------------------------------------------
+-- 4c. Zmiana kluczy w tabelach, które powstały wcześniej
+--
+-- „create table if not exists” nie zmienia klucza istniejącej tabeli, dlatego
+-- te polecenia są potrzebne przy ponownym uruchomieniu pliku. Można je
+-- uruchamiać wielokrotnie.
+--
+-- Jeżeli któreś polecenie zwróci błąd o zduplikowanym kluczu, znaczy to, że
+-- w tabeli są już dwa zamówienia o identycznym czasie powstania. Wtedy napisz
+-- o tym - nie usuwaj danych, jest na to sposób.
+-- ---------------------------------------------------------------------------
+alter table public.menu_items      drop constraint if exists menu_items_pkey;
+alter table public.menu_items      add  constraint menu_items_pkey primary key (local_id);
+
+alter table public.ingredients     drop constraint if exists ingredients_pkey;
+alter table public.ingredients     add  constraint ingredients_pkey primary key (local_id);
+
+alter table public.client_orders   drop constraint if exists client_orders_pkey;
+alter table public.client_orders   add  constraint client_orders_pkey primary key (created_at);
+
+alter table public.purchase_orders drop constraint if exists purchase_orders_pkey;
+alter table public.purchase_orders add  constraint purchase_orders_pkey primary key (created_at);
+
+-- Klucz główny zakłada własny indeks, więc osobny indeks na created_at
+-- byłby tylko zbędnym obciążeniem przy zapisie.
+drop index if exists public.client_orders_created_at_idx;
+drop index if exists public.purchase_orders_created_at_idx;
 
 -- ---------------------------------------------------------------------------
 -- 5. Zabezpieczenia (RLS)

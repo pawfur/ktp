@@ -29,6 +29,8 @@ Panel Supabase → Twój projekt → **Settings (⚙) → API**. Skopiuj do `con
 
 Panel Supabase → **SQL Editor → New query** → wklej całą zawartość `docs/supabase-schema.sql` → **Run**.
 
+Plik można i **trzeba** uruchamiać ponownie po każdej zmianie schematu — jest napisany tak, żeby nie usuwać danych. Sekcja „4c” zmienia klucze tabel, również tych, które już istnieją.
+
 Tworzy cztery tabele i włącza reguły RLS:
 
 | Tabela | Zawartość |
@@ -179,6 +181,56 @@ from public.ingredients
 order by (stock <= min_stock) desc, name;
 ```
 
+### Lista zamówień — jak w aplikacji
+
+Dwa gotowe sposoby. Pierwszy jest wygodniejszy do Excela, drugi wygląda jak karty w aplikacji.
+
+**Wszystkie pozycje, jedna pod drugą:**
+
+```sql
+select
+  co.local_id                                                            as nr,
+  to_char(co.created_at at time zone 'Asia/Jakarta', 'DD.MM.YYYY HH24:MI') as data,
+  co.user_name                                                           as uzytkownik,
+  co.status                                                              as status,
+  item->>'name'                                                          as pozycja,
+  (item->>'qty')::numeric                                                as sztuk,
+  'Rp ' || to_char((item->>'lineTotal')::numeric, 'FM999G999G999')        as wartosc
+from public.client_orders co,
+     jsonb_array_elements(co.items) as item
+order by co.created_at desc, item->>'name';
+```
+
+**Jedno zamówienie w jednym wierszu — najbliżej widoku z aplikacji:**
+
+```sql
+select
+  co.local_id                                                            as nr,
+  to_char(co.created_at at time zone 'Asia/Jakarta', 'DD.MM.YYYY HH24:MI') as data,
+  co.user_name                                                           as uzytkownik,
+  co.status                                                              as status,
+  (
+    select string_agg(
+             (item->>'qty') || '× ' || (item->>'name') || ' — Rp ' ||
+             to_char((item->>'lineTotal')::numeric, 'FM999G999G999'),
+             E'\n' order by t.ordinality
+           )
+    from jsonb_array_elements(co.items) with ordinality as t(item, ordinality)
+  )                                                                      as pozycje,
+  'Rp ' || to_char(co.total, 'FM999G999G999')                            as razem
+from public.client_orders co
+order by co.created_at desc;
+```
+
+Godziny są przeliczane na strefę **Asia/Jakarta**, żeby zgadzały się z zegarem w lokalu — baza przechowuje czas w UTC.
+
+Żeby zawęzić do jednego dnia, dopisz przed `order by`:
+
+```sql
+where (co.created_at at time zone 'Asia/Jakarta')::date
+      = (now() at time zone 'Asia/Jakarta')::date
+```
+
 ### Kiedy dane są puste
 
 Gdy `client_orders` jest pusta, dane jeszcze nie dotarły. W aplikacji na telefonie: **Ustawienia → Chmura (Supabase) → Wyślij teraz**. Komunikat pod przyciskiem powie, czy wysyłka się udała.
@@ -220,6 +272,23 @@ Znaczy, że `docs/supabase-schema.sql` nie został jeszcze uruchomiony w SQL Edi
 
 Uruchomiłeś starszą wersję schematu i brakuje kolumny `user_name`. Uruchom `docs/supabase-schema.sql` jeszcze raz — plik jest napisany tak, żeby można go było bezpiecznie powtarzać.
 
+### „W raportach sprzedaż jest podwójna”
+
+Dwa zamówienia o tej samej treści, ale innym `device_id`. Powstaje tak, gdy dane zostaną odtworzone z kopii na nowym telefonie, a kluczem tabeli jest numer nadawany przez urządzenie.
+
+Naprawa: uruchom `docs/supabase-schema.sql` jeszcze raz — sekcja „4c” przestawia klucz zamówień na `created_at`. Po tej zmianie duplikaty trzeba usunąć ręcznie:
+
+```sql
+-- Pokaż duplikaty (po dacie powstania)
+select created_at, count(*)
+from public.client_orders
+group by created_at
+having count(*) > 1;
+
+-- Zostaw jeden wiersz na datę
+-- Najpierw sprawdź wynik, dopiero potem usuwaj.
+```
+
 ### „Brak dostępu — zaloguj się ponownie”
 
 Sesja wygasła albo hasło konta zostało zmienione. Zaloguj się jeszcze raz w Ustawieniach.
@@ -227,8 +296,28 @@ Sesja wygasła albo hasło konta zostało zmienione. Zaloguj się jeszcze raz w 
 ## Jak to działa w aplikacji
 
 - Wysyłka jest **jednokierunkowa**: telefon wysyła, Supabase tylko przyjmuje. Nic nie nadpisze ani nie usunie danych na telefonie — to ważne, bo aplikacja jest w codziennym użyciu w lokalu.
+- **Wysyłane są tylko zmienione wiersze.** Każdy wiersz ma w telefonie zapisany „odcisk” ostatniej wysłanej wersji, więc powtórna wysyłka bez zmian **nie wykonuje żadnego zapytania do sieci**. Wysłanie zmienionej ceny w menu to jedno żądanie zamiast wysyłania całego menu.
+- **Po zalogowaniu aplikacja wysyła wszystko od razu**, bez czekania na kolejną zmianę. Dlatego nie trzeba pamiętać o przycisku „Wyślij teraz”.
+- Pod przyciskiem widać potwierdzenie z chmury: **„W chmurze: menu 12, składniki 6, zamówienia 3, zakupy 1”**. To liczba wierszy faktycznie widocznych w Supabase, a nie to, ile aplikacja próbowała wysłać. Odpowiedź ma stały rozmiar — liczba siedzi w nagłówku, więc tysiąc zamówień jej nie powiększa.
 - Po każdej zmianie aplikacja czeka 2 sekundy i wysyła w tle. Zapis lokalny i interfejs zawsze mają pierwszeństwo.
+- Puste tabele są pomijane — jeśli nie ma jeszcze żadnych zamówień, aplikacja nie wysyła pustego zapytania.
 - Bez internetu wysyłka jest **pomijana** — to nie jest nieudana próba. Po **trzech** nieudanych próbach aplikacja odpuszcza i czeka na następną zmianę, żeby nie marnować baterii.
 - Gdy usuniesz zamówienie, składnik albo zamówienie zakupowe, odpowiedni wiersz znika też w chmurze.
 - Brak logowania lub brak danych w `config/supabase-config.js` = **zero połączeń z siecią**, aplikacja działa wyłącznie lokalnie.
-- Aplikacja wysyła dane przy każdej zmianie, więc działa też jako kopia zapasowa poza telefonem. Nie zastępuje jednak eksportu do pliku — to nadal najpewniejszy sposób przeniesienia danych.
+
+### Dlaczego powtórna wysyłka nie tworzy duplikatów
+
+O tym, czy dwa wiersze to ten sam wiersz, decyduje **klucz główny** tabeli, ustawiony w `docs/supabase-schema.sql`:
+
+| Tabela | Klucz | Dlaczego tak |
+|---|---|---|
+| `client_orders`, `purchase_orders` | `created_at` | Zamówienie ma własną tożsamość: moment powstania. Data jedzie w kopii zapasowej, więc odtworzenie danych na innym telefonie **nadpisze** to samo zamówienie, zamiast dopisać drugą kopię. |
+| `menu_items`, `ingredients` | `local_id` | To stan, a nie zdarzenie — jeden wiersz na pozycję menu i na składnik. |
+
+Gdyby kluczem był numer nadawany przez telefon, po skasowaniu danych i odtworzeniu z kopii numeracja ruszyłaby od nowa i **sprzedaż w raportach wyszłaby podwójnie**. Właśnie dlatego kluczem jest data.
+
+`device_id` i `user_name` zostały jako zwykłe kolumny opisowe — do raportów „z którego telefonu”.
+
+### Czego wysyłka nie robi
+
+Nie kasuje historii poza jawnym usunięciem w aplikacji (wtedy leci `DELETE`). Nie przechowuje też historii zmian: stan magazynu jest nadpisywany, więc nie zobaczysz, ile bułek było wczoraj. Zamówienia są bezpieczne, bo po utworzeniu się nie zmieniają.

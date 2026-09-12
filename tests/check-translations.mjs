@@ -201,7 +201,10 @@ function checkHtmlKeys(html, translations) {
 
 function checkKeyUsage(appSource, html, translations) {
   const fromHtml = [...html.matchAll(/data-i18n="([^"]+)"/g)].map(match => match[1]);
-  const fromTranslate = [...appSource.matchAll(/translate\(\s*'([A-Za-z_][A-Za-z0-9_]*)'/g)].map(match => match[1]);
+  // Bierzemy wszystkie literały z pierwszego argumentu, żeby złapać także
+  // klucze wybierane warunkiem, np. translate(warunek ? 'a' : 'b').
+  const fromTranslate = [...appSource.matchAll(/translate\(\s*([^)]*)/g)]
+    .flatMap(match => [...match[1].matchAll(/'([A-Za-z_][A-Za-z0-9_]*)'/g)].map(inner => inner[1]));
   // Klucze przekazywane jako argumenty, np. getCounterLabel(count, 'item', 'items').
   const fromHelpers = [...appSource.matchAll(/getCounterLabel\(([^)]*)\)/g)]
     .flatMap(match => [...match[1].matchAll(/'([A-Za-z_][A-Za-z0-9_]*)'/g)].map(inner => inner[1]));

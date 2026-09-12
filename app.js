@@ -62,6 +62,8 @@ const defaultState = window.KedaiConfig.defaultState;
           syncPushInProgress: 'Wysyłanie danych do chmury...',
           syncPushDone: 'Dane zostały wysłane do chmury.',
           syncPushFailed: 'Nie udało się wysłać danych: {detail}',
+          syncNothingToSend: 'Wszystko jest już w chmurze. Nie było nic nowego do wysłania.',
+          syncCloudRows: 'W chmurze: menu {menu}, składniki {ingredients}, zamówienia {orders}, zakupy {purchases}',
           storagePersistent: 'Pamięć trwała: włączona',
           storageNotPersistent: 'Pamięć trwała: wyłączona (system może usunąć dane przy braku miejsca)',
           storageLabel: 'Wykorzystanie pamięci',
@@ -222,6 +224,8 @@ const defaultState = window.KedaiConfig.defaultState;
           syncPushInProgress: 'Sending data to the cloud...',
           syncPushDone: 'Data has been sent to the cloud.',
           syncPushFailed: 'Could not send data: {detail}',
+          syncNothingToSend: 'Everything is already in the cloud. There was nothing new to send.',
+          syncCloudRows: 'In the cloud: menu {menu}, ingredients {ingredients}, orders {orders}, purchases {purchases}',
           storagePersistent: 'Persistent storage: enabled',
           storageNotPersistent: 'Persistent storage: disabled (the system may clear data when space is low)',
           storageLabel: 'Storage usage',
@@ -382,6 +386,8 @@ const defaultState = window.KedaiConfig.defaultState;
           syncPushInProgress: 'Mengirim data ke cloud...',
           syncPushDone: 'Data telah dikirim ke cloud.',
           syncPushFailed: 'Gagal mengirim data: {detail}',
+          syncNothingToSend: 'Semua sudah ada di cloud. Tidak ada yang baru untuk dikirim.',
+          syncCloudRows: 'Di cloud: menu {menu}, bahan {ingredients}, pesanan {orders}, pembelian {purchases}',
           storagePersistent: 'Penyimpanan permanen: aktif',
           storageNotPersistent: 'Penyimpanan permanen: nonaktif (sistem dapat menghapus data saat ruang menipis)',
           storageLabel: 'Penggunaan penyimpanan',
@@ -552,6 +558,7 @@ const defaultState = window.KedaiConfig.defaultState;
       const syncPushBtn = document.getElementById('syncPushBtn');
       const syncSignOutBtn = document.getElementById('syncSignOutBtn');
       let syncErrorNotice = '';
+      let cloudCounts = null;
       const headerDateLabel = document.getElementById('headerDate');
       const headerWeekdayLabel = document.getElementById('headerWeekday');
 
@@ -1626,7 +1633,7 @@ const defaultState = window.KedaiConfig.defaultState;
         showConfirmDialog(translate('confirmDeleteOrder', { date: formatDateTime(order.createdAt) }), () => {
           state.activeOrders = state.activeOrders.filter(item => !sameOrderId(item.id, orderId));
           window.KedaiDatabase.deleteOrder(order.id);
-          window.KedaiSync?.deleteRows('clientOrders', [order.id]);
+          window.KedaiSync?.deleteRows('clientOrders', [order.date || order.createdAt]);
           saveState();
           renderAll();
           showToast(translate('orderDeleted'), 'success');
@@ -1827,7 +1834,7 @@ const defaultState = window.KedaiConfig.defaultState;
         showConfirmDialog(translate('confirmDeletePurchase'), () => {
           state.purchaseOrders = state.purchaseOrders.filter(item => String(item.id) !== String(orderId));
           window.KedaiDatabase.deletePurchaseOrder(order.id);
-          window.KedaiSync?.deleteRows('purchaseOrders', [order.id]);
+          window.KedaiSync?.deleteRows('purchaseOrders', [order.date || order.createdAt]);
           saveState();
           renderPurchaseOrders();
           showToast(translate('purchaseDeleted'), 'success');
@@ -2049,7 +2056,16 @@ const defaultState = window.KedaiConfig.defaultState;
           return;
         }
 
-        syncStatusLabel.textContent = translate('syncSignedInAs', { email: status.email });
+        const parts = [translate('syncSignedInAs', { email: status.email })];
+        if (cloudCounts) {
+          parts.push(translate('syncCloudRows', {
+            menu: cloudCounts.menu,
+            ingredients: cloudCounts.ingredients,
+            orders: cloudCounts.clientOrders,
+            purchases: cloudCounts.purchaseOrders
+          }));
+        }
+        syncStatusLabel.textContent = parts.join(' · ');
       }
 
       function saveSyncUserName() {
@@ -2098,6 +2114,9 @@ const defaultState = window.KedaiConfig.defaultState;
           const session = await sync.signIn(email, password);
           syncPasswordInput.value = '';
           showToast(translate('syncSignedInAs', { email: session.email }), 'success');
+          // Po zalogowaniu wysyłamy od razu wszystko, żeby dane nie czekały
+          // na przypadkową zmianę w aplikacji.
+          await sendToCloud({ button: false });
         } catch (error) {
           syncErrorNotice = syncAuthMessage(error);
           showToast(syncErrorNotice, 'error');
@@ -2108,30 +2127,60 @@ const defaultState = window.KedaiConfig.defaultState;
         }
       }
 
-      async function pushToCloud() {
+      /** Odczytuje z chmury liczbę wierszy i pokazuje ją w Ustawieniach. */
+      async function refreshCloudCounts() {
         const sync = window.KedaiSync;
-        if (!sync?.isConfigured()) return;
-
-        syncPushBtn.disabled = true;
-        syncPushBtn.textContent = translate('syncPushInProgress');
-        let result;
+        if (!sync?.countRows) return;
         try {
-          result = await sync.pushNow(state);
-        } finally {
-          syncPushBtn.disabled = false;
-          syncPushBtn.textContent = translate('syncPushNow');
-        }
-
-        if (result?.ok) {
-          showToast(translate('syncPushDone'), 'success');
-        } else {
-          showToast(translate('syncPushFailed', { detail: syncDetailText(result?.detail) }), 'error');
+          cloudCounts = await sync.countRows();
+        } catch (error) {
+          console.warn('Nie udało się policzyć wierszy w chmurze:', error);
+          cloudCounts = null;
         }
         renderSyncPanel();
       }
 
+      async function sendToCloud(options = {}) {
+        const sync = window.KedaiSync;
+        if (!sync?.isConfigured()) return null;
+        const { button = true } = options;
+
+        if (button) {
+          syncPushBtn.disabled = true;
+          syncPushBtn.textContent = translate('syncPushInProgress');
+        }
+
+        let result;
+        try {
+          result = await sync.pushNow(state);
+        } finally {
+          if (button) {
+            syncPushBtn.disabled = false;
+            syncPushBtn.textContent = translate('syncPushNow');
+          }
+        }
+
+        if (result?.ok) {
+          if (button) {
+            showToast(translate(result.sent === 0 ? 'syncNothingToSend' : 'syncPushDone'), 'success');
+          }
+          await refreshCloudCounts();
+        } else if (button) {
+          showToast(translate('syncPushFailed', { detail: syncDetailText(result?.detail) }), 'error');
+        }
+
+        renderSyncPanel();
+        return result;
+      }
+
+      function pushToCloud() {
+        return sendToCloud({ button: true });
+      }
+
       function signOutFromCloud() {
         window.KedaiSync?.signOut();
+        syncErrorNotice = '';
+        cloudCounts = null;
         renderSyncPanel();
       }
 

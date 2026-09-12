@@ -218,10 +218,14 @@ Aplikacja może wysyłać dane do Supabase, żeby raporty ze sprzedaży i zamów
 
 Każdy wiersz niesie dwie kolumny opisujące pochodzenie:
 
-- `device_id` — techniczny identyfikator telefonu. Chroni przed nadpisaniem dawnych zamówień po skasowaniu danych aplikacji, gdy lokalne identyfikatory liczą się od nowa.
+- `device_id` — techniczny identyfikator telefonu. Służy tylko do raportów, nie jest kluczem wiersza.
 - `user_name` — nazwa użytkownika wpisana w Ustawieniach. To ona trafia do raportów.
 
+O tym, czy dwa wiersze to ten sam wiersz, decyduje klucz główny: w zamówieniach jest to `created_at` (moment powstania), a w menu i magazynie `local_id`. Dzięki temu odtworzenie kopii zapasowej na innym telefonie nadpisuje te same zamówienia, a nie dopisuje drugą kopię. Gdyby kluczem był numer nadawany przez telefon, po odtworzeniu danych numeracja ruszyłaby od nowa i sprzedaż w raportach wyszłaby podwójnie.
+
 Zapis do chmury jest wykonywany przez `POST` z nagłówkiem `Prefer: resolution=merge-duplicates`, czyli **nadpisuje wiersz o tym samym kluczu**, a nie tworzy duplikatów. Usunięcie zamówienia, składnika albo zamówienia zakupowego usuwa też odpowiedni wiersz w chmurze.
+
+Wysyłka jest **przyrostowa**: każdy wiersz ma w telefonie zapisany odcisk ostatniej wysłanej wersji (klucze `kedai_pos_synced_*`), więc wysyłane są wyłącznie wiersze nowe albo zmienione. Druga wysyłka bez zmian nie wykonuje żadnego zapytania do sieci, a tysiąc zamówień w historii nie oznacza wysyłania tysiąca wierszy. Odcisk zawiera też nazwę użytkownika, więc zmiana nazwy powoduje jednorazowe wysłanie wszystkiego, żeby podpisy się zgadzały.
 
 Zasady bezpieczeństwa: dostęp mają wyłącznie zalogowani użytkownicy (jedno wspólne konto lokalu), tabele mają włączone RLS, a w aplikacji jest tylko klucz publiczny. Wysyłka nie startuje, gdy brak konfiguracji lub gdy użytkownik nie jest zalogowany — wtedy aplikacja nie wykonuje żadnego zapytania do sieci.
 
