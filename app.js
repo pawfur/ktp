@@ -2236,6 +2236,9 @@ const defaultState = window.KedaiConfig.defaultState;
           state = await window.KedaiDatabase.importState(defaultState, payload);
           renderAll();
           renderStorageInfo();
+          // Import zapisuje dane własną drogą (poza saveState), więc wysyłkę
+          // do chmury trzeba uruchomić tutaj ręcznie.
+          window.KedaiSync?.notifyChange(state);
           showToast(translate('importDone'), 'success');
         } catch (error) {
           console.error('Błąd importu danych:', error);
