@@ -15,6 +15,8 @@ Kedai/
 ├── manifest.json
 ├── service-worker.js
 ├── version.json
+├── logoKTP.png
+├── push-github.ps1
 ├── config/
 │   ├── default-state.js
 │   └── supabase-config.js
@@ -23,6 +25,8 @@ Kedai/
 │   ├── icon.svg
 │   ├── sync.js
 │   └── ui.js
+├── tools/
+│   └── push-release.mjs
 ├── tests/
 │   └── check-translations.mjs
 └── docs/
@@ -103,6 +107,10 @@ Wysyła dane do Supabase. Odsłania `window.KedaiSync` i spełnia cztery warunki
 ### `tests/check-translations.mjs`
 
 Sprawdza spójność tłumaczeń PL/EN/ID bez uruchamiania przeglądarki: kompletność kluczy, symbole zastępcze, duplikaty oraz użycie kluczy w HTML i w kodzie. Uruchamianie i szczegóły opisuje [TESTS.md](TESTS.md).
+
+### `tools/push-release.mjs` i `push-github.ps1`
+
+Skrypt wydania. `push-release.mjs` (Node) wykonuje całą procedurę publikacji: numer wersji z zegara, podbicie `CACHE_NAME`, testy, commit i push. `push-github.ps1` to cienka nakładka dla Windows – przekazuje argumenty i nie zamyka okna przy uruchomieniu dwuklikiem. Opis w rozdziale 9.
 
 ## 4. Menu, orientacja i magazyn
 
@@ -200,6 +208,8 @@ Po każdej publikacji należy:
 3. zwiększyć `CACHE_NAME` w `service-worker.js`,
 4. wykonać commit i push na GitHub.
 
+Wszystkie te kroki (i uruchomienie testów) wykonuje za Ciebie skrypt wydania z rozdziału 9.
+
 Użytkownik zobaczy nową wersję dopiero po kliknięciu **Aktualizuj aplikację** w Ustawieniach.
 
 ## 8. Chmura (Supabase)
@@ -217,7 +227,51 @@ Zasady bezpieczeństwa: dostęp mają wyłącznie zalogowani użytkownicy (jedno
 
 ## 9. Publikacja
 
-Przed publikacją warto uruchomić sprawdzanie tłumaczeń:
+Wydanie nowej wersji robi jeden skrypt. Wystarczy w katalogu projektu:
+
+```powershell
+.\push-github.ps1 -m "Krótki opis zmiany"
+```
+
+albo bezpośrednio przez Node:
+
+```powershell
+node tools/push-release.mjs -m "Krótki opis zmiany"
+```
+
+Skrypt po kolei:
+
+1. sprawdza, że jesteś na gałęzi `main` i nie masz zaległości z origina,
+2. wylicza numer wersji z bieżącego czasu lokalnego (`YY.MM.DD.hhmm`),
+3. wpisuje go do `config/default-state.js` i `version.json`,
+4. podbija `CACHE_NAME` w `service-worker.js`,
+5. uruchamia wszystkie testy `tests/check-*.mjs`,
+6. pokazuje listę plików, które trafią do commita,
+7. robi commit i `git push origin main`,
+8. czeka, aż GitHub Pages opublikuje nowy `version.json`.
+
+Jeżeli test nie przejdzie, skrypt **przywraca poprzedni numer wersji**, więc nieudane wydanie nie zostawia zmian w plikach.
+
+Przydatne opcje:
+
+| Opcja | Znaczenie |
+| --- | --- |
+| `--dry-run` | pokazuje plan i nic nie zmienia |
+| `-y` | pomija pytanie „Wysłać na GitHub?” |
+| `-v 26.09.12.0330` | numer wersji podany ręcznie |
+| `--no-test` | pomija testy |
+| `--no-push` | robi tylko commit lokalnie |
+| `--no-verify` | nie czeka na publikację GitHub Pages |
+| `-h` | pomoc |
+
+Uwagi:
+
+- Kopie zapasowe danych (`kedai-pos-backup-*.json`) są **celowo pomijane** — repozytorium jest publiczne, a pliki zawierają prawdziwe zamówienia.
+- Uruchomienie bez `-m` zapyta o opis zmiany, a przed wysłaniem poprosi o potwierdzenie. Do treści commita dołączany jest automatycznie numer wersji i `CACHE_NAME`.
+- Numer wersji musi być większy od poprzedniego. Przy dwóch wydaniach w tej samej minucie skrypt poprosi o odczekanie minuty albo o numer podany przez `-v`.
+- Nie używaj `git add -A` ręcznie — łatwo wtedy wysłać kopię zapasową danych na publiczne repozytorium.
+
+Sprawdzenie samych tłumaczeń (bez publikacji):
 
 ```powershell
 node tests/check-translations.mjs
