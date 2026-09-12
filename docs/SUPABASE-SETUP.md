@@ -139,6 +139,50 @@ where created_at > now() - interval '7 days'
 order by created_at desc;
 ```
 
+## Gdzie oglądać dane
+
+### Table Editor — najprościej, bez pisania zapytań
+
+Supabase → **Table Editor** → wybierz tabelę z listy po lewej. Widzisz wiersze jak w arkuszu kalkulacyjnym:
+
+| Tabela | Co pokazuje |
+|---|---|
+| `client_orders` | zamówienia klientów — od tego zacznij |
+| `purchase_orders` | zamówienia zakupowe składników |
+| `menu_items` | menu wraz z kategoriami |
+| `ingredients` | magazyn wraz z aktualnym stanem |
+
+Kolumna `user_name` mówi, z którego telefonu przyszły dane, a `device_id` odróżnia telefony od siebie.
+
+W Table Editor możesz sortować po nagłówku kolumny, filtrować wiersze, a przyciskiem pobierania zapisać widok do pliku **CSV**, który otworzysz w Excelu lub Arkuszach Google.
+
+Panel Supabase pokazuje wszystkie wiersze, bo działa z pominięciem reguł RLS. Dlatego widzisz w nim dane, których nie widzi klucz publiczny używany przez aplikację — i tak ma być.
+
+### SQL Editor — do raportów i podsumowań
+
+**SQL Editor → New query**, wklej zapytanie i kliknij **Run**. Przycisk **Save** zapisuje zapytanie na liście, żeby nie wklejać go ponownie.
+
+Dwa dodatkowe zapytania na start:
+
+```sql
+-- Zamówienia z dzisiaj
+select created_at, user_name, total
+from public.client_orders
+where created_at::date = current_date
+order by created_at desc;
+```
+
+```sql
+-- Stan magazynu, braki na początku
+select name, stock, unit, min_stock, target_stock
+from public.ingredients
+order by (stock <= min_stock) desc, name;
+```
+
+### Kiedy dane są puste
+
+Gdy `client_orders` jest pusta, dane jeszcze nie dotarły. W aplikacji na telefonie: **Ustawienia → Chmura (Supabase) → Wyślij teraz**. Komunikat pod przyciskiem powie, czy wysyłka się udała.
+
 ## Najczęstsze problemy
 
 Aplikacja pokazuje dokładny powód pod przyciskiem logowania (na czerwono) i w krótkim komunikacie na dole ekranu.
