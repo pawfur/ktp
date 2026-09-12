@@ -40,6 +40,8 @@ Kedai/
 
 Zawiera strukturę interfejsu: nagłówek, zakładki, formularz menu, obsługę klienta, zamówienia, archiwum, ustawienia i dolną nawigację. Ładuje pozostałe pliki w ustalonej kolejności.
 
+Górny pasek (`.app-header`) zawiera trzy elementy: logo `logoKTP.png` po lewej (w białym kaflu, przycięte do znaku), nazwę aktualnej zakładki na środku oraz datę z nazwą dnia tygodnia po prawej. Nazwy zakładek w pasku to wszystkie warianty językowo w `<h1 class="app-title">` – widoczny jest tylko ten z klasą `.tab-title.active`, ustawianą przy zmianie zakładki. Dlatego panele nie mają już własnych nagłówków z nazwą zakładki (odsyłacze `data-i18n` zostały w pasku, dzięki czemu klucze tłumaczeń nadal są używane).
+
 ### `styles.css`
 
 Zawiera własne style aplikacji, między innymi wygląd kart, nawigacji, przycisków, responsywność i `touch-action: manipulation`, które ogranicza przypadkowe podwójne powiększenie na telefonie.
@@ -59,7 +61,8 @@ Przykład: `26.09.09.2138` oznacza rok 2026, 9 września, godzinę 21:38.
 Jest głównym kontrolerem aplikacji. Odpowiada za:
 
 - tłumaczenia PL/EN/ID,
-- przełączanie zakładek,
+- przełączanie zakładek (razem z nazwą zakładki w górnym pasku),
+- datę i nazwę dnia tygodnia w górnym pasku (`renderHeaderDate`, odświeżana też po północy),
 - renderowanie menu, obsługi, zamówień i archiwum,
 - dodawanie, edycję, usuwanie i porządkowanie menu,
 - tworzenie i edycję zamówień,
@@ -79,7 +82,7 @@ Obsługuje mobilne okna potwierdzeń przed usunięciem, anulowaniem i innymi ope
 
 ### `manifest.json`
 
-Opisuje aplikację PWA: nazwę, ikonę, zakres, kolor i tryb `standalone`, dzięki któremu aplikacja uruchamia się bez paska adresu po dodaniu do ekranu głównego.
+Opisuje aplikację PWA: nazwę, ikonę, zakres, kolor i tryb `standalone`, dzięki któremu aplikacja uruchamia się bez paska adresu po dodaniu do ekranu głównego. Ikona to `logoKTP.png` (ten sam plik co logo w górnym pasku).
 
 ### `service-worker.js`
 

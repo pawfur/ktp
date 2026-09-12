@@ -524,6 +524,8 @@ const defaultState = window.KedaiConfig.defaultState;
       const syncSignInBtn = document.getElementById('syncSignInBtn');
       const syncPushBtn = document.getElementById('syncPushBtn');
       const syncSignOutBtn = document.getElementById('syncSignOutBtn');
+      const headerDateLabel = document.getElementById('headerDate');
+      const headerWeekdayLabel = document.getElementById('headerWeekday');
 
       function translate(key, replacements = {}) {
         const lang = state.language || 'pl';
@@ -555,6 +557,38 @@ const defaultState = window.KedaiConfig.defaultState;
         return Number.isInteger(number) ? String(number) : number.toFixed(2);
       }
 
+      function getLocale() {
+        return state.language === 'en' ? 'en-US' : state.language === 'id' ? 'id-ID' : 'pl-PL';
+      }
+
+      /**
+       * Data i dzień tygodnia w prawym górnym rogu paska. Odświeża się też po
+       * północy, bez przeładowania aplikacji.
+       */
+      function renderHeaderDate() {
+        const locale = getLocale();
+        const now = new Date();
+
+        if (headerDateLabel) {
+          headerDateLabel.textContent = new Intl.DateTimeFormat(locale, {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          }).format(now);
+        }
+
+        if (headerWeekdayLabel) {
+          const weekday = new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(now);
+          headerWeekdayLabel.textContent = weekday.charAt(0).toLocaleUpperCase(locale) + weekday.slice(1);
+        }
+      }
+
+      function renderTabTitle() {
+        document.querySelectorAll('.tab-title').forEach(title => {
+          title.classList.toggle('active', title.dataset.titleFor === activeTab);
+        });
+      }
+
       function setLanguage(lang) {
         state.language = lang;
         window.KedaiDatabase.saveLanguage(lang);
@@ -576,6 +610,8 @@ const defaultState = window.KedaiConfig.defaultState;
         if (languageSelect) {
           languageSelect.value = lang;
         }
+
+        renderHeaderDate();
       }
 
       function showToast(message, type = 'success') {
@@ -622,6 +658,8 @@ const defaultState = window.KedaiConfig.defaultState;
           button.classList.toggle('bg-slate-100', !active);
           button.classList.toggle('text-slate-700', !active);
         });
+
+        renderTabTitle();
       }
 
       function setActiveTab(tab) {
@@ -2111,5 +2149,8 @@ const defaultState = window.KedaiConfig.defaultState;
           showToast(translate('dbOpenFailed'), 'error');
         }
       }
+
+      // Data w górnym pasku odświeża się także po północy, bez przeładowania.
+      setInterval(renderHeaderDate, 60000);
 
       initializeApp();

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kedai-pos-v27';
+const CACHE_NAME = 'kedai-pos-v29';
 const APP_SHELL = [
   './',
   './index.html',
@@ -12,7 +12,7 @@ const APP_SHELL = [
   './modules/sync.js',
   './manifest.json',
   './modules/icon.svg',
-  './logo.jpeg'
+  './logoKTP.png'
 ];
 
 /**

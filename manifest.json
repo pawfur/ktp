@@ -11,9 +11,9 @@
   "lang": "pl",
   "icons": [
     {
-      "src": "logo.jpeg",
-      "sizes": "any",
-      "type": "image/jpeg",
+      "src": "logoKTP.png",
+      "sizes": "500x500",
+      "type": "image/png",
       "purpose": "any"
     }
   ]

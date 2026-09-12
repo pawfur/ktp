@@ -44,13 +44,88 @@ body {
   border-right: 1px solid rgba(148, 163, 184, 0.25);
 }
 
+/* Górny pasek: logo po lewej, tytuł zakładki na środku, data i dzień tygodnia
+   po prawej. Marginesy paska są minimalne, żeby logo było jak największe. */
+.app-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: max(2px, env(safe-area-inset-top)) 8px 2px;
+  --logo-h: 80px;
+}
+
+/* Kafel z logo. Plik logoKTP.png ma przezroczyste marginesy wokół znaku,
+   dlatego obraz jest przeskalowany i przycięty tak, aby znak zajmował
+   prawie całą wysokość paska. */
+.app-logo-box {
+  --logo-s: calc(var(--logo-h) * 2.0125);
+  position: relative;
+  flex: none;
+  width: calc(var(--logo-h) * 1.2);
+  height: var(--logo-h);
+  overflow: hidden;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(120, 53, 15, 0.22);
+}
+
 .app-logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
   display: block;
-  width: min(180px, 58vw);
-  height: 48px;
+  width: var(--logo-s);
+  height: var(--logo-s);
+  max-width: none;
   object-fit: contain;
-  object-position: left center;
-  border-radius: 10px;
+  transform: translate(calc(-50% + var(--logo-s) * 0.008), calc(-50% - var(--logo-s) * 0.032));
+}
+
+.app-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  max-width: 50%;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(124, 45, 18, 0.35);
+  pointer-events: none;
+}
+
+.tab-title {
+  display: none;
+}
+
+.tab-title.active {
+  display: block;
+}
+
+.app-today {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: auto;
+  line-height: 1.15;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.app-today-date {
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.app-today-weekday {
+  font-size: 0.68rem;
+  font-weight: 600;
+  opacity: 0.92;
 }
 
 .premium-card {
@@ -91,8 +166,44 @@ body {
     border-right: none;
   }
 
+  .app-header {
+    --logo-h: 64px;
+  }
+
+  .app-title {
+    font-size: 0.95rem;
+  }
+
+  .app-today-date {
+    font-size: 0.72rem;
+  }
+
+  .app-today-weekday {
+    font-size: 0.62rem;
+  }
+
   .tab-btn {
     font-size: 10px;
     letter-spacing: 0.01em;
+  }
+}
+
+/* Najwęższe telefony (np. 320 px) – mniejszy pasek, żeby nazwa zakładki
+   nie nachodziła na logo ani na datę. */
+@media (max-width: 340px) {
+  .app-header {
+    --logo-h: 52px;
+  }
+
+  .app-title {
+    font-size: 0.8rem;
+  }
+
+  .app-today-date {
+    font-size: 0.66rem;
+  }
+
+  .app-today-weekday {
+    font-size: 0.58rem;
   }
 }
