@@ -38,7 +38,7 @@ const defaultState = window.KedaiConfig.defaultState;
           cloudTitle: 'Chmura (Supabase)',
           cloudDescription: 'Dane są wysyłane do chmury, aby móc robić raporty z komputera. Dane na telefonie pozostają najważniejsze i nic ich nie nadpisuje.',
           userNameLabel: 'Nazwa użytkownika',
-          userNameHint: 'Ta nazwa podpisuje każdy wysłany wiersz, żeby w raportach było widać, skąd przyszły dane.',
+          userNameHint: 'Ta nazwa podpisuje każdy wysłany wiersz, żeby w raportach było widać, skąd przyszły dane. To nie jest login — login jest niżej.',
           userNameSaved: 'Nazwa użytkownika została zapisana.',
           syncSignIn: 'Zaloguj do chmury',
           syncSignOut: 'Wyloguj',
@@ -48,7 +48,13 @@ const defaultState = window.KedaiConfig.defaultState;
           syncSignedInAs: 'Zalogowano jako {email}',
           syncEnterCredentials: 'Podaj e-mail i hasło.',
           syncSigningIn: 'Logowanie...',
-          syncSignInFailed: 'Nie udało się zalogować: {detail}',
+          syncEmailLabel: 'E-mail konta lokalu',
+          syncPasswordLabel: 'Hasło konta lokalu',
+          syncErrNotConfirmed: 'Konto w Supabase nie zostało potwierdzone. Wejdź w panel Supabase → Authentication → Users, otwórz tego użytkownika i potwierdź jego e-mail. Możesz też usunąć konto i dodać je ponownie, zaznaczając „Auto Confirm User”.',
+          syncErrBadCredentials: 'Błędny e-mail lub hasło. Sprawdź, czy konto zostało utworzone w tym samym projekcie Supabase, którego adres jest w konfiguracji.',
+          syncErrRateLimit: 'Za dużo prób logowania. Odczekaj minutę i spróbuj ponownie.',
+          syncErrOffline: 'Brak połączenia z internetem.',
+          syncErrGeneric: 'Nie udało się zalogować: {detail}',
           syncPushInProgress: 'Wysyłanie danych do chmury...',
           syncPushDone: 'Dane zostały wysłane do chmury.',
           syncPushFailed: 'Nie udało się wysłać danych: {detail}',
@@ -189,7 +195,7 @@ const defaultState = window.KedaiConfig.defaultState;
           cloudTitle: 'Cloud (Supabase)',
           cloudDescription: 'Data is sent to the cloud so you can run reports from a computer. The data on the phone stays the most important and nothing overwrites it.',
           userNameLabel: 'User name',
-          userNameHint: 'This name is attached to every row sent, so reports show where the data came from.',
+          userNameHint: 'This name is attached to every row sent, so reports show where the data came from. This is not a login — the login is below.',
           userNameSaved: 'User name has been saved.',
           syncSignIn: 'Sign in to cloud',
           syncSignOut: 'Sign out',
@@ -199,7 +205,13 @@ const defaultState = window.KedaiConfig.defaultState;
           syncSignedInAs: 'Signed in as {email}',
           syncEnterCredentials: 'Enter e-mail and password.',
           syncSigningIn: 'Signing in...',
-          syncSignInFailed: 'Could not sign in: {detail}',
+          syncEmailLabel: 'Shop account e-mail',
+          syncPasswordLabel: 'Shop account password',
+          syncErrNotConfirmed: 'The Supabase account has not been confirmed. Open the Supabase panel → Authentication → Users, open the user and confirm their e-mail. You can also delete the account and add it again with "Auto Confirm User" ticked.',
+          syncErrBadCredentials: 'Wrong e-mail or password. Check that the account was created in the same Supabase project whose address is in the configuration.',
+          syncErrRateLimit: 'Too many sign-in attempts. Wait a minute and try again.',
+          syncErrOffline: 'No internet connection.',
+          syncErrGeneric: 'Could not sign in: {detail}',
           syncPushInProgress: 'Sending data to the cloud...',
           syncPushDone: 'Data has been sent to the cloud.',
           syncPushFailed: 'Could not send data: {detail}',
@@ -340,7 +352,7 @@ const defaultState = window.KedaiConfig.defaultState;
           cloudTitle: 'Cloud (Supabase)',
           cloudDescription: 'Data dikirim ke cloud agar Anda bisa membuat laporan dari komputer. Data di ponsel tetap yang utama dan tidak ada yang menimpanya.',
           userNameLabel: 'Nama pengguna',
-          userNameHint: 'Nama ini disertakan pada setiap baris yang dikirim, agar laporan menunjukkan asal datanya.',
+          userNameHint: 'Nama ini disertakan pada setiap baris yang dikirim, agar laporan menunjukkan asal datanya. Ini bukan login — login ada di bawah.',
           userNameSaved: 'Nama pengguna telah disimpan.',
           syncSignIn: 'Masuk ke cloud',
           syncSignOut: 'Keluar',
@@ -350,7 +362,13 @@ const defaultState = window.KedaiConfig.defaultState;
           syncSignedInAs: 'Masuk sebagai {email}',
           syncEnterCredentials: 'Masukkan email dan kata sandi.',
           syncSigningIn: 'Sedang masuk...',
-          syncSignInFailed: 'Gagal masuk: {detail}',
+          syncEmailLabel: 'Email akun toko',
+          syncPasswordLabel: 'Kata sandi akun toko',
+          syncErrNotConfirmed: 'Akun Supabase belum dikonfirmasi. Buka panel Supabase → Authentication → Users, buka pengguna tersebut dan konfirmasi emailnya. Anda juga bisa menghapus akun lalu menambahkannya lagi dengan opsi "Auto Confirm User".',
+          syncErrBadCredentials: 'Email atau kata sandi salah. Periksa apakah akun dibuat di proyek Supabase yang sama dengan alamat di konfigurasi.',
+          syncErrRateLimit: 'Terlalu banyak percobaan masuk. Tunggu satu menit lalu coba lagi.',
+          syncErrOffline: 'Tidak ada koneksi internet.',
+          syncErrGeneric: 'Gagal masuk: {detail}',
           syncPushInProgress: 'Mengirim data ke cloud...',
           syncPushDone: 'Data telah dikirim ke cloud.',
           syncPushFailed: 'Gagal mengirim data: {detail}',
@@ -524,6 +542,7 @@ const defaultState = window.KedaiConfig.defaultState;
       const syncSignInBtn = document.getElementById('syncSignInBtn');
       const syncPushBtn = document.getElementById('syncPushBtn');
       const syncSignOutBtn = document.getElementById('syncSignOutBtn');
+      let syncErrorNotice = '';
       const headerDateLabel = document.getElementById('headerDate');
       const headerWeekdayLabel = document.getElementById('headerWeekday');
 
@@ -1999,6 +2018,16 @@ const defaultState = window.KedaiConfig.defaultState;
         syncPushBtn.textContent = translate('syncPushNow');
         syncPushBtn.disabled = false;
 
+        if (status.signedIn) syncErrorNotice = '';
+        const notice = status.signedIn ? '' : syncErrorNotice;
+        syncStatusLabel.classList.toggle('text-rose-600', Boolean(notice));
+        syncStatusLabel.classList.toggle('text-slate-500', !notice);
+
+        if (notice) {
+          syncStatusLabel.textContent = notice;
+          return;
+        }
+
         if (!status.signedIn) {
           syncStatusLabel.textContent = translate('syncNeedsLogin');
           return;
@@ -2016,6 +2045,17 @@ const defaultState = window.KedaiConfig.defaultState;
         syncUserNameInput.value = saved;
         syncUserNameInput.blur();
         showToast(translate('userNameSaved'), 'success');
+      }
+
+      function syncAuthMessage(error) {
+        const code = error?.code || '';
+        if (code === 'email_not_confirmed') return translate('syncErrNotConfirmed');
+        if (code === 'invalid_credentials') return translate('syncErrBadCredentials');
+        if (code === 'over_request_rate_limit' || code === 'too_many_requests' || error?.status === 429) {
+          return translate('syncErrRateLimit');
+        }
+        if (error?.message === 'Failed to fetch') return translate('syncErrOffline');
+        return translate('syncErrGeneric', { detail: error?.message || String(error || '') });
       }
 
       async function signInToCloud() {
@@ -2036,8 +2076,8 @@ const defaultState = window.KedaiConfig.defaultState;
           syncPasswordInput.value = '';
           showToast(translate('syncSignedInAs', { email: session.email }), 'success');
         } catch (error) {
-          const detail = error?.message || String(error);
-          showToast(translate('syncSignInFailed', { detail }), 'error');
+          syncErrorNotice = syncAuthMessage(error);
+          showToast(syncErrorNotice, 'error');
         } finally {
           syncSignInBtn.disabled = false;
           syncSignInBtn.textContent = translate('syncSignIn');

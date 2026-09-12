@@ -106,7 +106,11 @@
     if (!response.ok) {
       const error = new Error(payload?.msg || payload?.message || `HTTP ${response.status}`);
       error.status = response.status;
-      error.code = payload?.code || payload?.error_code || '';
+      // GoTrue zwraca kod błędu w `error_code`, a PostgREST w tekstowym `code`.
+      // Liczbowe `code` to tylko numer HTTP, więc go pomijamy.
+      error.code = payload?.error_code
+        || (typeof payload?.code === 'string' ? payload.code : '')
+        || '';
       throw error;
     }
     return payload;

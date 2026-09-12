@@ -1,0 +1,11 @@
+# Eksporty danych z aplikacji (menu, zamówienia, magazyn).
+# Nie trafiają do repozytorium - to dane z lokalu, nie kod.
+kedai-pos-backup-*.json
+
+# Pliki tymczasowe systemu Windows.
+Thumbs.db
+desktop.ini
+
+# Pliki edytorów.
+.vscode/*
+!.vscode/extensions.json

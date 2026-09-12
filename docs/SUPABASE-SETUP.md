@@ -139,6 +139,47 @@ where created_at > now() - interval '7 days'
 order by created_at desc;
 ```
 
+## Najczęstsze problemy
+
+Aplikacja pokazuje dokładny powód pod przyciskiem logowania (na czerwono) i w krótkim komunikacie na dole ekranu.
+
+### „Konto w Supabase nie zostało potwierdzone”
+
+Najczęstsza przyczyna. Konto istnieje, ale e-mail nie jest potwierdzony, więc Supabase odmawia logowania.
+
+Dzieje się tak, gdy przy dodawaniu użytkownika **nie było zaznaczone „Auto Confirm User”**, albo gdy użytkownik został dodany przez zaproszenie i nigdy nie kliknął linku z maila. Domyślny e-mail Supabase często nie dociera, więc zaproszenie przepada.
+
+Dwa sposoby naprawy — wystarczy jeden:
+
+1. **W panelu** (zalecane): Supabase → **Authentication → Users** → otwórz użytkownika i potwierdź jego e-mail. Jeżeli panel nie daje takiej opcji, usuń użytkownika i dodaj go ponownie, tym razem zaznaczając **Auto Confirm User**.
+2. **Zapytaniem SQL**, w SQL Editor:
+
+   ```sql
+   update auth.users
+   set email_confirmed_at = now()
+   where email = 'twoj.adres@gmail.com';
+   ```
+
+   Podmień adres na e-mail konta. Zapytanie zmienia tylko znacznik potwierdzenia — hasła i uprawnień nie rusza.
+
+### „Błędny e-mail lub hasło”
+
+- Sprawdź, czy konto powstało **w tym samym projekcie**, którego adres jest w `config/supabase-config.js`. Drugi projekt Supabase ma osobne konta i osobne dane.
+- Jeżeli konto dodawałeś przez **Authentication → Users → Add user**, to nie jest konto Supabase z ekranu logowania do panelu — to zwykły użytkownik i jego hasło jest tym, które wpisałeś w formularzu.
+- Login do aplikacji **nie** używa konta GitHub ani e-maila z GitHuba.
+
+### „Brak tabel w Supabase”
+
+Znaczy, że `docs/supabase-schema.sql` nie został jeszcze uruchomiony w SQL Editor. Logowanie może wtedy działać, ale wysyłka danych nie.
+
+### „Brakuje kolumny w tabeli”
+
+Uruchomiłeś starszą wersję schematu i brakuje kolumny `user_name`. Uruchom `docs/supabase-schema.sql` jeszcze raz — plik jest napisany tak, żeby można go było bezpiecznie powtarzać.
+
+### „Brak dostępu — zaloguj się ponownie”
+
+Sesja wygasła albo hasło konta zostało zmienione. Zaloguj się jeszcze raz w Ustawieniach.
+
 ## Jak to działa w aplikacji
 
 - Wysyłka jest **jednokierunkowa**: telefon wysyła, Supabase tylko przyjmuje. Nic nie nadpisze ani nie usunie danych na telefonie — to ważne, bo aplikacja jest w codziennym użyciu w lokalu.
