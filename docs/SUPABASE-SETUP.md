@@ -31,6 +31,33 @@ Panel Supabase → **SQL Editor → New query** → wklej całą zawartość `do
 
 Plik można i **trzeba** uruchamiać ponownie po każdej zmianie schematu — jest napisany tak, żeby nie usuwać danych. Sekcja „4c” zmienia klucze tabel, również tych, które już istnieją.
 
+### Kontrola kluczy
+
+To zapytanie pokazuje, co jest kluczem głównym każdej tabeli. Uruchom je po zmianach w schemacie:
+
+```sql
+select tc.table_name as tabela, kcu.column_name as kolumna_klucza
+from information_schema.table_constraints tc
+join information_schema.key_column_usage kcu
+  on kcu.constraint_name = tc.constraint_name
+ and kcu.table_schema = tc.table_schema
+where tc.constraint_type = 'PRIMARY KEY'
+  and tc.table_schema = 'public'
+  and tc.table_name in ('client_orders', 'purchase_orders', 'menu_items', 'ingredients')
+order by 1, 2;
+```
+
+Poprawny wynik to cztery wiersze:
+
+| tabela | kolumna_klucza |
+|---|---|
+| `client_orders` | `created_at` |
+| `ingredients` | `local_id` |
+| `menu_items` | `local_id` |
+| `purchase_orders` | `created_at` |
+
+Jeżeli przy którejś tabeli widzisz `device_id`, sekcja „4c” nie zadziałała i zamówienia mogą się dublować po odtworzeniu kopii na innym telefonie.
+
 Tworzy cztery tabele i włącza reguły RLS:
 
 | Tabela | Zawartość |
