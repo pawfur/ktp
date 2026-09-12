@@ -281,13 +281,14 @@
 
   /* --------------------------------------------------------------- wysyłka */
 
+  /** Zwraca klucz tłumaczenia albo surowy komunikat z Supabase. */
   function describe(error) {
     if (!error) return '';
-    if (error.code === 'PGRST205') return 'Brak tabel w Supabase - uruchom docs/supabase-schema.sql';
-    if (error.code === 'PGRST204') return 'Brakuje kolumny w tabeli - uruchom ponownie docs/supabase-schema.sql';
-    if (error.status === 401 || error.status === 403) return 'Brak dostępu - zaloguj się ponownie';
-    if (error.message === 'Failed to fetch') return 'Brak połączenia z internetem';
-    return error.message || 'Nieznany błąd';
+    if (error.code === 'PGRST205') return 'syncErrTables';
+    if (error.code === 'PGRST204') return 'syncErrColumn';
+    if (error.status === 401 || error.status === 403) return 'syncErrAccess';
+    if (error.message === 'Failed to fetch') return 'syncErrOffline';
+    return error.message || '';
   }
 
   function setStatus(code, detail = '') {

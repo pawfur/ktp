@@ -23,6 +23,13 @@ const BASE_LANGUAGE = 'pl';
  */
 const ALLOWED_IDENTICAL = new Set(['menu', 'edit']);
 
+/**
+ * Klucze wybierane dynamicznie. Moduł chmury zwraca nazwę klucza
+ * (np. 'syncErrTables'), a app.js tłumaczy ją w syncDetailText().
+ * Statyczna analiza takich odwołań nie widzi, więc są wypisane tutaj.
+ */
+const DYNAMIC_KEYS = new Set(['syncErrTables', 'syncErrColumn', 'syncErrAccess', 'syncErrOffline']);
+
 const colors = {
   reset: '\u001b[0m',
   red: '\u001b[31m',
@@ -201,7 +208,7 @@ function checkKeyUsage(appSource, html, translations) {
 
   const used = new Set([...fromHtml, ...fromTranslate, ...fromHelpers]);
   const allKeys = Object.keys(translations[BASE_LANGUAGE]);
-  const unused = allKeys.filter(key => !used.has(key));
+  const unused = allKeys.filter(key => !used.has(key) && !DYNAMIC_KEYS.has(key));
 
   if (unused.length) {
     warn(`Klucze zdefiniowane, ale nigdzie nieużywane: ${unused.join(', ')}`);

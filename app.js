@@ -54,11 +54,14 @@ const defaultState = window.KedaiConfig.defaultState;
           syncErrBadCredentials: 'Błędny e-mail lub hasło. Sprawdź, czy konto zostało utworzone w tym samym projekcie Supabase, którego adres jest w konfiguracji.',
           syncErrRateLimit: 'Za dużo prób logowania. Odczekaj minutę i spróbuj ponownie.',
           syncErrOffline: 'Brak połączenia z internetem.',
+          syncErrTables: 'Brak tabel w Supabase. Uruchom docs/supabase-schema.sql w SQL Editor.',
+          syncErrColumn: 'Brakuje kolumny w tabeli. Uruchom ponownie docs/supabase-schema.sql w SQL Editor.',
+          syncErrAccess: 'Brak dostępu. Zaloguj się ponownie.',
+          syncProblem: 'Ostatnia wysyłka do chmury nie udała się: {detail}',
           syncErrGeneric: 'Nie udało się zalogować: {detail}',
           syncPushInProgress: 'Wysyłanie danych do chmury...',
           syncPushDone: 'Dane zostały wysłane do chmury.',
           syncPushFailed: 'Nie udało się wysłać danych: {detail}',
-          syncAutoFailed: 'Wysyłka do chmury nie udała się. Kolejna zmiana spróbuje ponownie.',
           storagePersistent: 'Pamięć trwała: włączona',
           storageNotPersistent: 'Pamięć trwała: wyłączona (system może usunąć dane przy braku miejsca)',
           storageLabel: 'Wykorzystanie pamięci',
@@ -211,11 +214,14 @@ const defaultState = window.KedaiConfig.defaultState;
           syncErrBadCredentials: 'Wrong e-mail or password. Check that the account was created in the same Supabase project whose address is in the configuration.',
           syncErrRateLimit: 'Too many sign-in attempts. Wait a minute and try again.',
           syncErrOffline: 'No internet connection.',
+          syncErrTables: 'Tables are missing in Supabase. Run docs/supabase-schema.sql in the SQL Editor.',
+          syncErrColumn: 'A table column is missing. Run docs/supabase-schema.sql again in the SQL Editor.',
+          syncErrAccess: 'Access denied. Sign in again.',
+          syncProblem: 'The last cloud upload failed: {detail}',
           syncErrGeneric: 'Could not sign in: {detail}',
           syncPushInProgress: 'Sending data to the cloud...',
           syncPushDone: 'Data has been sent to the cloud.',
           syncPushFailed: 'Could not send data: {detail}',
-          syncAutoFailed: 'Cloud upload failed. The next change will try again.',
           storagePersistent: 'Persistent storage: enabled',
           storageNotPersistent: 'Persistent storage: disabled (the system may clear data when space is low)',
           storageLabel: 'Storage usage',
@@ -368,11 +374,14 @@ const defaultState = window.KedaiConfig.defaultState;
           syncErrBadCredentials: 'Email atau kata sandi salah. Periksa apakah akun dibuat di proyek Supabase yang sama dengan alamat di konfigurasi.',
           syncErrRateLimit: 'Terlalu banyak percobaan masuk. Tunggu satu menit lalu coba lagi.',
           syncErrOffline: 'Tidak ada koneksi internet.',
+          syncErrTables: 'Tabel tidak ada di Supabase. Jalankan docs/supabase-schema.sql di SQL Editor.',
+          syncErrColumn: 'Kolom tabel tidak ada. Jalankan lagi docs/supabase-schema.sql di SQL Editor.',
+          syncErrAccess: 'Akses ditolak. Masuk kembali.',
+          syncProblem: 'Pengiriman terakhir ke cloud gagal: {detail}',
           syncErrGeneric: 'Gagal masuk: {detail}',
           syncPushInProgress: 'Mengirim data ke cloud...',
           syncPushDone: 'Data telah dikirim ke cloud.',
           syncPushFailed: 'Gagal mengirim data: {detail}',
-          syncAutoFailed: 'Pengiriman ke cloud gagal. Perubahan berikutnya akan mencoba lagi.',
           storagePersistent: 'Penyimpanan permanen: aktif',
           storageNotPersistent: 'Penyimpanan permanen: nonaktif (sistem dapat menghapus data saat ruang menipis)',
           storageLabel: 'Penggunaan penyimpanan',
@@ -2033,9 +2042,14 @@ const defaultState = window.KedaiConfig.defaultState;
           return;
         }
 
-        syncStatusLabel.textContent = status.code === 'failed'
-          ? translate('syncAutoFailed')
-          : translate('syncSignedInAs', { email: status.email });
+        if (status.code === 'failed') {
+          syncStatusLabel.textContent = translate('syncProblem', { detail: syncDetailText(status.detail) });
+          syncStatusLabel.classList.remove('text-slate-500');
+          syncStatusLabel.classList.add('text-rose-600');
+          return;
+        }
+
+        syncStatusLabel.textContent = translate('syncSignedInAs', { email: status.email });
       }
 
       function saveSyncUserName() {
@@ -2056,6 +2070,15 @@ const defaultState = window.KedaiConfig.defaultState;
         }
         if (error?.message === 'Failed to fetch') return translate('syncErrOffline');
         return translate('syncErrGeneric', { detail: error?.message || String(error || '') });
+      }
+
+      /**
+       * Powód niepowodzenia z modułu chmury jest albo kluczem tłumaczenia,
+       * albo surowym komunikatem z Supabase.
+       */
+      function syncDetailText(detail) {
+        if (!detail) return '';
+        return detail.startsWith('syncErr') ? translate(detail) : detail;
       }
 
       async function signInToCloud() {
@@ -2102,7 +2125,7 @@ const defaultState = window.KedaiConfig.defaultState;
         if (result?.ok) {
           showToast(translate('syncPushDone'), 'success');
         } else {
-          showToast(translate('syncPushFailed', { detail: result?.detail || '' }), 'error');
+          showToast(translate('syncPushFailed', { detail: syncDetailText(result?.detail) }), 'error');
         }
         renderSyncPanel();
       }
