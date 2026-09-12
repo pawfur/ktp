@@ -40,7 +40,7 @@ Kedai/
 
 Zawiera strukturę interfejsu: nagłówek, zakładki, formularz menu, obsługę klienta, zamówienia, archiwum, ustawienia i dolną nawigację. Ładuje pozostałe pliki w ustalonej kolejności.
 
-Górny pasek (`.app-header`) zawiera trzy elementy: logo `logoKTP.png` po lewej (w białym kaflu, przycięte do znaku), nazwę aktualnej zakładki na środku oraz datę z nazwą dnia tygodnia po prawej. Nazwy zakładek w pasku to wszystkie warianty językowo w `<h1 class="app-title">` – widoczny jest tylko ten z klasą `.tab-title.active`, ustawianą przy zmianie zakładki. Dlatego panele nie mają już własnych nagłówków z nazwą zakładki (odsyłacze `data-i18n` zostały w pasku, dzięki czemu klucze tłumaczeń nadal są używane).
+Górny pasek (`.app-header`) zawiera trzy elementy: logo `logoKTP.png` po lewej, nazwę aktualnej zakładki na środku oraz datę z nazwą dnia tygodnia po prawej. Logo leży wprost na pomarańczowym pasku (bez białego tła) i jest kadrowane przez `.app-logo-box` z `overflow: hidden` – plik logo ma przezroczyste marginesy wokół znaku, więc obraz jest powiększony (`.app-logo` z `translate(-50%, -50%)`), a nadmiar jest obcinany. Ponieważ plik jest jednokolorowy (brązowy), w CSS jest `filter: brightness(0) invert(1)`, który rozjaśnia znak do bieli – bez tego był niewidoczny na pasku. Nazwy zakładek w pasku to wszystkie warianty językowe w `<h1 class="app-title">` – widoczny jest tylko ten z klasą `.tab-title.active`, ustawianą przy zmianie zakładki. Dlatego panele nie mają już własnych nagłówków z nazwą zakładki (odsyłacze `data-i18n` zostały w pasku, dzięki czemu klucze tłumaczeń nadal są używane).
 
 ### `styles.css`
 

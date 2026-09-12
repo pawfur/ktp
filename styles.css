@@ -58,17 +58,15 @@ body {
 
 /* Kafel z logo. Plik logoKTP.png ma przezroczyste marginesy wokół znaku,
    dlatego obraz jest przeskalowany i przycięty tak, aby znak zajmował
-   prawie całą wysokość paska. */
+   prawie całą wysokość paska. Tło jest przezroczyste – znak leży wprost
+   na pomarańczowym pasku. */
 .app-logo-box {
-  --logo-s: calc(var(--logo-h) * 2.0125);
+  --logo-s: calc(var(--logo-h) * 2.356);
   position: relative;
   flex: none;
   width: calc(var(--logo-h) * 1.2);
   height: var(--logo-h);
   overflow: hidden;
-  border-radius: 12px;
-  background: #ffffff;
-  box-shadow: 0 4px 12px rgba(120, 53, 15, 0.22);
 }
 
 .app-logo {
@@ -80,7 +78,11 @@ body {
   height: var(--logo-s);
   max-width: none;
   object-fit: contain;
-  transform: translate(calc(-50% + var(--logo-s) * 0.008), calc(-50% - var(--logo-s) * 0.032));
+  transform: translate(-50%, -50%);
+  /* Plik logoKTP.png jest jednokolorowy (brązowy). Na pomarańczowym pasku
+     taki kolor jest praktycznie niewidoczny, dlatego znak rozjaśniamy do
+     bieli – zgodnie z białym tytułem i datą. */
+  filter: brightness(0) invert(1);
 }
 
 .app-title {
