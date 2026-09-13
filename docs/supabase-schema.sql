@@ -128,6 +128,27 @@ drop index if exists public.client_orders_created_at_idx;
 drop index if exists public.purchase_orders_created_at_idx;
 
 -- ---------------------------------------------------------------------------
+-- 4d. Miękkie usuwanie - w chmurze nic nie znika
+--
+-- Aplikacja nie wykonuje już żadnych zapytań DELETE. Gdy pozycja jest
+-- usuwana w telefonie, wysyłany jest ten sam wiersz ze znacznikiem
+-- `deleted` = true i datą `deleted_at`. Zamówienia dostają dodatkowo
+-- `status` = 'deleted'.
+--
+-- Raporty powinny więc filtrować:  ... where not deleted
+-- (a jeśli chcesz zobaczyć też usunięte: bez tego warunku).
+-- ---------------------------------------------------------------------------
+alter table public.menu_items      add column if not exists deleted boolean not null default false;
+alter table public.ingredients     add column if not exists deleted boolean not null default false;
+alter table public.client_orders   add column if not exists deleted boolean not null default false;
+alter table public.purchase_orders add column if not exists deleted boolean not null default false;
+
+alter table public.menu_items      add column if not exists deleted_at timestamptz;
+alter table public.ingredients     add column if not exists deleted_at timestamptz;
+alter table public.client_orders   add column if not exists deleted_at timestamptz;
+alter table public.purchase_orders add column if not exists deleted_at timestamptz;
+
+-- ---------------------------------------------------------------------------
 -- 5. Zabezpieczenia (RLS)
 --
 -- Bez tego kroku klucz anon, który jest publicznie widoczny w aplikacji,

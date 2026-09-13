@@ -1,6 +1,6 @@
 # Testy aplikacji Kedai POS
 
-Ten dokument wyjaśnia, jak działa sprawdzanie tłumaczeń i jak je uruchamiać.
+Ten dokument wyjaśnia, jak działa sprawdzanie tłumaczeń i jak je uruchamiać. Opisuje też test modułu wysyłki do chmury (sekcja 10).
 
 ## 1. Po co jest ten test
 
@@ -148,3 +148,23 @@ Plik `tests/check-translations.mjs` jest samodzielnym skryptem Node. Można obok
 - `tests/check-assets.mjs` – sprawdzenie, czy pliki z `APP_SHELL` istnieją.
 
 Każdy taki skrypt może zwracać kod wyjścia `1` przy błędzie, dzięki czemu łatwo uruchomić je wszystkie jedną komendą przed publikacją.
+
+## 10. Test wysyłki do chmury
+
+```powershell
+node tests/check-sync.mjs
+```
+
+Test nie potrzebuje przeglądarki ani internetu: podstawia własną pamięć lokalną i własny `fetch`, a potem sprawdza zachowanie `modules/sync.js`. Najważniejsze kontrole:
+
+| Kontrola | Co chroni |
+|---|---|
+| Wysyłka bez zmian | Brak zbędnych zapytań do Supabase (koszty i bateria) |
+| Brak zapytań `DELETE` | Dane w chmurze nigdy nie znikają - usunięcie to tylko znacznik `deleted` |
+| Znacznik `deleted` w wierszu | Raporty zachowują historię usuniętych zamówień |
+| Izolacja błędnych wierszy | Jeden zły wiersz nie blokuje pozostałych |
+| Wysłany wiersz = zapisany odcisk | Zmiana danych w trakcie wysyłki nie powoduje cichego rozjazdu z chmurą |
+| Zmiana nazwy użytkownika | Wiersze w chmurze są przemianowywane |
+| Licznik zaległości | Użytkownik widzi, że coś czeka na wysłanie |
+
+Jeżeli zmieniasz `modules/sync.js`, uruchom ten test przed publikacją. Skrypt wydania robi to automatycznie i przerwie publikację, gdy kontrola się nie powiedzie.

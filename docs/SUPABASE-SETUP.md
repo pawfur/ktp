@@ -9,12 +9,13 @@ Połączenie Supabase z GitHubem (w panelu Supabase) **nie jest do tego potrzebn
 | # | Co | Kto to robi | Stan |
 |---|---|---|---|
 | 1 | Adres projektu i klucz w `config/supabase-config.js` | Ty | zrobione |
-| 2 | Uruchomienie `docs/supabase-schema.sql` w SQL Editor | Ty | **do zrobienia** |
-| 3 | Utworzenie konta lokalu w Authentication | Ty | **do zrobienia** |
+| 2 | Uruchomienie `docs/supabase-schema.sql` w SQL Editor | Ty | zrobione |
+| 3 | Utworzenie konta lokalu w Authentication | Ty | zrobione |
 | 4 | Kod wysyłający dane (`modules/sync.js`) | ja | zrobione |
 | 5 | Karta „Chmura” w Ustawieniach | ja | zrobione |
+| 6 | Kolumny `deleted` / `deleted_at` (sekcja 4d schematu) | Ty | zrobione |
 
-Zostały dwa kroki.
+Wszystkie kroki są zamknięte. Schemat można uruchamiać ponownie po każdej aktualizacji aplikacji — jest napisany tak, żeby nie usuwał danych.
 
 ## Krok 1 — dane połączenia (zrobione)
 
@@ -345,7 +346,7 @@ Znaczy, że `docs/supabase-schema.sql` nie został jeszcze uruchomiony w SQL Edi
 
 ### „Brakuje kolumny w tabeli”
 
-Uruchomiłeś starszą wersję schematu i brakuje kolumny `user_name`. Uruchom `docs/supabase-schema.sql` jeszcze raz — plik jest napisany tak, żeby można go było bezpiecznie powtarzać.
+Uruchomiłeś starszą wersję schematu i brakuje jakiejś kolumny (np. `user_name`, `deleted` albo `deleted_at`). Uruchom `docs/supabase-schema.sql` jeszcze raz — plik jest napisany tak, żeby można go było bezpiecznie powtarzać.
 
 ### „W raportach sprzedaż jest podwójna”
 
@@ -395,4 +396,10 @@ Gdyby kluczem był numer nadawany przez telefon, po skasowaniu danych i odtworze
 
 ### Czego wysyłka nie robi
 
-Nie kasuje historii poza jawnym usunięciem w aplikacji (wtedy leci `DELETE`). Nie przechowuje też historii zmian: stan magazynu jest nadpisywany, więc nie zobaczysz, ile bułek było wczoraj. Zamówienia są bezpieczne, bo po utworzeniu się nie zmieniają.
+**Nie kasuje historii.** Usunięcie pozycji w aplikacji nie usuwa wiersza z Supabase — wiersz zostaje ze znacznikiem `deleted` = true i datą `deleted_at` (zamówienia dostają dodatkowo `status` = 'deleted'). Dzięki temu w raportach widać też to, co zostało skasowane. W zapytaniach filtruj `where not deleted`, a gdy chcesz zobaczyć usunięte — pomiń ten warunek.
+
+**Nie przechowuje historii zmian.** Stan magazynu jest nadpisywany, więc nie zobaczysz, ile bułek było wczoraj. Zamówienia są bezpieczne, bo po utworzeniu się nie zmieniają.
+
+**Nie gubi zaległości.** Gdy telefon nie ma internetu albo nie jest zalogowany, wiersze czekają w kolejce i wychodzą same przy pierwszej okazji (po odzyskaniu sieci, po powrocie do aplikacji, a także przy jej starcie). Licznik zaległości widać w prawym górnym rogu paska: „N do wysłania”, a na telefonie bez logowania — „N bez chmury”.
+
+**Nie wymusza trzymania wszystkiego na telefonie.** W Ustawieniach → „Dane na telefonie” można ustawić po ilu dniach stare zamówienia mają być usuwane z pamięci telefonu. Kasowane są wyłącznie wiersze już potwierdzone w chmurze i tylko na telefonie.

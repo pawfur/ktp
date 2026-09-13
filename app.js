@@ -64,6 +64,24 @@ const defaultState = window.KedaiConfig.defaultState;
           syncPushFailed: 'Nie udało się wysłać danych: {detail}',
           syncNothingToSend: 'Wszystko jest już w chmurze. Nie było nic nowego do wysłania.',
           syncCloudRows: 'W chmurze: menu {menu}, składniki {ingredients}, zamówienia {orders}, zakupy {purchases}',
+          syncPendingCount: 'Wiersze czekające na wysłanie: {count}',
+          syncPendingNone: 'Wszystko potwierdzone w chmurze',
+          syncLastSuccess: 'Ostatnia udana wysyłka: {time}',
+          syncFailedCount: 'Chmura odrzuciła {count} wierszy: {detail}',
+          syncResendAll: 'Wyślij wszystko od nowa',
+          syncResendConfirm: 'Wysłać ponownie wszystkie dane? Wysyłka jest bezpieczna: nadpisuje te same wiersze i nie tworzy duplikatów.',
+          syncResendDone: 'Wszystkie dane zostały wysłane ponownie.',
+          syncBadgePending: '{count} do wysłania',
+          syncBadgeSignedOut: '{count} bez chmury',
+          syncBadgeFailed: '{count} odrzuconych',
+          syncDeleteNote: 'Usunięcie pozycji nie kasuje jej z chmury - wiersz zostaje ze znacznikiem deleted.',
+          localDataTitle: 'Dane na telefonie',
+          localDataDescription: 'Stare zamówienia można usuwać z telefonu, aby zwolnić miejsce. W chmurze zostają na zawsze i nigdy nie są kasowane.',
+          localRetentionLabel: 'Trzymaj archiwum na telefonie (dni)',
+          localRetentionHint: '0 = nie usuwaj nic. Starsze zamówienia są usuwane tylko z telefonu i tylko wtedy, gdy są już potwierdzone w chmurze.',
+          localRetentionSave: 'Zapisz',
+          localRetentionSaved: 'Ustawienie zostało zapisane.',
+          localRetentionPurged: 'Usunięto z telefonu {count} starych zamówień (w chmurze zostały).',
           storagePersistent: 'Pamięć trwała: włączona',
           storageNotPersistent: 'Pamięć trwała: wyłączona (system może usunąć dane przy braku miejsca)',
           storageLabel: 'Wykorzystanie pamięci',
@@ -226,6 +244,24 @@ const defaultState = window.KedaiConfig.defaultState;
           syncPushFailed: 'Could not send data: {detail}',
           syncNothingToSend: 'Everything is already in the cloud. There was nothing new to send.',
           syncCloudRows: 'In the cloud: menu {menu}, ingredients {ingredients}, orders {orders}, purchases {purchases}',
+          syncPendingCount: 'Rows waiting to be sent: {count}',
+          syncPendingNone: 'Everything confirmed in the cloud',
+          syncLastSuccess: 'Last successful upload: {time}',
+          syncFailedCount: 'The cloud rejected {count} rows: {detail}',
+          syncResendAll: 'Send everything again',
+          syncResendConfirm: 'Send all data again? This is safe: it overwrites the same rows and never creates duplicates.',
+          syncResendDone: 'All data has been sent again.',
+          syncBadgePending: '{count} to send',
+          syncBadgeSignedOut: '{count} not in the cloud',
+          syncBadgeFailed: '{count} rejected',
+          syncDeleteNote: 'Deleting an item does not remove it from the cloud - the row stays with a deleted flag.',
+          localDataTitle: 'Data on the phone',
+          localDataDescription: 'Old orders can be removed from the phone to free up space. In the cloud they stay forever and are never deleted.',
+          localRetentionLabel: 'Keep the archive on the phone (days)',
+          localRetentionHint: '0 = keep everything. Older orders are removed from the phone only, and only when they are already confirmed in the cloud.',
+          localRetentionSave: 'Save',
+          localRetentionSaved: 'The setting has been saved.',
+          localRetentionPurged: 'Removed {count} old orders from the phone (they stay in the cloud).',
           storagePersistent: 'Persistent storage: enabled',
           storageNotPersistent: 'Persistent storage: disabled (the system may clear data when space is low)',
           storageLabel: 'Storage usage',
@@ -388,6 +424,24 @@ const defaultState = window.KedaiConfig.defaultState;
           syncPushFailed: 'Gagal mengirim data: {detail}',
           syncNothingToSend: 'Semua sudah ada di cloud. Tidak ada yang baru untuk dikirim.',
           syncCloudRows: 'Di cloud: menu {menu}, bahan {ingredients}, pesanan {orders}, pembelian {purchases}',
+          syncPendingCount: 'Baris menunggu dikirim: {count}',
+          syncPendingNone: 'Semua sudah terkonfirmasi di cloud',
+          syncLastSuccess: 'Pengiriman berhasil terakhir: {time}',
+          syncFailedCount: 'Cloud menolak {count} baris: {detail}',
+          syncResendAll: 'Kirim ulang semua',
+          syncResendConfirm: 'Kirim ulang semua data? Ini aman: menimpa baris yang sama dan tidak membuat duplikat.',
+          syncResendDone: 'Semua data telah dikirim ulang.',
+          syncBadgePending: '{count} belum terkirim',
+          syncBadgeSignedOut: '{count} belum ke cloud',
+          syncBadgeFailed: '{count} ditolak',
+          syncDeleteNote: 'Menghapus item tidak menghapusnya dari cloud - baris tetap ada dengan tanda deleted.',
+          localDataTitle: 'Data di ponsel',
+          localDataDescription: 'Pesanan lama bisa dihapus dari ponsel untuk menghemat ruang. Di cloud tetap tersimpan selamanya dan tidak pernah dihapus.',
+          localRetentionLabel: 'Simpan arsip di ponsel (hari)',
+          localRetentionHint: '0 = simpan semua. Pesanan lama hanya dihapus dari ponsel, dan hanya jika sudah terkonfirmasi di cloud.',
+          localRetentionSave: 'Simpan',
+          localRetentionSaved: 'Pengaturan telah disimpan.',
+          localRetentionPurged: 'Menghapus {count} pesanan lama dari ponsel (tetap ada di cloud).',
           storagePersistent: 'Penyimpanan permanen: aktif',
           storageNotPersistent: 'Penyimpanan permanen: nonaktif (sistem dapat menghapus data saat ruang menipis)',
           storageLabel: 'Penggunaan penyimpanan',
@@ -557,6 +611,9 @@ const defaultState = window.KedaiConfig.defaultState;
       const syncSignInBtn = document.getElementById('syncSignInBtn');
       const syncPushBtn = document.getElementById('syncPushBtn');
       const syncSignOutBtn = document.getElementById('syncSignOutBtn');
+      const syncResendBtn = document.getElementById('syncResendBtn');
+      const retentionDaysInput = document.getElementById('retentionDays');
+      const saveRetentionBtn = document.getElementById('saveRetentionBtn');
       let syncErrorNotice = '';
       let cloudCounts = null;
       const headerDateLabel = document.getElementById('headerDate');
@@ -578,6 +635,7 @@ const defaultState = window.KedaiConfig.defaultState;
         const result = window.KedaiDatabase.saveState(state);
         // Wysyłka do chmury tylko ustawia licznik czasu - nigdy nie blokuje zapisu.
         window.KedaiSync?.notifyChange(state);
+        updateSyncBadge();
         return result;
       }
 
@@ -1466,6 +1524,7 @@ const defaultState = window.KedaiConfig.defaultState;
         if (!item) return;
 
         showConfirmDialog(translate('confirmDeleteProduct', { name: item.name }), () => {
+          window.KedaiSync?.softDelete('menu', [item]);
           state.menu = state.menu.filter(product => product.id !== productId);
           state.menu = state.menu.map((product, index) => ({ ...product, order: index }));
           saveState();
@@ -1631,9 +1690,11 @@ const defaultState = window.KedaiConfig.defaultState;
         if (!order) return;
 
         showConfirmDialog(translate('confirmDeleteOrder', { date: formatDateTime(order.createdAt) }), () => {
+          // W chmurze wiersz nie znika - dostaje tylko znacznik `deleted`,
+          // żeby historia sprzedaży została w raportach.
+          window.KedaiSync?.softDelete('clientOrders', [order]);
           state.activeOrders = state.activeOrders.filter(item => !sameOrderId(item.id, orderId));
           window.KedaiDatabase.deleteOrder(order.id);
-          window.KedaiSync?.deleteRows('clientOrders', [order.date || order.createdAt]);
           saveState();
           renderAll();
           showToast(translate('orderDeleted'), 'success');
@@ -1720,10 +1781,10 @@ const defaultState = window.KedaiConfig.defaultState;
         if (!ingredient) return;
 
         showConfirmDialog(translate('confirmDeleteIngredient', { name: ingredient.name }), () => {
+          window.KedaiSync?.softDelete('ingredients', [ingredient]);
           state.ingredients = state.ingredients.filter(item => item.id !== ingredientId);
           delete currentPurchaseSelection[ingredientId];
           window.KedaiDatabase.deleteIngredient(ingredientId);
-          window.KedaiSync?.deleteRows('ingredients', [ingredientId]);
           if (editingIngredientId === ingredientId) resetIngredientForm();
           saveState();
           renderAll();
@@ -1832,9 +1893,9 @@ const defaultState = window.KedaiConfig.defaultState;
         if (!order) return;
 
         showConfirmDialog(translate('confirmDeletePurchase'), () => {
+          window.KedaiSync?.softDelete('purchaseOrders', [order]);
           state.purchaseOrders = state.purchaseOrders.filter(item => String(item.id) !== String(orderId));
           window.KedaiDatabase.deletePurchaseOrder(order.id);
-          window.KedaiSync?.deleteRows('purchaseOrders', [order.date || order.createdAt]);
           saveState();
           renderPurchaseOrders();
           showToast(translate('purchaseDeleted'), 'success');
@@ -1995,6 +2056,14 @@ const defaultState = window.KedaiConfig.defaultState;
       syncSignInBtn.addEventListener('click', signInToCloud);
       syncPushBtn.addEventListener('click', pushToCloud);
       syncSignOutBtn.addEventListener('click', signOutFromCloud);
+      syncResendBtn?.addEventListener('click', resendAllToCloud);
+      saveRetentionBtn?.addEventListener('click', saveRetentionSetting);
+      // Moduł chmury melduje każdy ruch (wysyłkę w tle, powstanie zaległości)
+      // i wtedy odświeżamy licznik oraz panel w Ustawieniach.
+      window.addEventListener('kedai-sync-status', () => {
+        updateSyncBadge();
+        renderSyncPanel();
+      });
       menuElementTypeSelect.addEventListener('change', updateMenuFormType);
 
       document.addEventListener('dblclick', event => {
@@ -2031,6 +2100,7 @@ const defaultState = window.KedaiConfig.defaultState;
         syncSignInBtn.classList.toggle('hidden', status.signedIn);
         syncPushBtn.classList.toggle('hidden', !status.signedIn);
         syncSignOutBtn.classList.toggle('hidden', !status.signedIn);
+        syncResendBtn?.classList.toggle('hidden', !status.signedIn);
         syncPushBtn.textContent = translate('syncPushNow');
         syncPushBtn.disabled = false;
 
@@ -2049,14 +2119,26 @@ const defaultState = window.KedaiConfig.defaultState;
           return;
         }
 
-        if (status.code === 'failed') {
-          syncStatusLabel.textContent = translate('syncProblem', { detail: syncDetailText(status.detail) });
+        // Odrzucone wiersze są ważniejsze niż informacja o sukcesie - muszą być
+        // widoczne na czerwono, bo inaczej część danych po cichu nie dojdzie.
+        const problem = status.failed > 0
+          ? translate('syncFailedCount', { count: status.failed, detail: syncDetailText(status.detail) })
+          : (status.code === 'failed' || status.code === 'partial'
+            ? translate('syncProblem', { detail: syncDetailText(status.detail) })
+            : '');
+
+        if (problem) {
+          syncStatusLabel.textContent = problem;
           syncStatusLabel.classList.remove('text-slate-500');
           syncStatusLabel.classList.add('text-rose-600');
           return;
         }
 
         const parts = [translate('syncSignedInAs', { email: status.email })];
+        parts.push(status.pending > 0
+          ? translate('syncPendingCount', { count: status.pending })
+          : translate('syncPendingNone'));
+        if (status.lastOkAt) parts.push(translate('syncLastSuccess', { time: formatDateTime(status.lastOkAt) }));
         if (cloudCounts) {
           parts.push(translate('syncCloudRows', {
             menu: cloudCounts.menu,
@@ -2074,7 +2156,110 @@ const defaultState = window.KedaiConfig.defaultState;
         const saved = sync.setUserName(syncUserNameInput.value);
         syncUserNameInput.value = saved;
         syncUserNameInput.blur();
+        // Nazwa jest częścią odcisku każdego wiersza, więc jej zmiana wymusza
+        // wysłanie danych ponownie - inaczej raporty filtrowałyby po starej
+        // nazwie i część zamówień byłaby niewidoczna.
+        sync.notifyChange(state);
         showToast(translate('userNameSaved'), 'success');
+      }
+
+      /* --------------------------------------------------- dane na telefonie */
+
+      const RETENTION_KEY = 'kedai_pos_local_retention_days';
+
+      /**
+       * Ile dni archiwum trzymamy na telefonie. 0 = nie usuwamy nic.
+       * Chmura nigdy nie jest ruszana - to ustawienie działa wyłącznie lokalnie.
+       */
+      function getRetentionDays() {
+        try {
+          const value = Number(localStorage.getItem(RETENTION_KEY));
+          return Number.isFinite(value) && value > 0 ? Math.min(Math.floor(value), 3650) : 0;
+        } catch (error) {
+          return 0;
+        }
+      }
+
+      function setRetentionDays(days) {
+        try {
+          if (days > 0) localStorage.setItem(RETENTION_KEY, String(days));
+          else localStorage.removeItem(RETENTION_KEY);
+        } catch (error) {
+          console.warn('Nie udało się zapisać ustawienia przechowywania:', error);
+        }
+      }
+
+      /**
+       * Usuwa z telefonu wyłącznie te zamówienia archiwalne, które są już
+       * potwierdzone w chmurze. Do Supabase nie leci żadne zapytanie -
+       * w chmurze te wiersze zostają na zawsze.
+       */
+      function purgeLocalArchive() {
+        const days = getRetentionDays();
+        if (!days) return 0;
+
+        const sync = window.KedaiSync;
+        const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+        const stale = state.archive.filter(order => {
+          const time = new Date(order.date || order.createdAt).getTime();
+          if (!Number.isFinite(time) || time >= cutoff) return false;
+          // Bezpiecznik: nigdy nie usuwamy wiersza, którego chmura nie potwierdziła.
+          return Boolean(sync?.isSent?.('clientOrders', order.date || order.createdAt));
+        });
+        if (!stale.length) return 0;
+
+        const ids = new Set(stale.map(order => order.id));
+        stale.forEach(order => window.KedaiDatabase.deleteOrder(order.id));
+        state.archive = state.archive.filter(order => !ids.has(order.id));
+        saveState();
+        return stale.length;
+      }
+
+      function saveRetentionSetting() {
+        const typed = Number(retentionDaysInput?.value || 0);
+        const days = Number.isFinite(typed) && typed > 0 ? Math.min(Math.floor(typed), 3650) : 0;
+        if (retentionDaysInput) retentionDaysInput.value = String(days);
+        setRetentionDays(days);
+        const removed = purgeLocalArchive();
+        if (removed) {
+          renderAll();
+          showToast(translate('localRetentionPurged', { count: removed }), 'success');
+        } else {
+          showToast(translate('localRetentionSaved'), 'success');
+        }
+      }
+
+      /** Awaryjne „wyślij wszystko od nowa", gdy trzeba naprawić rozbieżność. */
+      function resendAllToCloud() {
+        const sync = window.KedaiSync;
+        if (!sync?.isConfigured() || !sync.isSignedIn()) return;
+
+        showConfirmDialog(translate('syncResendConfirm'), async () => {
+          sync.forgetSynced();
+          updateSyncBadge();
+          const result = await sendToCloud({ button: true });
+          if (result?.ok) showToast(translate('syncResendDone'), 'success');
+        });
+      }
+
+      /** Kropka w pasku u góry: widać, że coś czeka albo zostało odrzucone. */
+      function updateSyncBadge() {
+        const badge = document.getElementById('syncBadge');
+        const sync = window.KedaiSync;
+        if (!badge || !sync?.isConfigured()) return;
+
+        const status = sync.getStatus();
+        const pending = status.pending;
+        const failed = status.failed;
+        if (!pending && !failed) {
+          badge.classList.add('hidden');
+          return;
+        }
+
+        badge.classList.remove('hidden');
+        if (failed) badge.textContent = translate('syncBadgeFailed', { count: failed });
+        else if (!status.signedIn) badge.textContent = translate('syncBadgeSignedOut', { count: pending });
+        else badge.textContent = translate('syncBadgePending', { count: pending });
       }
 
       function syncAuthMessage(error) {
@@ -2162,7 +2347,14 @@ const defaultState = window.KedaiConfig.defaultState;
 
         if (result?.ok) {
           if (button) {
-            showToast(translate(result.sent === 0 ? 'syncNothingToSend' : 'syncPushDone'), 'success');
+            if (result.rejected?.length) {
+              showToast(translate('syncFailedCount', {
+                count: result.rejected.length,
+                detail: syncDetailText(result.rejected[0].detail)
+              }), 'error');
+            } else {
+              showToast(translate(result.sent === 0 ? 'syncNothingToSend' : 'syncPushDone'), 'success');
+            }
           }
           await refreshCloudCounts();
         } else if (button) {
@@ -2258,7 +2450,13 @@ const defaultState = window.KedaiConfig.defaultState;
           renderAll();
           renderStorageInfo();
           syncUserNameInput.value = window.KedaiSync?.getUserName() || '';
+          if (retentionDaysInput) retentionDaysInput.value = String(getRetentionDays());
+          if (purgeLocalArchive()) renderAll();
+          // Bez tego zaległości z poprzedniej sesji czekałyby na przypadkową
+          // następną zmianę danych - patrz komentarz w modules/sync.js.
+          window.KedaiSync?.start(state);
           renderSyncPanel();
+          updateSyncBadge();
         } catch (error) {
           console.error('Błąd uruchamiania IndexedDB:', error);
           showToast(translate('dbOpenFailed'), 'error');
