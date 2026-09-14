@@ -149,6 +149,47 @@ alter table public.client_orders   add column if not exists deleted_at timestamp
 alter table public.purchase_orders add column if not exists deleted_at timestamptz;
 
 -- ---------------------------------------------------------------------------
+-- 4e. Widoczność pozycji menu (ukrywanie bez utraty danych)
+--
+-- W aplikacji każdą pozycję menu i każdą zakładkę można czasowo wyłączyć
+-- (Ustawienia → Edytuj menu → przełącznik przy pozycji). Wyłączona pozycja znika
+-- z widoku obsługi klienta, ale zostaje w bazie, w edytorze menu i w kopii
+-- zapasowej. Wyłączenie zakładki ukrywa wyłącznie jej nagłówek - pozycje pod nią
+-- zostają widoczne, chyba że wyłączy się je osobno.
+--
+-- Dla raportów sprzedaży nic się nie zmienia: zamówienie zapisuje nazwę i cenę
+-- z momentu sprzedaży, a wiersze menu są tylko bieżącym stanem cennika.
+-- ---------------------------------------------------------------------------
+alter table public.menu_items add column if not exists visible boolean not null default true;
+
+-- ---------------------------------------------------------------------------
+-- 4f. Kolor zakładki menu (barwa 0-360)
+--
+-- Zakładka (type = 'section') może mieć kolor wybrany suwakiem w aplikacji.
+-- Podajemy samą barwę (HUE) w stopniach - jasność i nasycenie dobiera aplikacja,
+-- żeby tła były pastelowe i czytelne. NULL = brak koloru (białe tło).
+-- ---------------------------------------------------------------------------
+alter table public.menu_items add column if not exists color integer;
+
+alter table public.menu_items
+  drop constraint if exists menu_items_color_range;
+
+alter table public.menu_items
+  add constraint menu_items_color_range check (color is null or (color >= 0 and color <= 360));
+
+-- ---------------------------------------------------------------------------
+-- 4g. Receptury pozycji menu
+--
+-- Receptura to lista składników i ilości zużywanych na JEDNĄ porcję dania,
+-- np. [{"id":"ing_1","qty":0.25}]. Pusta lista = danie bez receptury.
+--
+-- Receptura nic sama nie odejmuje: zużycie schodzi ze stanu magazynu dopiero
+-- wtedy, gdy zamówienie trafia do archiwum, i widac je potem w kolumnie
+-- ingredients.stock (aplikacja przelicza to lokalnie i wysyła nowy stan).
+-- ---------------------------------------------------------------------------
+alter table public.menu_items add column if not exists recipe jsonb not null default '[]'::jsonb;
+
+-- ---------------------------------------------------------------------------
 -- 5. Zabezpieczenia (RLS)
 --
 -- Bez tego kroku klucz anon, który jest publicznie widoczny w aplikacji,

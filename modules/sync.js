@@ -363,6 +363,14 @@
       .join(',');
   }
 
+  /** Krótki opis receptury - bez niego zmiana składników byłaby niewidoczna. */
+  function recipeSignature(recipe) {
+    if (!Array.isArray(recipe) || !recipe.length) return '0';
+    return recipe
+      .map(entry => `${entry.id}:${Number(entry.qty || 0)}`)
+      .join(',');
+  }
+
   function orderTimestamp(order) {
     return order.date || order.createdAt || '';
   }
@@ -384,7 +392,10 @@
           entry.item.price,
           entry.item.type === 'section' ? 'section' : 'product',
           entry.item.order ?? entry.index,
-          entry.item.deleted === true ? 'deleted' : 'active'
+          entry.item.deleted === true ? 'deleted' : 'active',
+          entry.item.visible === false ? 'hidden' : 'visible',
+          entry.item.color ?? '',
+          recipeSignature(entry.item.recipe)
         ]),
         row: entry => ({
           device_id: meta.deviceId,
@@ -394,6 +405,9 @@
           type: entry.item.type === 'section' ? 'section' : 'product',
           sort_order: Number.isFinite(Number(entry.item.order)) ? Number(entry.item.order) : entry.index,
           user_name: meta.userName,
+          visible: entry.item.visible !== false,
+          color: Number.isFinite(Number(entry.item.color)) && entry.item.color !== null ? Math.round(Number(entry.item.color)) : null,
+          recipe: Array.isArray(entry.item.recipe) ? entry.item.recipe : [],
           deleted: entry.item.deleted === true,
           deleted_at: entry.item.deleted_at || null,
           updated_at: meta.now

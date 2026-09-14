@@ -173,6 +173,27 @@ const defaultState = window.KedaiConfig.defaultState;
           activeOrdersLabel: 'Aktywne zamówienia',
           archivedOrdersLabel: 'Zarchiwizowane zamówienia',
           confirmDeleteProduct: 'Usunąć pozycję "{name}" z menu?',
+          hideItem: 'Ukryj w obsłudze klienta',
+          showItem: 'Pokaż w obsłudze klienta',
+          itemHidden: 'Pozycja "{name}" została ukryta. Wróci po kliknięciu "Pokaż w obsłudze klienta".',
+          itemShown: 'Pozycja "{name}" jest znowu widoczna.',
+          itemHiddenBadge: 'UKRYTE — widoczne tylko tutaj',
+          visibleInCustomer: 'Widoczne w obsłudze klienta',
+          sectionColor: 'Kolor zakładki',
+          sectionColorNone: 'bez koloru',
+          sectionColorClear: 'Wyczyść',
+          recipe: 'Receptura',
+          recipeTitle: 'Receptura: {name}',
+          recipeHint: 'Wpisz, ile składnika zużywa jedna porcja. Puste pole = składnik nieużywany w tym daniu.',
+          recipeStock: 'Stan',
+          recipeSave: 'Zapisz recepturę',
+          recipeSaved: 'Receptura została zapisana.',
+          recipeNoIngredients: 'Magazyn jest pusty. Dodaj składniki w Ustawieniach → Edycja magazynu.',
+          recipeMissing: 'Składnik usunięty z magazynu',
+          recipeRemoveMissing: 'Usuń z receptury',
+          archivedWithStock: 'Zamówienie w archiwum. Z magazynu zeszło składników: {count}.',
+          archivedWithStockOne: 'Zamówienie w archiwum. Z magazynu zszedł 1 składnik.',
+          menuCountWithHidden: '{visible} widocznych · {hidden} ukrytych',
           confirmDeleteOrder: 'Usunąć aktywne zamówienie z dnia {date}?',
           confirmCancelSelection: 'Czy na pewno chcesz anulować bieżące zamówienie?',
           confirmEditOrder: 'Aby edytować to zamówienie, obecne zamówienie w zakładce Obsługa zostanie usunięte. Kontynuować?',
@@ -353,6 +374,27 @@ const defaultState = window.KedaiConfig.defaultState;
           activeOrdersLabel: 'Active orders',
           archivedOrdersLabel: 'Archived orders',
           confirmDeleteProduct: 'Delete the "{name}" item from the menu?',
+          hideItem: 'Hide from customers',
+          showItem: 'Show to customers',
+          itemHidden: 'Item "{name}" is now hidden. It comes back with "Show to customers".',
+          itemShown: 'Item "{name}" is visible again.',
+          itemHiddenBadge: 'HIDDEN — only visible here',
+          visibleInCustomer: 'Visible to customers',
+          sectionColor: 'Colour of the tab',
+          sectionColorNone: 'no colour',
+          sectionColorClear: 'Clear',
+          recipe: 'Recipe',
+          recipeTitle: 'Recipe: {name}',
+          recipeHint: 'Enter how much of each ingredient one portion uses. An empty field means the ingredient is not used in this dish.',
+          recipeStock: 'Stock',
+          recipeSave: 'Save recipe',
+          recipeSaved: 'The recipe has been saved.',
+          recipeNoIngredients: 'The warehouse is empty. Add ingredients in Settings → Edit warehouse.',
+          recipeMissing: 'Ingredient removed from the warehouse',
+          recipeRemoveMissing: 'Remove from recipe',
+          archivedWithStock: 'Order archived. {count} ingredients were deducted from stock.',
+          archivedWithStockOne: 'Order archived. 1 ingredient was deducted from stock.',
+          menuCountWithHidden: '{visible} visible · {hidden} hidden',
           confirmDeleteOrder: 'Delete the active order from {date}?',
           confirmCancelSelection: 'Are you sure you want to cancel the current order?',
           confirmEditOrder: 'To edit this order, the current order in the Customer tab will be removed. Continue?',
@@ -533,6 +575,27 @@ const defaultState = window.KedaiConfig.defaultState;
           activeOrdersLabel: 'Pesanan aktif',
           archivedOrdersLabel: 'Pesanan arsip',
           confirmDeleteProduct: 'Hapus item "{name}" dari menu?',
+          hideItem: 'Sembunyikan dari pelanggan',
+          showItem: 'Tampilkan ke pelanggan',
+          itemHidden: 'Item "{name}" disembunyikan. Muncul kembali dengan "Tampilkan ke pelanggan".',
+          itemShown: 'Item "{name}" terlihat kembali.',
+          itemHiddenBadge: 'DISEMBUNYIKAN — hanya terlihat di sini',
+          visibleInCustomer: 'Terlihat ke pelanggan',
+          sectionColor: 'Warna kategori',
+          sectionColorNone: 'tanpa warna',
+          sectionColorClear: 'Hapus',
+          recipe: 'Resep',
+          recipeTitle: 'Resep: {name}',
+          recipeHint: 'Isi berapa banyak bahan yang dipakai untuk satu porsi. Kolom kosong = bahan tidak dipakai di menu ini.',
+          recipeStock: 'Stok',
+          recipeSave: 'Simpan resep',
+          recipeSaved: 'Resep telah disimpan.',
+          recipeNoIngredients: 'Gudang masih kosong. Tambahkan bahan di Pengaturan → Ubah gudang.',
+          recipeMissing: 'Bahan dihapus dari gudang',
+          recipeRemoveMissing: 'Hapus dari resep',
+          archivedWithStock: 'Pesanan diarsipkan. {count} bahan dikurangi dari stok.',
+          archivedWithStockOne: 'Pesanan diarsipkan. 1 bahan dikurangi dari stok.',
+          menuCountWithHidden: '{visible} terlihat · {hidden} disembunyikan',
           confirmDeleteOrder: 'Hapus pesanan aktif dari {date}?',
           confirmCancelSelection: 'Apakah Anda yakin ingin membatalkan pesanan saat ini?',
           confirmEditOrder: 'Untuk mengedit pesanan ini, pesanan saat ini di tab Pelayanan akan dihapus. Lanjutkan?',
@@ -570,6 +633,12 @@ const defaultState = window.KedaiConfig.defaultState;
       const confirmMessage = document.getElementById('confirmMessage');
       const confirmNoBtn = document.getElementById('confirmNoBtn');
       const confirmYesBtn = document.getElementById('confirmYesBtn');
+      const recipeModal = document.getElementById('recipeModal');
+      const recipeTitle = document.getElementById('recipeTitle');
+      const recipeHintText = document.getElementById('recipeHintText');
+      const recipeList = document.getElementById('recipeList');
+      const recipeSaveBtn = document.getElementById('recipeSaveBtn');
+      const recipeCancelBtn = document.getElementById('recipeCancelBtn');
       const archiveTotal = document.getElementById('archiveTotal');
       const archiveCount = document.getElementById('archiveCount');
       const archiveRangeModes = document.getElementById('archiveRangeModes');
@@ -732,6 +801,61 @@ const defaultState = window.KedaiConfig.defaultState;
         return item.type === 'section';
       }
 
+      /** Pozycja jest widoczna, dopóki ktoś jej nie ukryje (domyślnie widoczna). */
+      function isItemVisible(item) {
+        return item?.visible !== false;
+      }
+
+      /**
+       * Menu dla klienta: bez pozycji wyłączonych przełącznikiem.
+       * Wyłączenie zakładki ukrywa TYLKO jej nagłówek - pozycje pod nią zostają
+       * widoczne, chyba że wyłączysz je osobno. Wyłączenie jednej rzeczy nie
+       * zmienia więc niczego innego w menu.
+       */
+      function getVisibleMenu() {
+        return getSortedMenu().filter(isItemVisible);
+      }
+
+      /** Barwa zakładki jest liczbą 0-360; brak liczby = brak koloru (białe tło). */
+      function sectionColorOf(item) {
+        return typeof item?.color === 'number' && Number.isFinite(item.color) ? item.color : null;
+      }
+
+      /**
+       * Delikatny, przezroczysty kolor (HSL) - nasycenie jest umyślnie niskie,
+       * żeby tła pozostały czytelne, a nie "dzikie". `lightness` to jasność
+       * w procentach (im wyżej, tym bledszy kolor).
+       */
+      function tint(hue, lightness, saturation = 85) {
+        return `hsl(${Math.round(Number(hue))} ${saturation}% ${lightness}%)`;
+      }
+
+      /**
+       * Menu dla klienta razem z kolorem zakładki, w której dana pozycja leży.
+       * Zakładka wyłączona jest traktowana jak nieobecna - jej pozycje nie mają
+       * koloru, tak samo jak pozycje przed pierwszą zakładką.
+       */
+      function getColoredVisibleMenu() {
+        let color = null;
+        return getVisibleMenu().map(item => {
+          if (isMenuSection(item)) {
+            color = sectionColorOf(item);
+            return { item, color, section: true };
+          }
+          return { item, color, section: false };
+        });
+      }
+
+      /** To samo dla edytora menu, gdzie widoczne są także pozycje wyłączone. */
+      function getEditorMenuWithColors() {
+        let color = null;
+        return getSortedMenu().map(item => {
+          const section = isMenuSection(item);
+          if (section) color = isItemVisible(item) ? sectionColorOf(item) : null;
+          return { item, color, section };
+        });
+      }
+
       function updateMenuFormType() {
         const isSection = menuElementTypeSelect.value === 'section';
         productPriceInput.disabled = isSection;
@@ -891,33 +1015,70 @@ const defaultState = window.KedaiConfig.defaultState;
 
       function renderMenu() {
         const menu = getSortedMenu();
-        const productCount = menu.filter(item => !isMenuSection(item)).length;
-        menuCountBadge.textContent = getCounterLabel(productCount, 'item', 'items');
+        const products = menu.filter(item => !isMenuSection(item));
+        // Pokazujemy to, co klient faktycznie może zamówić: pozycje ukryte
+        // pojedynczo ORAZ te należące do ukrytej zakładki.
+        const orderableProducts = getVisibleMenu().filter(item => !isMenuSection(item)).length;
+        const hiddenProducts = products.length - orderableProducts;
+        menuCountBadge.textContent = hiddenProducts
+          ? translate('menuCountWithHidden', { visible: orderableProducts, hidden: hiddenProducts })
+          : getCounterLabel(orderableProducts, 'item', 'items');
 
         if (!menu.length) {
           menuList.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${translate('noProduct')}</div>`;
           return;
         }
 
-        menuList.innerHTML = menu
-          .map((item, index) => {
+        const editorMenu = getEditorMenuWithColors();
+        menuList.innerHTML = editorMenu
+          .map(({ item, color }, index) => {
             const section = isMenuSection(item);
+            const visible = isItemVisible(item);
+            const recipeCount = section ? 0 : recipeOf(item).length;
+            // Wyłączona zakładka nie koloruje niczego - jest jak nieobecna.
+            const activeColor = section && !visible ? null : color;
+            const cardStyle = activeColor === null
+              ? ''
+              : (section
+                ? ` style="background-color: ${tint(activeColor, 93)}; border-color: ${tint(activeColor, 78)}"`
+                : ` style="background-color: ${tint(activeColor, 98)}; border-color: ${tint(activeColor, 90)}; border-left: 4px solid ${tint(activeColor, 66)}"`);
             return `
-              <div class="rounded-2xl border ${section ? 'border-orange-200 bg-orange-50' : 'border-slate-200 bg-white'} p-3 shadow-sm">
+              <div class="rounded-2xl border ${section ? 'border-orange-200 bg-orange-50' : 'border-slate-200 bg-white'} p-3 shadow-sm ${visible ? '' : 'opacity-60'}"${cardStyle}>
                 <div class="flex items-center justify-between gap-3">
                   <div>
                     <p class="text-base font-bold text-slate-800">${section ? '▰ ' : ''}${escapeHtml(item.name)}</p>
                     ${section ? `<p class="text-xs font-semibold uppercase tracking-wide text-orange-600">${translate('sectionType')}</p>` : `<p class="text-sm font-semibold text-orange-600">${formatCurrency(item.price)}</p>`}
+                    ${visible ? '' : `<p class="mt-1 text-xs font-bold text-slate-500">${translate('itemHiddenBadge')}</p>`}
                   </div>
                   <div class="flex gap-2">
                     <button data-action="move-up" data-id="${item.id}" class="touch-btn menu-move-btn rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-xs font-bold text-slate-700 ${index === 0 ? 'opacity-40' : ''}" ${index === 0 ? 'disabled' : ''}>↑</button>
-                    <button data-action="move-down" data-id="${item.id}" class="touch-btn menu-move-btn rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-xs font-bold text-slate-700 ${index === menu.length - 1 ? 'opacity-40' : ''}" ${index === menu.length - 1 ? 'disabled' : ''}>↓</button>
+                    <button data-action="move-down" data-id="${item.id}" class="touch-btn menu-move-btn rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-xs font-bold text-slate-700 ${index === editorMenu.length - 1 ? 'opacity-40' : ''}" ${index === editorMenu.length - 1 ? 'disabled' : ''}>↓</button>
                   </div>
                 </div>
 
-                <div class="mt-3 grid grid-cols-2 gap-2">
+                <div class="mt-3 grid ${section ? 'grid-cols-2' : 'grid-cols-3'} gap-2">
                   <button data-action="edit-product" data-id="${item.id}" class="touch-btn rounded-xl bg-amber-100 px-3 py-2 text-sm font-bold text-amber-700">${section ? translate('editSection') : translate('edit')}</button>
+                  ${section ? '' : `<button data-action="open-recipe" data-id="${item.id}" class="touch-btn rounded-xl bg-sky-100 px-3 py-2 text-sm font-bold text-sky-700">${recipeCount ? `${translate('recipe')} (${recipeCount})` : translate('recipe')}</button>`}
                   <button data-action="delete-product" data-id="${item.id}" class="touch-btn rounded-xl bg-rose-100 px-3 py-2 text-sm font-bold text-rose-700">${translate('delete')}</button>
+                </div>
+
+                ${section ? `
+                <div class="mt-3 rounded-xl bg-white/70 px-3 py-2">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-xs font-bold text-slate-600">${translate('sectionColor')}</span>
+                    <span class="text-[11px] font-semibold text-slate-500">${color === null ? translate('sectionColorNone') : `${Math.round(color)}°`}</span>
+                  </div>
+                  <div class="mt-2 flex items-center gap-2">
+                    <input type="range" min="0" max="360" step="1" value="${color === null ? 0 : Math.round(color)}" data-action="section-color" data-id="${item.id}" class="color-range" aria-label="${translate('sectionColor')}" />
+                    <button data-action="clear-section-color" data-id="${item.id}" class="touch-btn rounded-xl border border-slate-300 bg-white px-2 py-2 text-[11px] font-bold text-slate-600">${translate('sectionColorClear')}</button>
+                  </div>
+                </div>` : ''}
+
+                <div class="mt-3 flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2">
+                  <span class="text-xs font-bold text-slate-600">${translate('visibleInCustomer')}</span>
+                  <button data-action="toggle-visible" data-id="${item.id}" role="switch" aria-checked="${visible ? 'true' : 'false'}" title="${visible ? translate('hideItem') : translate('showItem')}" aria-label="${visible ? translate('hideItem') : translate('showItem')}" class="switch ${visible ? 'is-on' : ''}">
+                    <span class="switch-knob"></span>
+                  </button>
                 </div>
               </div>
             `;
@@ -938,16 +1099,24 @@ const defaultState = window.KedaiConfig.defaultState;
       }
 
       function renderCustomer() {
-        const menu = getSortedMenu();
+        const menu = getColoredVisibleMenu();
 
         customerItems.innerHTML = menu
-          .map(item => {
+          .map(({ item, color }) => {
             if (isMenuSection(item)) {
-              return `<div class="mt-5 border-b-2 border-orange-200 pb-2 text-sm font-black uppercase tracking-[0.12em] text-orange-600">${escapeHtml(item.name)}</div>`;
+              const style = color === null
+                ? ''
+                : ` style="background-color: ${tint(color, 91)}; border-color: ${tint(color, 62)}; color: ${tint(color, 27, 55)}"`;
+              return `<div class="mt-5 rounded-xl border-b-2 px-3 py-1 text-sm font-black uppercase tracking-[0.12em] text-orange-600"${style}>${escapeHtml(item.name)}</div>`;
             }
             const qty = Number(currentSelection[item.id] || 0);
+            // Tło pozycji jest bardzo jasne, a mocniejsza jest tylko lewa krawędź -
+            // kolor porządkuje menu, ale nie przeszkadza w czytaniu nazw i cen.
+            const style = color === null
+              ? ''
+              : ` style="background-color: ${tint(color, 97)}; border-color: ${tint(color, 88)}; border-left: 4px solid ${tint(color, 62)}"`;
             return `
-              <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+              <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm"${style}>
                 <div class="flex items-center justify-between gap-3">
                   <div>
                     <p class="text-base font-bold text-slate-800">${escapeHtml(item.name)}</p>
@@ -965,12 +1134,10 @@ const defaultState = window.KedaiConfig.defaultState;
           .join('');
 
         const details = menu
-          .filter(item => !isMenuSection(item))
+          .filter(entry => !entry.section)
+          .map(entry => entry.item)
           .filter(item => Number(currentSelection[item.id] || 0) > 0)
-          .map(item => {
-            const qty = Number(currentSelection[item.id] || 0);
-            return { ...item, qty };
-          });
+          .map(item => ({ ...item, qty: Number(currentSelection[item.id] || 0) }));
 
         const totalQty = details.reduce((sum, item) => sum + item.qty, 0);
         const total = details.reduce((sum, item) => sum + item.qty * item.price, 0);
@@ -1448,6 +1615,154 @@ const defaultState = window.KedaiConfig.defaultState;
         );
       }
 
+      /* ------------------------------------------------------------ receptury */
+
+      // Receptura to lista { id składnika, qty } na pozycji menu. Pusta = brak.
+      let recipeEditingId = null;
+      let recipeDraft = [];
+
+      function recipeOf(item) {
+        return Array.isArray(item?.recipe) ? item.recipe : [];
+      }
+
+      function draftQuantity(ingredientId) {
+        const entry = recipeDraft.find(row => row.id === ingredientId);
+        return entry ? Number(entry.qty || 0) : 0;
+      }
+
+      /** Zapisuje to, co użytkownik ma w polach okna, do szkicu receptury. */
+      function captureRecipeInputs() {
+        const missingIds = new Set(recipeDraft.filter(entry => !(state.ingredients || []).some(ingredient => ingredient.id === entry.id)).map(entry => entry.id));
+        const draft = recipeDraft.filter(entry => missingIds.has(entry.id));
+
+        recipeList.querySelectorAll('[data-recipe-ingredient]').forEach(input => {
+          const qty = Number(String(input.value).replace(',', '.'));
+          if (Number.isFinite(qty) && qty > 0) draft.push({ id: input.dataset.recipeIngredient, qty });
+        });
+
+        recipeDraft = draft;
+      }
+
+      function openRecipeEditor(productId) {
+        const product = state.menu.find(item => item.id === productId);
+        if (!product || isMenuSection(product)) return;
+
+        recipeEditingId = productId;
+        recipeDraft = recipeOf(product).map(entry => ({ id: entry.id, qty: Number(entry.qty || 0) }));
+        recipeTitle.textContent = translate('recipeTitle', { name: product.name });
+        recipeHintText.textContent = translate('recipeHint');
+        recipeSaveBtn.textContent = translate('recipeSave');
+        recipeCancelBtn.textContent = translate('cancel');
+        renderRecipeList();
+        recipeModal.classList.remove('hidden');
+      }
+
+      function closeRecipeEditor() {
+        recipeEditingId = null;
+        recipeDraft = [];
+        recipeModal.classList.add('hidden');
+      }
+
+      function renderRecipeList() {
+        const ingredients = [...(state.ingredients || [])]
+          .sort((first, second) => String(first.name).localeCompare(String(second.name), 'pl'));
+        const knownIds = new Set(ingredients.map(ingredient => ingredient.id));
+        const missing = recipeDraft.filter(entry => !knownIds.has(entry.id));
+
+        if (!ingredients.length && !missing.length) {
+          recipeList.innerHTML = `<div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-center text-sm text-slate-500">${translate('recipeNoIngredients')}</div>`;
+          return;
+        }
+
+        recipeList.innerHTML = [
+          ...ingredients.map(ingredient => {
+            const qty = draftQuantity(ingredient.id);
+            return `
+              <div class="rounded-xl border border-slate-200 bg-white p-2">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="min-w-0">
+                    <p class="truncate text-sm font-bold text-slate-800">${escapeHtml(ingredient.name)}</p>
+                    <p class="text-[11px] text-slate-500">${translate('recipeStock')}: ${formatNumber(ingredient.stock)} ${escapeHtml(ingredient.unit || '')}</p>
+                  </div>
+                  <div class="flex flex-none items-center gap-1">
+                    <input type="number" inputmode="decimal" min="0" step="any" data-recipe-ingredient="${ingredient.id}" value="${qty || ''}" placeholder="0" class="w-24 rounded-lg border border-slate-300 px-2 py-2 text-right text-sm text-slate-800" />
+                    <span class="w-10 text-xs font-semibold text-slate-500">${escapeHtml(ingredient.unit || '')}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }),
+          ...missing.map(entry => `
+              <div class="rounded-xl border border-amber-200 bg-amber-50 p-2">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="min-w-0">
+                    <p class="truncate text-sm font-bold text-amber-800">${escapeHtml(entry.id)}</p>
+                    <p class="text-[11px] font-semibold text-amber-700">${translate('recipeMissing')}</p>
+                  </div>
+                  <button type="button" data-action="remove-recipe-ingredient" data-id="${escapeHtml(entry.id)}" class="touch-btn flex-none rounded-lg border border-amber-300 bg-white px-2 py-2 text-[11px] font-bold text-amber-700">${translate('recipeRemoveMissing')}</button>
+                </div>
+              </div>`)
+        ].join('');
+      }
+
+      function removeRecipeEntry(ingredientId) {
+        captureRecipeInputs();
+        recipeDraft = recipeDraft.filter(entry => entry.id !== ingredientId);
+        renderRecipeList();
+      }
+
+      function saveRecipeFromDialog() {
+        const product = state.menu.find(item => item.id === recipeEditingId);
+        if (!product) {
+          closeRecipeEditor();
+          return;
+        }
+
+        captureRecipeInputs();
+        const recipe = recipeDraft
+          .filter(entry => Number(entry.qty) > 0)
+          .map(entry => ({ id: entry.id, qty: Number(entry.qty) }));
+
+        if (recipe.length) product.recipe = recipe;
+        else delete product.recipe;
+
+        closeRecipeEditor();
+        saveState();
+        renderAll();
+        showToast(translate('recipeSaved'), 'success');
+      }
+
+      /**
+       * Odejmuje z magazynu składniki zużyte na zamówienie, na podstawie receptur
+       * pozycji. Składniki usunięte z magazynu są pomijane (receptura je pamięta,
+       * ale nie ma czego odejmować). Zwraca listę odjętych pozycji do komunikatu.
+       */
+      function deductIngredientsForOrder(order) {
+        const usage = new Map();
+
+        (order.items || []).forEach(item => {
+          const product = state.menu.find(entry => entry.id === item.productId);
+          const portions = Number(item.qty || 0);
+          if (!product || portions <= 0) return;
+
+          recipeOf(product).forEach(entry => {
+            const amount = Number(entry.qty || 0) * portions;
+            if (amount <= 0) return;
+            usage.set(entry.id, (usage.get(entry.id) || 0) + amount);
+          });
+        });
+
+        const applied = [];
+        usage.forEach((amount, ingredientId) => {
+          const ingredient = state.ingredients.find(entry => entry.id === ingredientId);
+          if (!ingredient) return;
+          ingredient.stock = Number((Number(ingredient.stock || 0) - amount).toFixed(3));
+          applied.push({ name: ingredient.name, unit: ingredient.unit, amount });
+        });
+
+        return applied;
+      }
+
       function updateProductQuantity(productId, change) {
         const currentQty = Number(currentSelection[productId] || 0);
         const nextValue = currentQty + change;
@@ -1486,7 +1801,8 @@ const defaultState = window.KedaiConfig.defaultState;
             name,
             type,
             price: type === 'section' ? 0 : Number(price.toFixed(2)),
-            order: state.menu.length
+            order: state.menu.length,
+            visible: true
           });
           showToast(translate('productAdded'), 'success');
         }
@@ -1556,6 +1872,49 @@ const defaultState = window.KedaiConfig.defaultState;
         renderAll();
       }
 
+      /**
+       * Wyłącza lub przywraca pozycję menu (także zakładkę). Nic nie jest
+       * kasowane - pozycja zostaje w edytorze i w kopii zapasowej, znika tylko
+       * z widoku obsługi klienta. Wyłączenie zakładki ukrywa wyłącznie jej
+       * nagłówek; pozycje pod nią zmieniają się tylko vtedy, gdy wyłączysz je
+       * osobno.
+       */
+      function toggleItemVisibility(productId) {
+        const item = state.menu.find(product => product.id === productId);
+        if (!item) return;
+
+        const wasVisible = isItemVisible(item);
+        item.visible = !wasVisible;
+        // Pozycja wyłączona w trakcie kompletowania zamówienia nie może po cichu
+        // trafić do zamówienia.
+        if (wasVisible) delete currentSelection[item.id];
+
+        saveState();
+        renderAll();
+        showToast(translate(item.visible ? 'itemShown' : 'itemHidden', { name: item.name }), 'success');
+      }
+
+      /**
+       * Ustawia kolor zakładki. `live` = przeciąganie paska: kolor widać od razu
+       * w obsłudze klienta, ale zapis (i wysyłka) następuje dopiero po puszczeniu
+       * paska, żeby przeciąganie nie zasypało chmury zapytaniami.
+       */
+      function setSectionColor(sectionId, hue, live) {
+        const section = state.menu.find(item => item.id === sectionId && isMenuSection(item));
+        if (!section) return;
+
+        if (hue === null) delete section.color;
+        else section.color = Math.max(0, Math.min(360, Math.round(Number(hue))));
+
+        if (live) {
+          renderCustomer();
+          return;
+        }
+
+        saveState();
+        renderAll();
+      }
+
       function createOrderPayload(items, total, createdAt) {
         return {
           createdAt,
@@ -1580,7 +1939,7 @@ const defaultState = window.KedaiConfig.defaultState;
       }
 
       async function saveCurrentOrder() {
-        const selected = getSortedMenu().filter(item => Number(currentSelection[item.id] || 0) > 0);
+        const selected = getVisibleMenu().filter(item => Number(currentSelection[item.id] || 0) > 0);
         if (!selected.length) {
           showToast(translate('chooseAtLeastOne'), 'warning');
           return;
@@ -1679,10 +2038,16 @@ const defaultState = window.KedaiConfig.defaultState;
         };
         state.archive.push(archivedOrder);
 
+        // Dopiero w tym momencie schodzi towar z magazynu - na podstawie receptur
+        // pozycji (patrz deductIngredientsForOrder).
+        const deducted = deductIngredientsForOrder(archivedOrder);
+
         await window.KedaiDatabase.updateOrder(archivedOrder, 'archived');
         saveState();
         renderAll();
-        showToast(translate('archived'), 'success');
+        showToast(deducted.length
+          ? translate(deducted.length === 1 ? 'archivedWithStockOne' : 'archivedWithStock', { count: deducted.length })
+          : translate('archived'), 'success');
       }
 
       async function deleteOrder(orderId) {
@@ -1903,6 +2268,8 @@ const defaultState = window.KedaiConfig.defaultState;
       }
 
       productForm.addEventListener('submit', handleProductFormSubmit);
+      recipeSaveBtn.addEventListener('click', saveRecipeFromDialog);
+      recipeCancelBtn.addEventListener('click', closeRecipeEditor);
 
       ingredientForm.addEventListener('submit', handleIngredientFormSubmit);
       document.getElementById('cancelIngredientEditBtn').addEventListener('click', cancelIngredientEdit);
@@ -1992,6 +2359,22 @@ const defaultState = window.KedaiConfig.defaultState;
           moveProduct(id, 'down');
         }
 
+        if (action === 'toggle-visible') {
+          toggleItemVisibility(id);
+        }
+
+        if (action === 'clear-section-color') {
+          setSectionColor(id, null, false);
+        }
+
+        if (action === 'open-recipe') {
+          openRecipeEditor(id);
+        }
+
+        if (action === 'remove-recipe-ingredient') {
+          removeRecipeEntry(id);
+        }
+
         if (action === 'edit-order') {
           editOrder(id);
         }
@@ -2065,6 +2448,20 @@ const defaultState = window.KedaiConfig.defaultState;
         renderSyncPanel();
       });
       menuElementTypeSelect.addEventListener('change', updateMenuFormType);
+
+      // Kolor zakładki: podczas przeciągania paska tylko podglądamy (bez zapisu,
+      // żeby nie zasypać chmury), a po puszczeniu zapisujemy raz.
+      document.addEventListener('input', event => {
+        const input = event.target.closest?.('[data-action="section-color"]');
+        if (!input) return;
+        setSectionColor(input.dataset.id, Number(input.value), true);
+      });
+
+      document.addEventListener('change', event => {
+        const input = event.target.closest?.('[data-action="section-color"]');
+        if (!input) return;
+        setSectionColor(input.dataset.id, Number(input.value), false);
+      });
 
       document.addEventListener('dblclick', event => {
         event.preventDefault();

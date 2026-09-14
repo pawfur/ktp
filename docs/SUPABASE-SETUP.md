@@ -346,7 +346,7 @@ Znaczy, że `docs/supabase-schema.sql` nie został jeszcze uruchomiony w SQL Edi
 
 ### „Brakuje kolumny w tabeli”
 
-Uruchomiłeś starszą wersję schematu i brakuje jakiejś kolumny (np. `user_name`, `deleted` albo `deleted_at`). Uruchom `docs/supabase-schema.sql` jeszcze raz — plik jest napisany tak, żeby można go było bezpiecznie powtarzać.
+Uruchomiłeś starszą wersję schematu i brakuje jakiejś kolumny (np. `user_name`, `deleted`, `deleted_at` albo `visible`). Uruchom `docs/supabase-schema.sql` jeszcze raz — plik jest napisany tak, żeby można go było bezpiecznie powtarzać.
 
 ### „W raportach sprzedaż jest podwójna”
 
@@ -403,3 +403,21 @@ Gdyby kluczem był numer nadawany przez telefon, po skasowaniu danych i odtworze
 **Nie gubi zaległości.** Gdy telefon nie ma internetu albo nie jest zalogowany, wiersze czekają w kolejce i wychodzą same przy pierwszej okazji (po odzyskaniu sieci, po powrocie do aplikacji, a także przy jej starcie). Licznik zaległości widać w prawym górnym rogu paska: „N do wysłania”, a na telefonie bez logowania — „N bez chmury”.
 
 **Nie wymusza trzymania wszystkiego na telefonie.** W Ustawieniach → „Dane na telefonie” można ustawić po ilu dniach stare zamówienia mają być usuwane z pamięci telefonu. Kasowane są wyłącznie wiersze już potwierdzone w chmurze i tylko na telefonie.
+## Pomost do raportów z komputera: `tools/db.mjs`
+
+Skrypt w Node.js (bez żadnych zależności, wymaga Node 18+) do czytania danych wprost z Supabase, bez otwierania panelu i bez kopiowania zapytań. **Tylko czyta** — jedyne zapytanie zapisujące to logowanie.
+
+```powershell
+node tools/db.mjs login                    # raz na jakiś czas; pyta o e-mail i hasło konta lokalu
+node tools/db.mjs devices                  # które telefony wysyłają, ile i kiedy ostatnio
+node tools/db.mjs orders --user PIPIN --days 3
+node tools/db.mjs orders --from 2026-09-12 --to 2026-09-13
+node tools/db.mjs sales --days 7
+node tools/db.mjs menu --user PIPIN
+node tools/db.mjs gaps                     # brakujące numery (local_id) per telefon
+node tools/db.mjs deleted                  # co usunięto w aplikacji
+node tools/db.mjs counts                   # liczba wierszy w tabelach
+node tools/db.mjs help                     # pełna lista opcji
+```
+
+Zasady: adres projektu i klucz publishable są brane z `config/supabase-config.js`; hasła skrypt nie zapisuje (tylko token odświeżania w `db.local.json`, wpisanym do `.gitignore`); godziny pokazuje w czasie `Asia/Jakarta`. Można go uruchamiać z dowolnego katalogu. Nowe polecenia dodaje się w obiekcie `COMMANDS` na końcu `tools/db.mjs` — do dyspozycji są gotowe `rest()`, `countRows()`, `table()`, `jakarta()`, `rp()`.

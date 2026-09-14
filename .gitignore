@@ -2,6 +2,9 @@
 # Nie trafiają do repozytorium - to dane z lokalu, nie kod.
 kedai-pos-backup-*.json
 
+# Sesja do skryptu raportowego tools/db.mjs (zawiera token odświeżania).
+db.local.json
+
 # Pliki tymczasowe systemu Windows.
 Thumbs.db
 desktop.ini
