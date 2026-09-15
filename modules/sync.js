@@ -363,6 +363,25 @@
       .join(',');
   }
 
+  /** Liczba albo null. `Number(null)` daje 0, więc nie da się tego sprawdzić skrótowo. */
+  function nullableNumber(value) {
+    if (value === null || value === undefined || value === '') return null;
+    const number = Number(value);
+    return Number.isFinite(number) ? number : null;
+  }
+
+  /** Krótki opis zużycia magazynu - zmiana ilości albo ceny musi być widoczna dla odcisku. */
+  function costSignature(items) {
+    if (!Array.isArray(items)) return '';
+    return items
+      .map(entry => [
+        entry.id || entry.name || '',
+        Number(entry.amount ?? 0),
+        Number(entry.unit_price ?? 0)
+      ].join(':'))
+      .join(',');
+  }
+
   /** Krótki opis receptury - bez niego zmiana składników byłaby niewidoczna. */
   function recipeSignature(recipe) {
     if (!Array.isArray(recipe) || !recipe.length) return '0';
@@ -460,7 +479,9 @@
           entry.item.deleted === true ? 'deleted' : entry.orderStatus,
           entry.item.total ?? entry.item.total_price ?? 0,
           entry.item.id ?? '',
-          itemsSignature(entry.item.items)
+          itemsSignature(entry.item.items),
+          nullableNumber(entry.item.costTotal),
+          costSignature(entry.item.costItems)
         ]),
         row: entry => ({
           device_id: meta.deviceId,
@@ -470,6 +491,12 @@
           total: Number(entry.item.total ?? entry.item.total_price ?? 0),
           items: Array.isArray(entry.item.items) ? entry.item.items : [],
           user_name: meta.userName,
+          // Koszt jest migawką z chwili archiwizacji. null = zamówienie sprzed
+          // wprowadzenia kosztów (albo jeszcze aktywne), 0 = naliczone, ale nic
+          // nie zeszło ze stanu. Te dwa przypadki muszą być rozróżnialne.
+          cost_total: nullableNumber(entry.item.costTotal),
+          stock_used: Array.isArray(entry.item.costItems) ? entry.item.costItems : null,
+          cost_at: entry.item.costAt || null,
           deleted: entry.item.deleted === true,
           deleted_at: entry.item.deleted_at || null,
           updated_at: meta.now

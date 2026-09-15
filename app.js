@@ -87,10 +87,16 @@ const defaultState = window.KedaiConfig.defaultState;
           storageLabel: 'Wykorzystanie pamięci',
           dbOpenFailed: 'Nie udało się otworzyć lokalnej bazy danych.',
           editMenu: 'Edytuj menu',
-          orderArchive: 'Archiwum zamówień',
+          openAppMenu: 'Ustawienia i edycja',
+          navModeTitle: 'Wygląd dolnego paska',
+          navModeHint: 'Zdecyduj, jak mają wyglądać przyciski na dole ekranu.',
+          navModeText: 'Tylko tekst',
+          navModeBoth: 'Tekst i ikona',
+          navModeIcon: 'Tylko ikona',
+          warehouseStock: 'Stan',
           editWarehouse: 'Edycja magazynu',
           warehouse: 'Magazyn',
-          warehouseHint: 'Podgląd stanu magazynu. Aby dodać lub zmienić składniki, użyj przycisku Edycja magazynu w Ustawieniach.',
+          warehouseHint: 'Podgląd stanu magazynu. Aby dodać lub zmienić składniki, użyj pozycji Edycja magazynu w menu pod zębatką.',
           ingredients: 'Składniki',
           addIngredient: 'Dodaj składnik',
           ingredientName: 'Nazwa',
@@ -193,6 +199,17 @@ const defaultState = window.KedaiConfig.defaultState;
           recipeRemoveMissing: 'Usuń z receptury',
           archivedWithStock: 'Zamówienie w archiwum. Z magazynu zeszło składników: {count}.',
           archivedWithStockOne: 'Zamówienie w archiwum. Z magazynu zszedł 1 składnik.',
+          recipeCostLabel: 'Koszt receptury',
+          recipeCostNone: 'Brak receptury',
+          recipeCostPartial: 'Koszt niepełny: brakuje {count} składników',
+          recipeMarginLabel: 'Marża',
+          orderCostLabel: 'Koszt zamówienia',
+          orderProfitLabel: 'Zysk i marża',
+          orderCostMissing: 'Koszt nienaliczony',
+          orderCostMissingHint: 'Zamówienie zarchiwizowane przed wprowadzeniem kosztów.',
+          orderStockUsed: 'Ze stanu zeszło',
+          orderStockNone: 'Nic nie zeszło ze stanu.',
+          seedApplied: 'Magazyn i receptury zostały uzupełnione.',
           menuCountWithHidden: '{visible} widocznych · {hidden} ukrytych',
           confirmDeleteOrder: 'Usunąć aktywne zamówienie z dnia {date}?',
           confirmCancelSelection: 'Czy na pewno chcesz anulować bieżące zamówienie?',
@@ -288,10 +305,16 @@ const defaultState = window.KedaiConfig.defaultState;
           storageLabel: 'Storage usage',
           dbOpenFailed: 'Could not open the local database.',
           editMenu: 'Edit menu',
-          orderArchive: 'Order archive',
+          openAppMenu: 'Settings and editing',
+          navModeTitle: 'Bottom bar appearance',
+          navModeHint: 'Choose how the buttons at the bottom of the screen look.',
+          navModeText: 'Text only',
+          navModeBoth: 'Text and icon',
+          navModeIcon: 'Icon only',
+          warehouseStock: 'Stock',
           editWarehouse: 'Edit warehouse',
           warehouse: 'Warehouse',
-          warehouseHint: 'Warehouse preview. To add or change ingredients, use the Edit warehouse button in Settings.',
+          warehouseHint: 'Warehouse preview. To add or change ingredients, use Edit warehouse in the menu under the gear.',
           ingredients: 'Ingredients',
           addIngredient: 'Add ingredient',
           ingredientName: 'Name',
@@ -394,6 +417,17 @@ const defaultState = window.KedaiConfig.defaultState;
           recipeRemoveMissing: 'Remove from recipe',
           archivedWithStock: 'Order archived. {count} ingredients were deducted from stock.',
           archivedWithStockOne: 'Order archived. 1 ingredient was deducted from stock.',
+          recipeCostLabel: 'Recipe cost',
+          recipeCostNone: 'No recipe',
+          recipeCostPartial: 'Partial cost: {count} ingredients missing',
+          recipeMarginLabel: 'Margin',
+          orderCostLabel: 'Order cost',
+          orderProfitLabel: 'Profit and margin',
+          orderCostMissing: 'Cost not calculated',
+          orderCostMissingHint: 'Order archived before cost tracking was introduced.',
+          orderStockUsed: 'Taken from stock',
+          orderStockNone: 'Nothing was taken from stock.',
+          seedApplied: 'Warehouse and recipes have been filled in.',
           menuCountWithHidden: '{visible} visible · {hidden} hidden',
           confirmDeleteOrder: 'Delete the active order from {date}?',
           confirmCancelSelection: 'Are you sure you want to cancel the current order?',
@@ -489,10 +523,16 @@ const defaultState = window.KedaiConfig.defaultState;
           storageLabel: 'Penggunaan penyimpanan',
           dbOpenFailed: 'Tidak dapat membuka basis data lokal.',
           editMenu: 'Ubah menu',
-          orderArchive: 'Arsip pesanan',
+          openAppMenu: 'Pengaturan dan edit',
+          navModeTitle: 'Tampilan bilah bawah',
+          navModeHint: 'Pilih tampilan tombol di bagian bawah layar.',
+          navModeText: 'Teks saja',
+          navModeBoth: 'Teks dan ikon',
+          navModeIcon: 'Ikon saja',
+          warehouseStock: 'Stok',
           editWarehouse: 'Ubah gudang',
           warehouse: 'Gudang',
-          warehouseHint: 'Pratinjau gudang. Untuk menambah atau mengubah bahan, gunakan tombol Ubah gudang di Pengaturan.',
+          warehouseHint: 'Pratinjau gudang. Untuk menambah atau mengubah bahan, gunakan Ubah gudang di menu bawah ikon roda gigi.',
           ingredients: 'Bahan',
           addIngredient: 'Tambah bahan',
           ingredientName: 'Nama',
@@ -595,6 +635,17 @@ const defaultState = window.KedaiConfig.defaultState;
           recipeRemoveMissing: 'Hapus dari resep',
           archivedWithStock: 'Pesanan diarsipkan. {count} bahan dikurangi dari stok.',
           archivedWithStockOne: 'Pesanan diarsipkan. 1 bahan dikurangi dari stok.',
+          recipeCostLabel: 'Biaya resep',
+          recipeCostNone: 'Tanpa resep',
+          recipeCostPartial: 'Biaya tidak lengkap: {count} bahan hilang',
+          recipeMarginLabel: 'Margin',
+          orderCostLabel: 'Biaya pesanan',
+          orderProfitLabel: 'Laba dan margin',
+          orderCostMissing: 'Biaya belum dihitung',
+          orderCostMissingHint: 'Pesanan diarsipkan sebelum pencatatan biaya.',
+          orderStockUsed: 'Diambil dari stok',
+          orderStockNone: 'Tidak ada yang diambil dari stok.',
+          seedApplied: 'Gudang dan resep sudah diisi.',
           menuCountWithHidden: '{visible} terlihat · {hidden} disembunyikan',
           confirmDeleteOrder: 'Hapus pesanan aktif dari {date}?',
           confirmCancelSelection: 'Apakah Anda yakin ingin membatalkan pesanan saat ini?',
@@ -607,7 +658,7 @@ const defaultState = window.KedaiConfig.defaultState;
       };
 
       let state = JSON.parse(JSON.stringify(defaultState));
-      let activeTab = 'menu';
+      let activeTab = 'customer';
       let currentSelection = {};
       let currentPurchaseSelection = {};
       let editingProductId = null;
@@ -687,6 +738,7 @@ const defaultState = window.KedaiConfig.defaultState;
       let cloudCounts = null;
       const headerDateLabel = document.getElementById('headerDate');
       const headerWeekdayLabel = document.getElementById('headerWeekday');
+      const headerTimeLabel = document.getElementById('headerTime');
 
       function translate(key, replacements = {}) {
         const lang = state.language || 'pl';
@@ -724,8 +776,9 @@ const defaultState = window.KedaiConfig.defaultState;
       }
 
       /**
-       * Data i dzień tygodnia w prawym górnym rogu paska. Odświeża się też po
-       * północy, bez przeładowania aplikacji.
+       * Data, dzień tygodnia i godzina - wyśrodkowane nad tytułem zakładki.
+       * Odświeża się co sekundę, więc data sama przeskoczy także po północy,
+       * bez przeładowania aplikacji.
        */
       function renderHeaderDate() {
         const locale = getLocale();
@@ -742,6 +795,17 @@ const defaultState = window.KedaiConfig.defaultState;
         if (headerWeekdayLabel) {
           const weekday = new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(now);
           headerWeekdayLabel.textContent = weekday.charAt(0).toLocaleUpperCase(locale) + weekday.slice(1);
+        }
+
+        if (headerTimeLabel) {
+          const time = new Intl.DateTimeFormat(locale, {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+          }).format(now);
+          // Piszemy tylko, gdy tekst się zmienił - zegar tyka co sekundę.
+          if (headerTimeLabel.textContent !== time) headerTimeLabel.textContent = time;
         }
       }
 
@@ -766,6 +830,15 @@ const defaultState = window.KedaiConfig.defaultState;
           const key = el.dataset.i18n;
           if (translations[lang][key] || translations.pl[key]) {
             el.textContent = translate(key);
+          }
+        });
+
+        // Etykiety dla czytników ekranu (data-i18n-aria) - przy trybie
+        // "tylko ikona" dolny pasek nie ma widocznego tekstu.
+        document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+          const key = el.dataset.i18nAria;
+          if (translations[lang][key] || translations.pl[key]) {
+            el.setAttribute('aria-label', translate(key));
           }
         });
 
@@ -869,18 +942,35 @@ const defaultState = window.KedaiConfig.defaultState;
         });
 
         document.querySelectorAll('.tab-btn').forEach(button => {
-          const active = button.dataset.tab === activeTab;
+          const tab = button.dataset.tab;
+          // Zamów i Lista zamówień to widoki wewnątrz Magazynu - pasek ma wtedy
+          // podświetlać Magazyn, a nie milczeć.
+          const active = tab === activeTab
+            || (tab === 'warehouse' && WAREHOUSE_VIEW_TABS.includes(activeTab));
           button.classList.toggle('bg-orange-500', active);
           button.classList.toggle('text-white', active);
           button.classList.toggle('bg-slate-100', !active);
           button.classList.toggle('text-slate-700', !active);
+          if (active) button.setAttribute('aria-current', 'page');
+          else button.removeAttribute('aria-current');
         });
 
+        // Zakładki z szuflady (Ustawienia, edytuj menu, edycja magazynu) nie mają
+        // przycisku na dole - wtedy podświetlamy zębatkę, żeby pasek nie milczał.
+        document.querySelectorAll('.drawer-item').forEach(item => {
+          item.classList.toggle('is-active', item.dataset.tab === activeTab);
+        });
+
+        const toggle = document.getElementById('drawerToggleBtn');
+        if (toggle) toggle.classList.toggle('is-active', DRAWER_TABS.includes(activeTab));
+
+        renderWarehouseNav();
         renderTabTitle();
       }
 
       function setActiveTab(tab) {
         activeTab = tab;
+        closeDrawer();
         renderTabs();
         if (tab === 'settings') checkForUpdates();
         if (tab === 'archive') {
@@ -888,6 +978,91 @@ const defaultState = window.KedaiConfig.defaultState;
           resetArchiveFilter();
           renderArchive();
         }
+      }
+
+      /* ------------------------------------------- szuflada i dolny pasek */
+
+      const NAV_MODE_KEY = 'kedai_pos_nav_mode';
+      const NAV_MODES = ['text', 'both', 'icon'];
+      const DRAWER_TABS = ['settings', 'menu', 'warehouseEdit'];
+      const WAREHOUSE_VIEWS = [
+        { tab: 'warehouse', key: 'warehouseStock' },
+        { tab: 'purchase', key: 'orderIngredients' },
+        { tab: 'purchaseList', key: 'purchaseList' }
+      ];
+      const WAREHOUSE_VIEW_TABS = WAREHOUSE_VIEWS.map(view => view.tab);
+
+      function isDrawerOpen() {
+        return !document.getElementById('appDrawer').classList.contains('hidden');
+      }
+
+      function openDrawer() {
+        document.getElementById('appDrawer').classList.remove('hidden');
+        document.getElementById('drawerToggleBtn').setAttribute('aria-expanded', 'true');
+      }
+
+      function closeDrawer() {
+        const drawer = document.getElementById('appDrawer');
+        if (!drawer || drawer.classList.contains('hidden')) return;
+        drawer.classList.add('hidden');
+        document.getElementById('drawerToggleBtn').setAttribute('aria-expanded', 'false');
+      }
+
+      /**
+       * Sposób wyświetlania dolnego paska: sam tekst, tekst z ikoną albo sama
+       * ikona. Ustawienie jest lokalne dla telefonu i dotyczy wyłącznie paska -
+       * szuflada zawsze pokazuje ikonę razem z podpisem.
+       */
+      function getNavMode() {
+        try {
+          const value = localStorage.getItem(NAV_MODE_KEY);
+          return NAV_MODES.includes(value) ? value : 'both';
+        } catch (error) {
+          return 'both';
+        }
+      }
+
+      function setNavMode(mode) {
+        const value = NAV_MODES.includes(mode) ? mode : 'both';
+        try {
+          localStorage.setItem(NAV_MODE_KEY, value);
+        } catch (error) {
+          console.warn('Nie udało się zapisać wyglądu paska:', error);
+        }
+        renderNavMode();
+      }
+
+      function renderNavMode() {
+        const mode = getNavMode();
+        const nav = document.querySelector('.app-nav');
+        if (nav) nav.dataset.navMode = mode;
+
+        // Tylko przyciski - ten sam atrybut ma też sam pasek (dla CSS).
+        document.querySelectorAll('button[data-nav-mode]').forEach(button => {
+          const active = button.dataset.navMode === mode;
+          button.classList.toggle('bg-orange-500', active);
+          button.classList.toggle('border-orange-500', active);
+          button.classList.toggle('text-white', active);
+          button.classList.toggle('bg-white', !active);
+          button.classList.toggle('text-slate-700', !active);
+          button.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+      }
+
+      /**
+       * Przełącznik trzech widoków magazynu (stan, zamówienie, lista zamówień).
+       * Wstawiany do każdego z tych paneli, żeby było widać, gdzie się jest.
+       */
+      function renderWarehouseNav() {
+        const current = WAREHOUSE_VIEWS.some(view => view.tab === activeTab) ? activeTab : 'warehouse';
+        const buttons = WAREHOUSE_VIEWS.map(view => {
+          const active = view.tab === current;
+          return `<button type="button" data-action="warehouse-view" data-view="${view.tab}" class="touch-btn rounded-xl px-2 py-2 text-xs font-bold ${active ? 'bg-orange-500 text-white' : 'bg-slate-100 text-slate-700'}">${translate(view.key)}</button>`;
+        }).join('');
+
+        document.querySelectorAll('[data-warehouse-nav]').forEach(holder => {
+          holder.innerHTML = `<div class="grid grid-cols-3 gap-2">${buttons}</div>`;
+        });
       }
 
       function compareVersions(firstVersion, secondVersion) {
@@ -1048,6 +1223,7 @@ const defaultState = window.KedaiConfig.defaultState;
                   <div>
                     <p class="text-base font-bold text-slate-800">${section ? '▰ ' : ''}${escapeHtml(item.name)}</p>
                     ${section ? `<p class="text-xs font-semibold uppercase tracking-wide text-orange-600">${translate('sectionType')}</p>` : `<p class="text-sm font-semibold text-orange-600">${formatCurrency(item.price)}</p>`}
+                    ${section ? '' : recipeCostLine(item)}
                     ${visible ? '' : `<p class="mt-1 text-xs font-bold text-slate-500">${translate('itemHiddenBadge')}</p>`}
                   </div>
                   <div class="flex gap-2">
@@ -1381,16 +1557,47 @@ const defaultState = window.KedaiConfig.defaultState;
               .map(item => `${item.qty}× ${item.name}`)
               .join(', ') || translate('noItems');
 
+            // Zamówienia zarchiwizowane przed wprowadzeniem kosztów nie mają
+            // migawki - nie odtwarzamy jej z aktualnych cen, bo to byłoby
+            // zgadywanie. Pokazujemy wprost, że kosztu nie ma.
+            const hasCost = order.costTotal !== null && order.costTotal !== undefined && Number.isFinite(Number(order.costTotal));
+            const revenue = Number(order.total || 0);
+            const cost = hasCost ? Number(order.costTotal) : 0;
+            const profit = revenue - cost;
+            const stockUsed = Array.isArray(order.costItems) ? order.costItems : [];
+            const margin = hasCost && revenue > 0 ? ((revenue - cost) / revenue) * 100 : null;
+
             return `
               <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
                 <div class="mb-2 flex items-start justify-between gap-3">
                   <div>
                     <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">${formatDateTime(order.createdAt)}</p>
-                    <p class="text-lg font-black text-slate-800">${formatCurrency(order.total)}</p>
+                    <p class="text-lg font-black text-slate-800">${formatCurrency(revenue)}</p>
                   </div>
                   <span class="rounded-full bg-slate-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-700">${translate('closed')}</span>
                 </div>
                 <p class="text-sm text-slate-600">${escapeHtml(summary)}</p>
+
+                <div class="mt-3 rounded-xl bg-slate-50 px-3 py-2">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-xs font-bold text-slate-600">${translate('orderCostLabel')}</span>
+                    <span class="text-sm font-bold ${hasCost ? 'text-slate-800' : 'text-slate-400'}">${hasCost ? formatCurrency(cost) : translate('orderCostMissing')}</span>
+                  </div>
+                  ${margin === null ? '' : `
+                  <div class="mt-1 flex items-center justify-between gap-2">
+                    <span class="text-xs font-bold text-slate-600">${translate('orderProfitLabel')}</span>
+                    <span class="text-sm font-bold ${profit >= 0 ? 'text-emerald-700' : 'text-rose-700'}">${formatCurrency(profit)} · ${formatNumber(margin)}%</span>
+                  </div>`}
+                  ${hasCost ? '' : `<p class="mt-1 text-[11px] text-slate-400">${translate('orderCostMissingHint')}</p>`}
+                </div>
+
+                ${stockUsed.length ? `
+                <div class="mt-2">
+                  <p class="text-xs font-bold text-slate-600">${translate('orderStockUsed')}</p>
+                  <ul class="mt-1 space-y-0.5">
+                    ${stockUsed.map(entry => `<li class="text-xs text-slate-600">${formatNumber(entry.amount)} ${escapeHtml(entry.unit || '')} · ${escapeHtml(entry.name || '')}</li>`).join('')}
+                  </ul>
+                </div>` : (hasCost ? `<p class="mt-2 text-xs text-slate-500">${translate('orderStockNone')}</p>` : '')}
               </div>
             `;
           })
@@ -1595,6 +1802,8 @@ const defaultState = window.KedaiConfig.defaultState;
 
       function renderAll() {
         applyTranslations();
+        renderNavMode();
+        updateSyncBadge();
         renderMenu();
         renderCustomer();
         renderActiveOrders();
@@ -1623,6 +1832,49 @@ const defaultState = window.KedaiConfig.defaultState;
 
       function recipeOf(item) {
         return Array.isArray(item?.recipe) ? item.recipe : [];
+      }
+
+      /**
+       * Koszt jednej porcji wyliczony z receptury: ilość składnika × jego cena
+       * jednostkowa. Liczone jest z bieżącego magazynu, więc w edycji menu to
+       * wartość "na dziś", a nie historia.
+       */
+      function recipeCost(product) {
+        let cost = 0;
+        let missing = 0;
+        const recipe = recipeOf(product);
+
+        recipe.forEach(entry => {
+          const ingredient = (state.ingredients || []).find(item => item.id === entry.id);
+          if (!ingredient) {
+            missing += 1;
+            return;
+          }
+          cost += Number(entry.qty || 0) * Number(ingredient.unit_price || 0);
+        });
+
+        return { cost: Number(cost.toFixed(2)), missing, count: recipe.length };
+      }
+
+      /**
+       * Wiersz z kosztem receptury obok ceny sprzedażowej. Pusta receptura
+       * pokazuje wprost "brak receptury" - zero byłoby mylące.
+       */
+      function recipeCostLine(item) {
+        const price = Number(item.price || 0);
+        const { cost, missing, count } = recipeCost(item);
+
+        if (!count) {
+          return `<p class="text-xs font-semibold text-slate-400">${translate('recipeCostLabel')}: ${translate('recipeCostNone')}</p>`;
+        }
+
+        const parts = [`${translate('recipeCostLabel')}: ${formatCurrency(cost)}`];
+        if (price > 0 && cost > 0) {
+          parts.push(`${translate('recipeMarginLabel')}: ${formatNumber(((price - cost) / price) * 100)}%`);
+        }
+        if (missing) parts.push(translate('recipeCostPartial', { count: missing }));
+
+        return `<p class="text-xs font-semibold ${missing ? 'text-amber-600' : 'text-slate-500'}">${parts.join(' · ')}</p>`;
       }
 
       function draftQuantity(ingredientId) {
@@ -1752,12 +2004,24 @@ const defaultState = window.KedaiConfig.defaultState;
           });
         });
 
+        // Do zużycia dokładamy cenę z TEJ chwili. To migawka kosztu - gdybyśmy
+        // liczyli ją później z aktualnego cennika, zmiana ceny składnika
+        // przepisałaby koszt zamówień z przeszłości.
         const applied = [];
         usage.forEach((amount, ingredientId) => {
           const ingredient = state.ingredients.find(entry => entry.id === ingredientId);
           if (!ingredient) return;
-          ingredient.stock = Number((Number(ingredient.stock || 0) - amount).toFixed(3));
-          applied.push({ name: ingredient.name, unit: ingredient.unit, amount });
+          const quantity = Number(amount.toFixed(3));
+          const unitPrice = Number(ingredient.unit_price || 0);
+          ingredient.stock = Number((Number(ingredient.stock || 0) - quantity).toFixed(3));
+          applied.push({
+            id: ingredient.id,
+            name: ingredient.name,
+            unit: ingredient.unit,
+            amount: quantity,
+            unit_price: unitPrice,
+            cost: Number((quantity * unitPrice).toFixed(2))
+          });
         });
 
         return applied;
@@ -2042,6 +2306,13 @@ const defaultState = window.KedaiConfig.defaultState;
         // pozycji (patrz deductIngredientsForOrder).
         const deducted = deductIngredientsForOrder(archivedOrder);
 
+        // Migawka kosztu: ile czego zeszło i po jakiej cenie z tej chwili.
+        // Dzięki temu późniejsza zmiana receptury albo ceny składnika nie
+        // przepisze kosztu tego zamówienia.
+        archivedOrder.costItems = deducted;
+        archivedOrder.costTotal = Number(deducted.reduce((sum, entry) => sum + Number(entry.cost || 0), 0).toFixed(2));
+        archivedOrder.costAt = new Date().toISOString();
+
         await window.KedaiDatabase.updateOrder(archivedOrder, 'archived');
         saveState();
         renderAll();
@@ -2275,9 +2546,6 @@ const defaultState = window.KedaiConfig.defaultState;
       document.getElementById('cancelIngredientEditBtn').addEventListener('click', cancelIngredientEdit);
       document.getElementById('acceptPurchaseBtn').addEventListener('click', acceptPurchaseOrder);
       document.getElementById('cancelPurchaseBtn').addEventListener('click', cancelPurchaseSelection);
-      document.querySelectorAll('[data-warehouse-view]').forEach(button => {
-        button.addEventListener('click', () => setActiveTab(button.dataset.warehouseView));
-      });
 
       document.getElementById('cancelProductEditBtn').addEventListener('click', cancelMenuEdit);
 
@@ -2412,6 +2680,10 @@ const defaultState = window.KedaiConfig.defaultState;
           deletePurchaseOrder(id);
         }
 
+        if (action === 'warehouse-view') {
+          setActiveTab(button.dataset.view);
+        }
+
         const tab = button.dataset.tab;
         if (tab) {
           setActiveTab(tab);
@@ -2422,8 +2694,19 @@ const defaultState = window.KedaiConfig.defaultState;
         button.addEventListener('click', () => setActiveTab(button.dataset.tab));
       });
 
-      document.querySelectorAll('[data-settings-tab]').forEach(button => {
-        button.addEventListener('click', () => setActiveTab(button.dataset.settingsTab));
+      document.getElementById('drawerToggleBtn').addEventListener('click', () => {
+        if (isDrawerOpen()) closeDrawer();
+        else openDrawer();
+      });
+
+      document.getElementById('appDrawerBackdrop').addEventListener('click', closeDrawer);
+
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeDrawer();
+      });
+
+      document.querySelectorAll('button[data-nav-mode]').forEach(button => {
+        button.addEventListener('click', () => setNavMode(button.dataset.navMode));
       });
 
       document.getElementById('checkUpdatesBtn').addEventListener('click', checkForUpdates);
@@ -2639,24 +2922,62 @@ const defaultState = window.KedaiConfig.defaultState;
         });
       }
 
-      /** Kropka w pasku u góry: widać, że coś czeka albo zostało odrzucone. */
+      /**
+       * Stan chmury pokazywany na dwa sposoby: kropka na zębatce (sygnał)
+       * i zdanie w stopce szuflady (wyjaśnienie). Sama kropka byłaby zagadką,
+       * dlatego pełny opis jest o jedno dotknięcie dalej.
+       */
       function updateSyncBadge() {
-        const badge = document.getElementById('syncBadge');
+        const dot = document.getElementById('drawerToggleDot');
+        const description = document.getElementById('drawerToggleStatus');
+        const footer = document.getElementById('drawerSyncFooter');
+        const footerDot = document.getElementById('drawerSyncDot');
+        const footerText = document.getElementById('drawerSyncText');
         const sync = window.KedaiSync;
-        if (!badge || !sync?.isConfigured()) return;
 
-        const status = sync.getStatus();
-        const pending = status.pending;
-        const failed = status.failed;
-        if (!pending && !failed) {
-          badge.classList.add('hidden');
+        if (!sync?.isConfigured()) {
+          // Bez konfiguracji chmury nie ma czego wysyłać - nie straszymy kropką.
+          dot?.classList.add('hidden');
+          footer?.classList.add('hidden');
+          if (description) description.textContent = '';
           return;
         }
 
-        badge.classList.remove('hidden');
-        if (failed) badge.textContent = translate('syncBadgeFailed', { count: failed });
-        else if (!status.signedIn) badge.textContent = translate('syncBadgeSignedOut', { count: pending });
-        else badge.textContent = translate('syncBadgePending', { count: pending });
+        const syncStatus = sync.getStatus();
+        const pending = syncStatus.pending;
+        const failed = syncStatus.failed;
+        const clean = !pending && !failed;
+        // Kropka ma zwracać uwagę, a nie mrugać przy każdej zmianie danych.
+        // Rutynowa chwilowa zaległość (telefon zalogowany, wysyłka ruszy za
+        // chwilę) jej nie zapala - inaczej świeciłaby cały dzień i przestałaby
+        // cokolwiek znaczyć. Zapala ją brak logowania (nic nie jedzie do chmury)
+        // albo odrzucone wiersze.
+        const needsAttention = failed > 0 || (!syncStatus.signedIn && pending > 0);
+
+        const message = clean
+          ? translate('syncPendingNone')
+          : (failed
+            ? translate('syncBadgeFailed', { count: failed })
+            : (syncStatus.signedIn
+              ? translate('syncBadgePending', { count: pending })
+              : translate('syncBadgeSignedOut', { count: pending })));
+
+        if (dot) {
+          dot.classList.toggle('hidden', !needsAttention);
+          dot.classList.toggle('is-error', Boolean(failed));
+          dot.title = message;
+        }
+
+        if (description) description.textContent = clean ? '' : message;
+
+        if (footer) {
+          footer.classList.remove('hidden');
+          if (footerDot) {
+            footerDot.classList.toggle('is-error', Boolean(failed));
+            footerDot.classList.toggle('is-clear', clean);
+          }
+          if (footerText) footerText.textContent = message;
+        }
       }
 
       function syncAuthMessage(error) {
@@ -2835,6 +3156,81 @@ const defaultState = window.KedaiConfig.defaultState;
         }
       }
 
+      /* ------------------------------------------------ jednorazowy seed PIPIN */
+
+      const PIPIN_SEED_KEY = 'kedai_pos_pipin_seed';
+
+      /**
+       * Jednorazowe uzupełnienie magazynu i receptur (config/seed-pipin.js).
+       *
+       * Wykonuje się raz na urządzenie i tylko dla użytkownika o nazwie z seeda,
+       * żeby nie ruszyć danych innych telefonów. Zasady: nic nie kasujemy
+       * fizycznie (stare składniki dostają nagrobek), stany magazynowe zostają,
+       * receptury wypełniamy wyłącznie tam, gdzie są puste.
+       */
+      async function applyPipinSeed() {
+        const seed = window.KedaiSeed;
+        if (!seed || !Array.isArray(seed.ingredients)) return false;
+
+        const userName = (window.KedaiSync?.getUserName() || '').trim().toUpperCase();
+        if (!userName || userName !== String(seed.userName || '').trim().toUpperCase()) return false;
+
+        const version = Number(seed.version || 1);
+        try {
+          if (Number(localStorage.getItem(PIPIN_SEED_KEY) || 0) >= version) return false;
+        } catch (error) {
+          // Brak dostępu do localStorage nie może zablokować uzupełnienia danych.
+        }
+
+        const now = new Date().toISOString();
+        const existing = new Map((state.ingredients || []).map(item => [item.id, item]));
+
+        seed.ingredients.forEach(entry => {
+          const current = existing.get(entry.id);
+          if (!current) {
+            state.ingredients.push({ ...entry });
+            return;
+          }
+          // Składnik już istnieje - stan zostawiamy (to prawdziwy towar w lokalu),
+          // a z seeda bierzemy nazwę, jednostkę, cenę i progi.
+          Object.assign(current, {
+            name: entry.name,
+            unit: entry.unit,
+            unit_price: entry.unit_price,
+            min_stock: entry.min_stock,
+            target_stock: entry.target_stock,
+            min_order_quantity: entry.min_order_quantity,
+            unit_step: entry.unit_step
+          });
+        });
+
+        const keptIds = new Set(seed.ingredients.map(entry => entry.id));
+        for (const id of (seed.remove || [])) {
+          const ingredient = existing.get(id);
+          if (!ingredient || keptIds.has(id)) continue;
+          ingredient.deleted = true;
+          ingredient.deleted_at = now;
+          // Nagrobek do chmury, potem usunięcie z telefonu - w tej kolejności.
+          window.KedaiSync?.softDelete('ingredients', [ingredient]);
+          state.ingredients = state.ingredients.filter(item => item.id !== id);
+          await window.KedaiDatabase.deleteIngredient(id);
+        }
+
+        Object.entries(seed.recipes || {}).forEach(([productId, recipe]) => {
+          const product = (state.menu || []).find(item => item.id === productId);
+          if (!product || recipeOf(product).length) return;
+          product.recipe = recipe.map(entry => ({ id: entry.id, qty: Number(entry.qty || 0) }));
+        });
+
+        try {
+          localStorage.setItem(PIPIN_SEED_KEY, String(version));
+        } catch (error) {
+          console.warn('Nie udało się zapisać znacznika uzupełnienia danych:', error);
+        }
+
+        return true;
+      }
+
       async function initializeApp() {
         try {
           updateMenuFormType();
@@ -2844,6 +3240,7 @@ const defaultState = window.KedaiConfig.defaultState;
           document.getElementById('settingsAppVersion').textContent = `v${window.KedaiConfig.version}`;
           await window.KedaiDatabase.requestPersistence();
           state = await window.KedaiDatabase.initialize(defaultState);
+          const seedApplied = await applyPipinSeed();
           renderAll();
           renderStorageInfo();
           syncUserNameInput.value = window.KedaiSync?.getUserName() || '';
@@ -2854,13 +3251,18 @@ const defaultState = window.KedaiConfig.defaultState;
           window.KedaiSync?.start(state);
           renderSyncPanel();
           updateSyncBadge();
+          if (seedApplied) {
+            saveState();
+            showToast(translate('seedApplied'), 'success');
+          }
         } catch (error) {
           console.error('Błąd uruchamiania IndexedDB:', error);
           showToast(translate('dbOpenFailed'), 'error');
         }
       }
 
-      // Data w górnym pasku odświeża się także po północy, bez przeładowania.
-      setInterval(renderHeaderDate, 60000);
+      // Data i godzina w górnym pasku odświeżają się same: data przeskoczy po
+      // północy, zegar tyka co sekundę - wszystko bez przeładowania aplikacji.
+      setInterval(renderHeaderDate, 1000);
 
       initializeApp();

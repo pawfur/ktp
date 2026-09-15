@@ -14,6 +14,8 @@ Połączenie Supabase z GitHubem (w panelu Supabase) **nie jest do tego potrzebn
 | 4 | Kod wysyłający dane (`modules/sync.js`) | ja | zrobione |
 | 5 | Karta „Chmura” w Ustawieniach | ja | zrobione |
 | 6 | Kolumny `deleted` / `deleted_at` (sekcja 4d schematu) | Ty | zrobione |
+| 7 | Kolumny `visible`, `color`, `recipe` (sekcje 4e–4g schematu) | ja (MCP) | zrobione |
+| 8 | Kolumny `cost_total`, `stock_used`, `cost_at` (sekcja 4h schematu) | ja (MCP) | zrobione |
 
 Wszystkie kroki są zamknięte. Schemat można uruchamiać ponownie po każdej aktualizacji aplikacji — jest napisany tak, żeby nie usuwał danych.
 

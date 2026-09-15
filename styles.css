@@ -123,16 +123,43 @@ body {
   border-right: 1px solid rgba(148, 163, 184, 0.25);
 }
 
-/* Górny pasek: logo po lewej, tytuł zakładki na środku, data i dzień tygodnia
-   po prawej. Marginesy paska są minimalne, żeby logo było jak największe. */
+/* Górny pasek: logo po lewej, tytuł zakładki na środku, zębatka po prawej.
+   Data, dzień tygodnia i godzina są wyśrodkowane nad tytułem i wyjęte z układu
+   (position: absolute), więc NIE zwiększają wysokości paska. Marginesy paska są
+   minimalne, żeby logo było jak największe. */
 .app-header {
+  position: relative;
+  padding: max(2px, env(safe-area-inset-top)) 8px 2px;
+  --logo-h: 80px;
+}
+
+.app-header-top {
+  position: absolute;
+  top: max(1px, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  line-height: 1.1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.app-header-day {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.app-header-main {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 4px;
-  padding: max(2px, env(safe-area-inset-top)) 8px 2px;
-  --logo-h: 80px;
+  min-height: var(--logo-h);
 }
 
 /* Kafel z logo. Plik logoKTP.png ma przezroczyste marginesy wokół znaku,
@@ -167,7 +194,8 @@ body {
 .app-title {
   position: absolute;
   left: 50%;
-  top: 50%;
+  /* Nieco poniżej środka: nad tytułem siedzi data, dzień tygodnia i godzina. */
+  top: 64%;
   transform: translate(-50%, -50%);
   margin: 0;
   max-width: 50%;
@@ -188,16 +216,6 @@ body {
   display: block;
 }
 
-.app-today {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-left: auto;
-  line-height: 1.15;
-  text-align: right;
-  white-space: nowrap;
-}
-
 .app-today-date {
   font-size: 0.8rem;
   font-weight: 800;
@@ -207,6 +225,184 @@ body {
   font-size: 0.68rem;
   font-weight: 600;
   opacity: 0.92;
+}
+
+/* Zegar. Liczby o równej szerokości, żeby tekst nie drgał w rytm sekund. */
+.app-today-time {
+  font-size: 0.82rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.95;
+}
+
+/* Stopka szuflady: stan chmury słowami. Wyjaśnia kropkę na zębatce, żeby nie
+   trzeba było się domyślać, co oznacza jej kolor. */
+.app-drawer-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #f8fafc;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.app-drawer-dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #facc15;
+  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.25);
+}
+
+.app-drawer-dot.is-error {
+  background: #f43f5e;
+  box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.25);
+}
+
+.app-drawer-dot.is-clear {
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+}
+
+/* Zębatka w prawym górnym rogu otwiera szufladę z Ustawieniami, edycją menu
+   i edycją magazynu. Rzeczy rzadkie są celowo najdalej od kciuka - nic, co
+   robisz przy ladzie, nie wymaga sięgania w ten róg. */
+.app-menu-btn {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.app-menu-btn:active {
+  transform: scale(0.96);
+}
+
+.app-menu-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.app-menu-btn.is-active {
+  background: rgba(255, 255, 255, 0.42);
+}
+
+/* Kropka na zębatce: coś czeka na wysłanie albo chmura odrzuciła wiersz.
+   Szczegóły (liczby i powód) są w Ustawieniach → Chmura. */
+.app-menu-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #facc15;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85);
+}
+
+.app-menu-dot.is-error {
+  background: #f43f5e;
+}
+
+/* Szuflada z konfiguracją - wysuwana z prawej, kliknięcie w tło zamyka. */
+.app-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+
+.app-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.app-drawer-shell {
+  position: absolute;
+  inset: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+.app-drawer-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(80%, 300px);
+  padding: max(14px, env(safe-area-inset-top)) 12px 16px;
+  background: #ffffff;
+  box-shadow: -18px 0 40px rgba(15, 23, 42, 0.25);
+  pointer-events: auto;
+  animation: drawer-in 0.18s ease-out;
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+.app-drawer-heading {
+  margin: 2px 4px 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #f8fafc;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: left;
+  color: #1e293b;
+}
+
+.drawer-item svg {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  color: #f97316;
+}
+
+.drawer-item.is-active {
+  border-color: #fdba74;
+  background: #fff7ed;
+  color: #9a3412;
+}
+
+.drawer-item:active {
+  transform: scale(0.99);
 }
 
 .premium-card {
@@ -231,7 +427,14 @@ body {
   background: #fff1f2;
 }
 
+/* Przycisk dolnego paska: ikona nad podpisem. Które elementy są widoczne,
+   decyduje atrybut data-nav-mode na pasku (Ustawienia → Wygląd dolnego paska). */
 .tab-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
   min-height: 52px;
   box-shadow: 0 8px 18px rgba(249, 115, 22, 0.2);
   transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
@@ -239,6 +442,31 @@ body {
 
 .tab-btn:active {
   transform: translateY(1px) scale(0.99);
+}
+
+.nav-icon {
+  display: block;
+  line-height: 0;
+}
+
+.nav-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.nav-label {
+  display: block;
+  line-height: 1.1;
+}
+
+.app-nav[data-nav-mode='text'] .nav-icon,
+.app-nav[data-nav-mode='icon'] .nav-label {
+  display: none;
+}
+
+.app-nav[data-nav-mode='icon'] .nav-icon svg {
+  width: 26px;
+  height: 26px;
 }
 
 @media (max-width: 380px) {
@@ -251,8 +479,15 @@ body {
     --logo-h: 64px;
   }
 
+  /* Tytuł niżej, bo nad nim musi zmieścić się data, dzień i godzina. */
   .app-title {
+    top: 66%;
     font-size: 0.95rem;
+  }
+
+  .app-header-top {
+    top: max(3px, env(safe-area-inset-top));
+    gap: 2px;
   }
 
   .app-today-date {
@@ -261,6 +496,10 @@ body {
 
   .app-today-weekday {
     font-size: 0.62rem;
+  }
+
+  .app-today-time {
+    font-size: 0.74rem;
   }
 
   .tab-btn {
@@ -277,14 +516,24 @@ body {
   }
 
   .app-title {
+    top: 68%;
     font-size: 0.8rem;
   }
 
+  .app-header-top {
+    top: max(3px, env(safe-area-inset-top));
+    gap: 2px;
+  }
+
   .app-today-date {
-    font-size: 0.66rem;
+    font-size: 0.62rem;
   }
 
   .app-today-weekday {
-    font-size: 0.58rem;
+    font-size: 0.54rem;
+  }
+
+  .app-today-time {
+    font-size: 0.62rem;
   }
 }

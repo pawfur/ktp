@@ -190,6 +190,28 @@ alter table public.menu_items
 alter table public.menu_items add column if not exists recipe jsonb not null default '[]'::jsonb;
 
 -- ---------------------------------------------------------------------------
+-- 4h. Koszt zamówienia i zużycie magazynu (migawka z chwili archiwizacji)
+--
+-- Gdy zamówienie trafia do archiwum, aplikacja nalicza koszt z receptur
+-- i zapisuje MIGAWKĘ: ile czego zeszło ze stanu i po jakiej cenie z tamtej
+-- chwili. Bez migawki zmiana ceny składnika przepisywałaby historię.
+--
+-- cost_total - suma kosztu zamówienia. NULL = zamówienie zarchiwizowane przed
+--              wprowadzeniem kosztów, nie da się go wiarygodnie odtworzyć.
+-- stock_used - lista składników zdjętych ze stanu, np.
+--              [{"id":"ing_ceker","name":"Ceker ayam","unit":"g",
+--                "amount":60,"unit_price":28,"cost":1680}]
+-- cost_at    - kiedy koszt został naliczony.
+--
+-- Uwaga: koszt obejmuje WYŁĄCZNIE to, co faktycznie zeszło ze stanu.
+-- Jeśli receptura wskazuje składnik usunięty z magazynu, nie ma go ani
+-- w koszcie, ani w zużyciu.
+-- ---------------------------------------------------------------------------
+alter table public.client_orders add column if not exists cost_total numeric;
+alter table public.client_orders add column if not exists stock_used jsonb;
+alter table public.client_orders add column if not exists cost_at timestamptz;
+
+-- ---------------------------------------------------------------------------
 -- 5. Zabezpieczenia (RLS)
 --
 -- Bez tego kroku klucz anon, który jest publicznie widoczny w aplikacji,

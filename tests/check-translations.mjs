@@ -27,8 +27,19 @@ const ALLOWED_IDENTICAL = new Set(['menu', 'edit']);
  * Klucze wybierane dynamicznie. Moduł chmury zwraca nazwę klucza
  * (np. 'syncErrTables'), a app.js tłumaczy ją w syncDetailText().
  * Statyczna analiza takich odwołań nie widzi, więc są wypisane tutaj.
+ *
+ * `warehouseStock` i `orderIngredients` trafiają tu z tego samego powodu:
+ * przełącznik widoków magazynu (WAREHOUSE_VIEWS w app.js) trzyma nazwy
+ * kluczy w danych, a nie wprost w wywołaniu translate().
  */
-const DYNAMIC_KEYS = new Set(['syncErrTables', 'syncErrColumn', 'syncErrAccess', 'syncErrOffline']);
+const DYNAMIC_KEYS = new Set([
+  'syncErrTables',
+  'syncErrColumn',
+  'syncErrAccess',
+  'syncErrOffline',
+  'warehouseStock',
+  'orderIngredients'
+]);
 
 const colors = {
   reset: '\u001b[0m',

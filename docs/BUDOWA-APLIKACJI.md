@@ -19,6 +19,7 @@ Kedai/
 ├── push-github.ps1
 ├── config/
 │   ├── default-state.js
+│   ├── seed-pipin.js
 │   └── supabase-config.js
 ├── modules/
 │   ├── dialogs.js
@@ -26,8 +27,10 @@ Kedai/
 │   ├── sync.js
 │   └── ui.js
 ├── tools/
+│   ├── db.mjs
 │   └── push-release.mjs
 ├── tests/
+│   ├── check-sync.mjs
 │   └── check-translations.mjs
 └── docs/
     ├── README.md
@@ -42,7 +45,28 @@ Kedai/
 
 ### `index.html`
 
-Zawiera strukturę interfejsu: nagłówek, zakładki, formularz menu, obsługę klienta, zamówienia, archiwum, ustawienia i dolną nawigację. Ładuje pozostałe pliki w ustalonej kolejności.
+Zawiera strukturę interfejsu: nagłówek, dolną nawigację, szufladę konfiguracji, formularz menu, obsługę klienta, zamówienia, archiwum i ustawienia. Ładuje pozostałe pliki w ustalonej kolejności.
+
+### Nawigacja (dolny pasek i szuflada)
+
+Ekrany są podzielone na dwie grupy i jest to decyzja projektowa, nie estetyka:
+
+- **Dolny pasek — strefa kciuka.** Cztery rzeczy, które robi się przy ladzie: Obsługa, Zamówienia, Archiwum, Magazyn. To przyciski `data-tab` w `<nav class="app-nav">`.
+- **Szuflada pod zębatką — prawy górny róg.** Rzeczy rzadkie: Ustawienia, Edytuj menu, Edycja magazynu. Róg u góry po prawej jest najtrudniej dostępny na telefonie, więc nie da się w niego kliknąć przez pomyłkę w trakcie obsługi klienta.
+
+Zakładki z szuflady nie mają przycisku na dole, dlatego gdy któraś jest otwarta, zamiast przycisku paska podświetla się zębatka — pasek nigdy nie „milczy”. Ustawienia nie mają już skrótów do edycji menu i magazynu: do każdego ekranu prowadzi jedna droga.
+
+Magazyn ma trzy widoki (stan, zamówienie, lista zamówień) przełączane paskiem `Stan | Zamów | Lista zamówień`. Przełącznik jest wstrzykiwany do każdego z tych trzech paneli (`renderWarehouseNav`), więc widać go niezależnie od tego, gdzie się jest, a dolny pasek nadal podświetla Magazyn.
+
+Wygląd paska ustawia się w Ustawieniach → **Wygląd dolnego paska**: `Tylko tekst` / `Tekst i ikona` / `Tylko ikona`. Ustawienie siedzi w `localStorage` (`kedai_pos_nav_mode`) i dotyczy wyłącznie paska — szuflada zawsze pokazuje ikonę razem z podpisem. Tryb „tylko ikona” nie może zostać bez etykiet dla czytników ekranu, dlatego przyciski mają `aria-label`, aktywna pozycja `aria-current="page"`, a tytuł zakładki w nagłówku nadal nazywa ekran. Uwaga przy zmianach: ten sam atrybut `data-nav-mode` nosi pasek (dla CSS) i przyciski (dla stanu), więc selektory w JavaScript muszą być zawężone do `button[data-nav-mode]`.
+
+Ikony są wbudowanymi SVG z `stroke="currentColor"`, dzięki czemu przejmują kolor aktywnego przycisku. Emoji odpadło: na różnych Androidach wyglądają inaczej i nie da się ich spójnie pokolorować.
+
+Nagłówek ma wysokość wyznaczoną przez logo (`--logo-h`), a data, dzień tygodnia i zegar `HH:MM:SS` są wyśrodkowane **nad** tytułem i wyjęte z układu (`position: absolute`), więc nie zwiększają wysokości paska. Data z dniem tygodnia to jedna linia (dzień po prawej stronie daty), zegar jest pod nią. Prawy górny róg należy do zębatki, dzięki czemu rzuca się w oczy.
+
+Zegar odświeża się co sekundę (`setInterval(renderHeaderDate, 1000)`) i pisze do DOM tylko wtedy, gdy tekst naprawdę się zmienił; liczby mają `font-variant-numeric: tabular-nums`, żeby nie drgały w rytm sekund. Tytuł zakładki jest przesunięty poniżej środka paska (`top: 62%`), bo nad nim musi zmieścić się data z zegarem; na wąskich ekranach (≤380 px i ≤340 px) schodzi jeszcze niżej (`64%` i `66%`), a czcionki górnej linii są odpowiednio mniejsze. Sprawdzone pomiarami na 320, 360 i 467 px: wysokość paska 56 / 68 / 84 px, odstęp zegar → tytuł 5–10 px, tytuł zawsze w jednej linii.
+
+Stan chmury pokazują dwa elementy: **kropka na zębatce** (żółta — coś czeka na wysłanie, czerwona — chmura odrzuciła wiersz, brak kropki — wszystko potwierdzone) oraz **zdanie w stopce szuflady**, które mówi to samo słowami (np. „63 bez chmury”). Sama kropka bez wyjaśnienia była zagadką — kolor bez legendy nic nie komunikuje. Liczby i powód odrzucenia są w Ustawieniach → Chmura.
 
 Górny pasek (`.app-header`) zawiera trzy elementy: logo `logoKTP.png` po lewej, nazwę aktualnej zakładki na środku oraz datę z nazwą dnia tygodnia po prawej. Logo leży wprost na pomarańczowym pasku (bez białego tła) i jest kadrowane przez `.app-logo-box` z `overflow: hidden` – plik logo ma przezroczyste marginesy wokół znaku, więc obraz jest powiększony (`.app-logo` z `translate(-50%, -50%)`), a nadmiar jest obcinany. Ponieważ plik jest jednokolorowy (brązowy), w CSS jest `filter: brightness(0) invert(1)`, który rozjaśnia znak do bieli – bez tego był niewidoczny na pasku. Nazwy zakładek w pasku to wszystkie warianty językowe w `<h1 class="app-title">` – widoczny jest tylko ten z klasą `.tab-title.active`, ustawianą przy zmianie zakładki. Dlatego panele nie mają już własnych nagłówków z nazwą zakładki (odsyłacze `data-i18n` zostały w pasku, dzięki czemu klucze tłumaczeń nadal są używane).
 
@@ -100,6 +124,12 @@ Jest publicznym źródłem aktualnej wersji opublikowanej na serwerze. Aplikacja
 
 Przechowuje adres projektu Supabase i klucz publiczny oraz nazwy tabel. Klucz publiczny jest z założenia jawny — trafia do przeglądarki, a danych bronią reguły RLS w bazie.
 
+### `config/seed-pipin.js`
+
+Jednorazowy zestaw danych (magazyn + receptury) dla telefonu PIPIN. To **dane, nie logika** — ceny, progi i gramatury można poprawiać bez ruszania kodu aplikacji. Mechanizm `applyPipinSeed` (w `app.js`) uruchamia się raz na urządzenie i wyłącznie wtedy, gdy w Ustawieniach wpisana jest nazwa użytkownika z pola `userName` tego pliku, więc inne telefony zostają nietknięte. Zasady: istniejące stany magazynowe są zachowywane (podmieniamy tylko nazwę, jednostkę, cenę i progi), receptury wypełniamy wyłącznie tam, gdzie są puste, a składniki z listy `remove` dostają nagrobek (`deleted`) — w chmurze zostają, z telefonu znikają.
+
+Uwaga przy poprawkach: plik zapamiętuje swoją `version` na urządzeniu. Zmiana treści bez podniesienia `version` **nie** zostanie już zaaplikowana na telefonie, który tę wersję widział.
+
 ### `modules/sync.js`
 
 Wysyła dane do Supabase. Odsłania `window.KedaiSync` i spełnia cztery warunki: kierunek jest tylko jeden (telefon wysyła, chmura przyjmuje), wysyłka nigdy nie blokuje zapisu lokalnego, brak internetu nie zużywa prób, a po trzech nieudanych próbach moduł czeka na kolejną zmianę danych. Każdy wiersz podpisuje nazwą użytkownika z Ustawień. Szczegóły wdrożenia opisuje [SUPABASE-SETUP.md](SUPABASE-SETUP.md).
@@ -125,6 +155,18 @@ Każda pozycja menu (produkt, nie zakładka) ma **recepturę** — przycisk „R
 
 **Zużycie schodzi z magazynu w momencie przeniesienia zamówienia do archiwum.** Aplikacja sumuje receptury wszystkich pozycji zamówienia (ilość z receptury × liczba porcji), odejmuje wynik od `ingredient.stock` i pokazuje komunikat, z ilu składników zdjęto towar. Stan magazynu zmienia się więc lokalnie i — jak każda zmiana — jest wysyłany do chmury. Jeśli po odejmowaniu stan spadnie poniżej minimum, karta składnika w Magazynie podświetli się na czerwono (klasa `.stock-low`). Receptury są częścią wierszy menu w chmurze (kolumna `menu_items.recipe`), więc odtworzenie danych na innym telefonie przenosi je razem z menu.
 Aplikacja jest przeznaczona wyłącznie do pracy w pionie. `manifest.json` ustawia `portrait-primary`, a przy uruchomieniu aplikacja próbuje zablokować orientację ekranu przez Screen Orientation API.
+
+### Koszt receptury i koszt zamówienia
+
+W edycji menu, pod ceną sprzedażową pozycji, widać **koszt receptury** (HPP) oraz marżę procentową. Koszt liczy się jako suma `ilość składnika × unit_price` z aktualnego magazynu, więc pokazuje wartość „na dziś”. Gdy receptura jest pusta, karta mówi wprost „Brak receptury" — zero byłoby mylące. Gdy receptura wskazuje składnik, którego nie ma już w magazynie, koszt jest częściowy, a obok pojawia się ostrzeżenie z liczbą brakujących składników.
+
+**Koszt zamówienia jest migawką z chwili archiwizacji, nie wartością liczoną na bieżąco.** W momencie archiwizacji aplikacja zapisuje na zamówieniu: `costItems` (lista składników zdjętych ze stanu — z ilością, jednostką, ceną z tej chwili i kosztem), `costTotal` (suma kosztu) oraz `costAt` (kiedy naliczono). Dzięki temu późniejsza zmiana ceny składnika albo receptury nie przepisze kosztu zamówień z przeszłości.
+
+W archiwum zamówień każda karta pokazuje sumę sprzedaży, **koszt zamówienia**, **zysk i marżę** oraz listę „Ze stanu zeszło" — jeden składnik pod drugim (np. `20 g · Kopi bubuk`). W kartach zamówień **aktywnych** nie ma ani kosztu, ani zużycia: pojawiają się dopiero po archiwizacji, bo dopiero wtedy towar schodzi ze stanu. Zamówienia zarchiwizowane przed wprowadzeniem kosztów nie mają migawki i pokazują „Koszt nienaliczony" — nie odtwarzamy jej z aktualnych cen, bo to byłoby zgadywanie.
+
+Koszt obejmuje wyłącznie to, co faktycznie zeszło ze stanu. Jeśli receptura wskazuje składnik usunięty z magazynu, nie ma go ani w zużyciu, ani w koszcie.
+
+W chmurze koszt jedzie w kolumnach `client_orders.cost_total`, `client_orders.stock_used` (jsonb) i `client_orders.cost_at` (schemat, sekcja 4h). `NULL` w `cost_total` znaczy „nie naliczono" (zamówienie aktywne albo sprzed tej zmiany), a `0` — „naliczono, ale nic nie zeszło ze stanu". Te dwa przypadki trzeba rozróżniać w raportach.
 
 ### Magazyn
 

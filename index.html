@@ -17,11 +17,20 @@
   <body class="text-slate-800 antialiased">
     <div class="mx-auto app-shell bg-white shadow-2xl relative">
       <header class="app-header sticky top-0 z-20 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white shadow-lg shadow-orange-500/20">
-        <div class="app-logo-box">
-          <img src="logoKTP.png" alt="Kedai POS" class="app-logo" />
+        <div class="app-header-top">
+          <span class="app-header-day">
+            <span id="headerDate" class="app-today-date"></span>
+            <span id="headerWeekday" class="app-today-weekday"></span>
+          </span>
+          <span id="headerTime" class="app-today-time"></span>
         </div>
 
-        <h1 class="app-title">
+        <div class="app-header-main">
+          <div class="app-logo-box">
+            <img src="logoKTP.png" alt="Kedai POS" class="app-logo" />
+          </div>
+
+          <h1 class="app-title">
           <span class="tab-title" data-title-for="menu" data-i18n="menu">Menu</span>
           <span class="tab-title" data-title-for="customer" data-i18n="customerService">Obsługa klienta</span>
           <span class="tab-title" data-title-for="orders" data-i18n="activeOrdersLabel">Aktywne zamówienia</span>
@@ -33,10 +42,11 @@
           <span class="tab-title" data-title-for="settings" data-i18n="settings">Ustawienia</span>
         </h1>
 
-        <div class="app-today">
-          <span id="headerDate" class="app-today-date"></span>
-          <span id="headerWeekday" class="app-today-weekday"></span>
-          <span id="syncBadge" class="mt-1 hidden rounded-full bg-rose-700/90 px-2 py-0.5 text-[10px] font-bold text-white"></span>
+          <button id="drawerToggleBtn" type="button" class="app-menu-btn" aria-expanded="false" aria-controls="appDrawer" data-i18n-aria="openAppMenu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7" stroke-width="2.4"/><circle cx="12" cy="12" r="2.6" stroke-width="2"/><path stroke-width="3" d="M12 5V2.8M12 19v2.2M5 12H2.8M19 12h2.2M7.05 7.05 5.49 5.49M16.95 16.95l1.56 1.56M16.95 7.05l1.56-1.56M7.05 16.95l-1.56 1.56"/></svg>
+          <span id="drawerToggleDot" class="app-menu-dot hidden" aria-hidden="true"></span>
+          <span id="drawerToggleStatus" class="sr-only"></span>
+        </button>
         </div>
       </header>
 
@@ -131,15 +141,13 @@
         </section>
 
         <section id="panel-warehouse" class="tab-panel">
+          <div data-warehouse-nav class="mb-4"></div>
+
           <div class="premium-card mb-4 rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-200">
             <div class="mb-3 flex items-center justify-end gap-3">
               <span id="warehouseValueBadge" class="rounded-full bg-emerald-100 px-2 py-1 text-xs font-bold text-emerald-700">Rp 0</span>
             </div>
-            <div class="grid grid-cols-2 gap-3">
-              <button data-warehouse-view="purchase" type="button" class="touch-btn rounded-xl bg-orange-500 px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-500/25" data-i18n="orderIngredients">Zamów</button>
-              <button data-warehouse-view="purchaseList" type="button" class="touch-btn rounded-xl border border-slate-300 bg-white px-3 py-3 text-sm font-bold text-slate-700" data-i18n="purchaseList">Lista zamówień</button>
-            </div>
-            <p class="mt-3 text-xs text-slate-500" data-i18n="warehouseHint">Podgląd stanu magazynu. Aby dodać lub zmienić składniki, użyj przycisku Edycja magazynu w Ustawieniach.</p>
+            <p class="text-xs text-slate-500" data-i18n="warehouseHint">Podgląd stanu magazynu. Aby dodać lub zmienić składniki, użyj przycisku Edycja magazynu w Ustawieniach.</p>
           </div>
 
           <div class="mb-3 flex items-center justify-between">
@@ -215,6 +223,8 @@
         </section>
 
         <section id="panel-purchase" class="tab-panel">
+          <div data-warehouse-nav class="mb-4"></div>
+
           <div id="purchaseItems" class="space-y-3"></div>
 
           <div class="mt-5 rounded-2xl bg-slate-900 p-4 text-white shadow-lg">
@@ -238,6 +248,8 @@
         </section>
 
         <section id="panel-purchaseList" class="tab-panel">
+          <div data-warehouse-nav class="mb-4"></div>
+
           <div id="purchaseOrderList" class="space-y-3"></div>
         </section>
 
@@ -270,10 +282,14 @@
         </section>
 
         <section id="panel-settings" class="tab-panel">
-          <div class="grid grid-cols-2 gap-3">
-            <button data-settings-tab="menu" type="button" class="touch-btn rounded-xl bg-orange-500 px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-500/25" data-i18n="editMenu">Edytuj menu</button>
-            <button data-settings-tab="archive" type="button" class="touch-btn rounded-xl bg-orange-500 px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-500/25" data-i18n="orderArchive">Archiwum zamówień</button>
-            <button data-settings-tab="warehouseEdit" type="button" class="touch-btn col-span-2 rounded-xl bg-orange-500 px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-500/25" data-i18n="editWarehouse">Edycja magazynu</button>
+          <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+            <p class="text-sm font-bold text-slate-700" data-i18n="navModeTitle">Wygląd dolnego paska</p>
+            <p class="mt-1 text-xs text-slate-500" data-i18n="navModeHint">Zdecyduj, jak mają wyglądać przyciski na dole ekranu.</p>
+            <div class="mt-3 grid grid-cols-3 gap-2">
+              <button type="button" data-nav-mode="text" class="touch-btn rounded-xl border border-slate-300 bg-white px-2 py-3 text-xs font-bold text-slate-700" data-i18n="navModeText">Tylko tekst</button>
+              <button type="button" data-nav-mode="both" class="touch-btn rounded-xl border border-slate-300 bg-white px-2 py-3 text-xs font-bold text-slate-700" data-i18n="navModeBoth">Tekst i ikona</button>
+              <button type="button" data-nav-mode="icon" class="touch-btn rounded-xl border border-slate-300 bg-white px-2 py-3 text-xs font-bold text-slate-700" data-i18n="navModeIcon">Tylko ikona</button>
+            </div>
           </div>
 
           <div class="mt-4 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
@@ -359,18 +375,57 @@
         </section>
       </main>
 
-      <nav class="premium-nav fixed bottom-0 left-1/2 z-30 w-full max-w-[480px] -translate-x-1/2 border-t border-slate-200 bg-white/90 px-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-md">
+      <nav class="premium-nav app-nav fixed bottom-0 left-1/2 z-30 w-full max-w-[480px] -translate-x-1/2 border-t border-slate-200 bg-white/90 px-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-md" data-nav-mode="both">
         <div class="grid grid-cols-4 gap-2">
-          <button data-tab="customer" class="tab-btn rounded-xl bg-slate-100 px-2 py-3 text-center text-[11px] font-bold text-slate-700 shadow-sm"><span data-i18n="customer">Obsługa</span></button>
-          <button data-tab="orders" class="tab-btn rounded-xl bg-slate-100 px-2 py-3 text-center text-[11px] font-bold text-slate-700 shadow-sm"><span data-i18n="orders">Zamówienia</span></button>
-          <button data-tab="warehouse" class="tab-btn rounded-xl bg-slate-100 px-2 py-3 text-center text-[11px] font-bold text-slate-700 shadow-sm"><span data-i18n="warehouse">Magazyn</span></button>
-          <button data-tab="settings" class="tab-btn rounded-xl bg-slate-100 px-2 py-3 text-center text-[11px] font-bold text-slate-700 shadow-sm"><span class="text-base">⚙️</span><span class="sr-only" data-i18n="settings">Ustawienia</span></button>
+          <button data-tab="customer" class="tab-btn rounded-xl bg-slate-100 px-1 py-2 text-center text-[11px] font-bold text-slate-700 shadow-sm">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5h2.2l2.3 9.6a1.8 1.8 0 0 0 1.75 1.4h7.4a1.8 1.8 0 0 0 1.75-1.35L20.5 8H6.5"/><circle cx="9.5" cy="19.2" r="1.3"/><circle cx="17.5" cy="19.2" r="1.3"/></svg></span>
+            <span class="nav-label" data-i18n="customer">Obsługa</span>
+          </button>
+          <button data-tab="orders" class="tab-btn rounded-xl bg-slate-100 px-1 py-2 text-center text-[11px] font-bold text-slate-700 shadow-sm">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.2h12v17.6l-3-1.7-3 1.7-3-1.7-3 1.7z"/><path d="M9.2 8.4h5.6M9.2 12.4h5.6"/></svg></span>
+            <span class="nav-label" data-i18n="orders">Zamówienia</span>
+          </button>
+          <button data-tab="archive" class="tab-btn rounded-xl bg-slate-100 px-1 py-2 text-center text-[11px] font-bold text-slate-700 shadow-sm">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="4.4" rx="1.2"/><path d="M5 8.4h14v10.8a1.2 1.2 0 0 1-1.2 1.2H6.2A1.2 1.2 0 0 1 5 19.2z"/><path d="M10 12.2h4"/></svg></span>
+            <span class="nav-label" data-i18n="archive">Archiwum</span>
+          </button>
+          <button data-tab="warehouse" class="tab-btn rounded-xl bg-slate-100 px-1 py-2 text-center text-[11px] font-bold text-slate-700 shadow-sm">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 8.4 12 3.8l8.4 4.6L12 13z"/><path d="M3.6 8.4v7.2L12 20.2l8.4-4.6V8.4"/><path d="M12 13v7.2"/></svg></span>
+            <span class="nav-label" data-i18n="warehouse">Magazyn</span>
+          </button>
         </div>
       </nav>
+
+      <div id="appDrawer" class="app-drawer hidden">
+        <div id="appDrawerBackdrop" class="app-drawer-backdrop"></div>
+        <div class="app-drawer-shell">
+          <aside class="app-drawer-panel" role="dialog" aria-modal="true" aria-labelledby="appDrawerTitle">
+            <p id="appDrawerTitle" class="app-drawer-heading" data-i18n="openAppMenu">Ustawienia i edycja</p>
+            <button type="button" class="drawer-item" data-tab="settings">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7" stroke-width="2.4"/><circle cx="12" cy="12" r="2.6" stroke-width="2"/><path stroke-width="3" d="M12 5V2.8M12 19v2.2M5 12H2.8M19 12h2.2M7.05 7.05 5.49 5.49M16.95 16.95l1.56 1.56M16.95 7.05l1.56-1.56M7.05 16.95l-1.56 1.56"/></svg>
+              <span data-i18n="settings">Ustawienia</span>
+            </button>
+            <button type="button" class="drawer-item" data-tab="menu">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4.2L19 9.2a2.1 2.1 0 0 0-3-3L5.2 17z"/><path d="M14.6 6.6l2.8 2.8"/></svg>
+              <span data-i18n="editMenu">Edytuj menu</span>
+            </button>
+            <button type="button" class="drawer-item" data-tab="warehouseEdit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.6 8.4 12 3.8l8.4 4.6L12 13z"/><path d="M3.6 8.4v7.2L12 20.2l8.4-4.6V8.4"/><path d="M12 13v7.2"/></svg>
+              <span data-i18n="editWarehouse">Edycja magazynu</span>
+            </button>
+
+            <div id="drawerSyncFooter" class="app-drawer-footer hidden">
+              <span id="drawerSyncDot" class="app-drawer-dot" aria-hidden="true"></span>
+              <span id="drawerSyncText"></span>
+            </div>
+          </aside>
+        </div>
+      </div>
     </div>
 
     <script src="config/default-state.js"></script>
     <script src="config/supabase-config.js"></script>
+    <script src="config/seed-pipin.js"></script>
     <script src="database.js"></script>
     <script src="modules/ui.js"></script>
     <script src="modules/dialogs.js"></script>

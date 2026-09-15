@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kedai-pos-v30';
+const CACHE_NAME = 'kedai-pos-v31';
 const APP_SHELL = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const APP_SHELL = [
   './database.js',
   './config/default-state.js',
   './config/supabase-config.js',
+  './config/seed-pipin.js',
   './modules/ui.js',
   './modules/dialogs.js',
   './modules/sync.js',
