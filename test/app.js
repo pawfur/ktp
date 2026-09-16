@@ -106,15 +106,42 @@ const defaultState = window.KedaiConfig.defaultState;
           warehouse: 'Magazyn',
           warehouseHint: 'Podgląd stanu magazynu. Aby dodać lub zmienić składniki, użyj pozycji Edycja magazynu w menu pod zębatką.',
           ingredients: 'Składniki',
-          addIngredient: 'Dodaj składnik',
+          addIngredient: 'Dodaj nowy składnik',
           ingredientName: 'Nazwa',
           ingredientUnit: 'Jednostka',
           ingredientStock: 'Ilość',
-          ingredientPrice: 'Cena jedn.',
+          ingredientStockHint: 'Ile masz teraz w magazynie.',
           ingredientMinStock: 'Stan min.',
-          ingredientTargetStock: 'Stan zalecany',
-          ingredientMoq: 'Min. zamówienie',
-          ingredientStep: 'Krok zamówienia',
+          ingredientMinStockHint: 'Poniżej tej ilości pozycja świeci na czerwono.',
+          ingredientPackage: 'Opakowanie',
+          ingredientPackageHint: 'Ile wchodzi w jedno opakowanie ({unit}) — o tyle zmienia się ilość przy zamawianiu.',
+          ingredientPriceFor: 'Cena za 1 {unit}',
+          ingredientCalcHint: 'Nie znasz ceny za jednostkę? Użyj kalkulatora obok.',
+          editIngredientTitle: 'Edytuj składnik',
+          ingredientModalHint: 'Wpisz stan, cenę i wielkość opakowania.',
+          ingredientAccept: 'Akceptuj',
+          addIngredientSection: 'Dodaj zakładkę',
+          ingredientSectionNewTitle: 'Nowa zakładka magazynu',
+          ingredientSectionEditTitle: 'Zakładka magazynu',
+          ingredientSectionSave: 'Dodaj zakładkę',
+          ingredientSectionHint: 'Składniki należą do zakładki, która jest nad nimi — przesuwaj je strzałkami.',
+          ingredientSectionPreview: 'Podgląd zakładki',
+          ingredientSectionAdded: 'Zakładka magazynu została dodana.',
+          ingredientSectionUpdated: 'Zakładka magazynu została zapisana.',
+          ingredientSectionRemoved: 'Zakładka została usunięta. Składniki zostały w magazynie.',
+          confirmDeleteIngredientSection: 'Usunąć zakładkę "{name}"? Składniki pod nią zostaną.',
+          fillSectionName: 'Wpisz nazwę zakładki.',
+          unitPcs: 'szt',
+          unitGram: 'g',
+          unitMl: 'ml',
+          calcOpen: 'Kalkulator ceny z opakowania',
+          calcTitle: 'Kalkulator ceny',
+          calcHint: 'Znasz cenę i wielkość opakowania? Policz cenę jednostki.',
+          calcPrice: 'Cena opakowania',
+          calcResultMissing: 'Uzupełnij oba pola',
+          calcApply: 'Użyj tej ceny',
+          calcApplyHint: 'Przycisk wpisze wyliczoną cenę i wielkość opakowania do okna składnika.',
+          calcApplied: 'Cena i wielkość opakowania zostały wpisane.',
           noIngredients: 'Brak składników. Dodaj pierwszy składnik.',
           fillIngredient: 'Uzupełnij poprawnie nazwę, ilość i cenę.',
           ingredientAdded: 'Składnik został dodany.',
@@ -137,10 +164,7 @@ const defaultState = window.KedaiConfig.defaultState;
           confirmDeletePurchase: 'Usunąć to zamówienie?',
           confirmCancelPurchase: 'Czy na pewno chcesz anulować zamówienie?',
           purchaseCleared: 'Zamówienie zostało anulowane.',
-          recommended: 'Zalecane',
-          useRecommended: 'Ustaw zalecane',
-          moqWarning: '{name}: minimalne zamówienie to {moq} {unit}.',
-          stepWarning: '{name}: ilość musi być wielokrotnością {step} {unit}.',
+          stepWarning: '{name}: ilość musi być wielokrotnością opakowania ({step} {unit}).',
           ordered: 'Zamówione',
           totalSales: 'Suma sprzedaży',
           language: 'Język',
@@ -324,15 +348,42 @@ const defaultState = window.KedaiConfig.defaultState;
           warehouse: 'Warehouse',
           warehouseHint: 'Warehouse preview. To add or change ingredients, use Edit warehouse in the menu under the gear.',
           ingredients: 'Ingredients',
-          addIngredient: 'Add ingredient',
+          addIngredient: 'Add new ingredient',
           ingredientName: 'Name',
           ingredientUnit: 'Unit',
           ingredientStock: 'Quantity',
-          ingredientPrice: 'Unit price',
+          ingredientStockHint: 'How much you have right now.',
           ingredientMinStock: 'Min. level',
-          ingredientTargetStock: 'Target level',
-          ingredientMoq: 'Min. order',
-          ingredientStep: 'Order step',
+          ingredientMinStockHint: 'Below this amount the item glows red.',
+          ingredientPackage: 'Package',
+          ingredientPackageHint: 'How much comes in one package ({unit}) — this is the step when ordering.',
+          ingredientPriceFor: 'Price per 1 {unit}',
+          ingredientCalcHint: 'Not sure about the unit price? Use the calculator next to it.',
+          editIngredientTitle: 'Edit ingredient',
+          ingredientModalHint: 'Enter the stock, price and package size.',
+          ingredientAccept: 'Accept',
+          addIngredientSection: 'Add tab',
+          ingredientSectionNewTitle: 'New warehouse tab',
+          ingredientSectionEditTitle: 'Warehouse tab',
+          ingredientSectionSave: 'Add tab',
+          ingredientSectionHint: 'Ingredients belong to the tab above them — move them with the arrows.',
+          ingredientSectionPreview: 'Tab preview',
+          ingredientSectionAdded: 'Warehouse tab added.',
+          ingredientSectionUpdated: 'Warehouse tab saved.',
+          ingredientSectionRemoved: 'Tab removed. The ingredients stayed in the warehouse.',
+          confirmDeleteIngredientSection: 'Delete tab "{name}"? The ingredients below it will stay.',
+          fillSectionName: 'Enter the tab name.',
+          unitPcs: 'pcs',
+          unitGram: 'g',
+          unitMl: 'ml',
+          calcOpen: 'Price calculator from package',
+          calcTitle: 'Price calculator',
+          calcHint: 'Know the package size and price? Work out the unit price.',
+          calcPrice: 'Package price',
+          calcResultMissing: 'Fill in both fields',
+          calcApply: 'Use this price',
+          calcApplyHint: 'The button fills the calculated price and package size into the ingredient window.',
+          calcApplied: 'Price and package size filled in.',
           noIngredients: 'No ingredients yet. Add the first one.',
           fillIngredient: 'Please enter a valid name, quantity and price.',
           ingredientAdded: 'Ingredient added.',
@@ -355,10 +406,7 @@ const defaultState = window.KedaiConfig.defaultState;
           confirmDeletePurchase: 'Delete this order?',
           confirmCancelPurchase: 'Are you sure you want to cancel the order?',
           purchaseCleared: 'Order cancelled.',
-          recommended: 'Recommended',
-          useRecommended: 'Use recommended',
-          moqWarning: '{name}: minimum order is {moq} {unit}.',
-          stepWarning: '{name}: quantity must be a multiple of {step} {unit}.',
+          stepWarning: '{name}: the quantity must be a multiple of the package ({step} {unit}).',
           ordered: 'Ordered',
           totalSales: 'Total sales',
           language: 'Language',
@@ -542,15 +590,42 @@ const defaultState = window.KedaiConfig.defaultState;
           warehouse: 'Gudang',
           warehouseHint: 'Pratinjau gudang. Untuk menambah atau mengubah bahan, gunakan Ubah gudang di menu bawah ikon roda gigi.',
           ingredients: 'Bahan',
-          addIngredient: 'Tambah bahan',
+          addIngredient: 'Tambah bahan baru',
           ingredientName: 'Nama',
           ingredientUnit: 'Satuan',
           ingredientStock: 'Jumlah',
-          ingredientPrice: 'Harga satuan',
+          ingredientStockHint: 'Berapa stok yang ada sekarang.',
           ingredientMinStock: 'Stok minimum',
-          ingredientTargetStock: 'Stok ideal',
-          ingredientMoq: 'Min. pesan',
-          ingredientStep: 'Langkah pesan',
+          ingredientMinStockHint: 'Di bawah jumlah ini item menyala merah.',
+          ingredientPackage: 'Kemasan',
+          ingredientPackageHint: 'Isi satu kemasan ({unit}) — ini langkah saat memesan.',
+          ingredientPriceFor: 'Harga per 1 {unit}',
+          ingredientCalcHint: 'Belum tahu harga satuan? Pakai kalkulator di samping.',
+          editIngredientTitle: 'Ubah bahan',
+          ingredientModalHint: 'Isi stok, harga, dan isi kemasan.',
+          ingredientAccept: 'Terima',
+          addIngredientSection: 'Tambah kategori',
+          ingredientSectionNewTitle: 'Kategori gudang baru',
+          ingredientSectionEditTitle: 'Kategori gudang',
+          ingredientSectionSave: 'Tambah kategori',
+          ingredientSectionHint: 'Bahan masuk ke kategori di atasnya — geser dengan panah.',
+          ingredientSectionPreview: 'Pratinjau kategori',
+          ingredientSectionAdded: 'Kategori gudang ditambahkan.',
+          ingredientSectionUpdated: 'Kategori gudang disimpan.',
+          ingredientSectionRemoved: 'Kategori dihapus. Bahannya tetap ada.',
+          confirmDeleteIngredientSection: 'Hapus kategori "{name}"? Bahan di bawahnya tetap ada.',
+          fillSectionName: 'Isi nama kategori.',
+          unitPcs: 'buah',
+          unitGram: 'g',
+          unitMl: 'ml',
+          calcOpen: 'Kalkulator harga dari kemasan',
+          calcTitle: 'Kalkulator harga',
+          calcHint: 'Tahu isi dan harga kemasan? Hitung harga satuannya.',
+          calcPrice: 'Harga kemasan',
+          calcResultMissing: 'Isi kedua kolom',
+          calcApply: 'Pakai harga ini',
+          calcApplyHint: 'Tombol mengisi harga dan isi kemasan ke jendela bahan.',
+          calcApplied: 'Harga dan isi kemasan sudah diisi.',
           noIngredients: 'Belum ada bahan. Tambahkan yang pertama.',
           fillIngredient: 'Isi nama, jumlah, dan harga dengan benar.',
           ingredientAdded: 'Bahan ditambahkan.',
@@ -573,10 +648,7 @@ const defaultState = window.KedaiConfig.defaultState;
           confirmDeletePurchase: 'Hapus pesanan ini?',
           confirmCancelPurchase: 'Apakah Anda yakin ingin membatalkan pesanan?',
           purchaseCleared: 'Pesanan dibatalkan.',
-          recommended: 'Disarankan',
-          useRecommended: 'Pakai disarankan',
-          moqWarning: '{name}: pesanan minimum {moq} {unit}.',
-          stepWarning: '{name}: jumlah harus kelipatan {step} {unit}.',
+          stepWarning: '{name}: jumlah harus kelipatan kemasan ({step} {unit}).',
           ordered: 'Dipesan',
           totalSales: 'Total penjualan',
           language: 'Bahasa',
@@ -671,7 +743,11 @@ const defaultState = window.KedaiConfig.defaultState;
       let currentPurchaseSelection = {};
       let editingProductId = null;
       let editingOrderId = null;
-      let editingIngredientId = null;
+      // Okno składnika: null = dodawanie nowego, id = edycja istniejącego.
+      let ingredientModalId = null;
+      // Okno zakładki magazynu i jej kolor (null = zakładka bez koloru).
+      let editingIngredientSectionId = null;
+      let ingredientSectionDraft = null;
 
       // Filtr archiwum: domyślnie dzisiejszy dzień.
       const archiveFilter = {
@@ -713,14 +789,39 @@ const defaultState = window.KedaiConfig.defaultState;
       const customerTotal = document.getElementById('customerTotal');
       const languageSelect = document.getElementById('languageSelect');
       const ingredientForm = document.getElementById('ingredientForm');
+      const ingredientModal = document.getElementById('ingredientModal');
+      const ingredientModalTitle = document.getElementById('ingredientModalTitle');
+      const ingredientModalHint = document.getElementById('ingredientModalHint');
       const ingredientNameInput = document.getElementById('ingredientName');
       const ingredientUnitSelect = document.getElementById('ingredientUnit');
       const ingredientStockInput = document.getElementById('ingredientStock');
       const ingredientPriceInput = document.getElementById('ingredientPrice');
+      const ingredientPriceLabel = document.getElementById('ingredientPriceLabel');
       const ingredientMinStockInput = document.getElementById('ingredientMinStock');
-      const ingredientTargetStockInput = document.getElementById('ingredientTargetStock');
-      const ingredientMoqInput = document.getElementById('ingredientMoq');
-      const ingredientStepInput = document.getElementById('ingredientStep');
+      const ingredientPackageInput = document.getElementById('ingredientPackage');
+      const ingredientPackageHint = document.getElementById('ingredientPackageHint');
+      const ingredientAcceptBtn = document.getElementById('ingredientAcceptBtn');
+      const ingredientCancelBtn = document.getElementById('ingredientCancelBtn');
+      const ingredientCalcBtn = document.getElementById('ingredientCalcBtn');
+      const addIngredientBtn = document.getElementById('addIngredientBtn');
+      const addIngredientSectionBtn = document.getElementById('addIngredientSectionBtn');
+      const priceCalcModal = document.getElementById('priceCalcModal');
+      const calcPackageInput = document.getElementById('calcPackage');
+      const calcPackageLabel = document.getElementById('calcPackageLabel');
+      const calcPriceInput = document.getElementById('calcPrice');
+      const calcResultLabel = document.getElementById('calcResultLabel');
+      const calcResult = document.getElementById('calcResult');
+      const calcApplyBtn = document.getElementById('calcApplyBtn');
+      const calcCancelBtn = document.getElementById('calcCancelBtn');
+      const ingredientSectionModal = document.getElementById('ingredientSectionModal');
+      const ingredientSectionTitle = document.getElementById('ingredientSectionTitle');
+      const ingredientSectionNameInput = document.getElementById('ingredientSectionName');
+      const ingredientSectionColorInput = document.getElementById('ingredientSectionColor');
+      const ingredientSectionColorClear = document.getElementById('ingredientSectionColorClear');
+      const ingredientSectionColorValue = document.getElementById('ingredientSectionColorValue');
+      const ingredientSectionPreview = document.getElementById('ingredientSectionPreview');
+      const ingredientSectionSaveBtn = document.getElementById('ingredientSectionAcceptBtn');
+      const ingredientSectionCancelBtn = document.getElementById('ingredientSectionCancelBtn');
       const ingredientList = document.getElementById('ingredientList');
       const ingredientEditList = document.getElementById('ingredientEditList');
       const ingredientEditCountBadge = document.getElementById('ingredientEditCountBadge');
@@ -1603,7 +1704,7 @@ const defaultState = window.KedaiConfig.defaultState;
                 <div class="mt-2">
                   <p class="text-xs font-bold text-slate-600">${translate('orderStockUsed')}</p>
                   <ul class="mt-1 space-y-0.5">
-                    ${stockUsed.map(entry => `<li class="text-xs text-slate-600">${formatNumber(entry.amount)} ${escapeHtml(entry.unit || '')} · ${escapeHtml(entry.name || '')}</li>`).join('')}
+                    ${stockUsed.map(entry => `<li class="text-xs text-slate-600">${formatNumber(entry.amount)} ${unitLabel(entry.unit)} · ${escapeHtml(entry.name || '')}</li>`).join('')}
                   </ul>
                 </div>` : (hasCost ? `<p class="mt-2 text-xs text-slate-500">${translate('orderStockNone')}</p>` : '')}
               </div>
@@ -1622,46 +1723,107 @@ const defaultState = window.KedaiConfig.defaultState;
         return Math.abs(ratio - Math.round(ratio)) < 1e-6;
       }
 
-      function getRecommendedQuantity(ingredient) {
-        const step = getStep(ingredient);
-        const missing = Number(ingredient.target_stock || 0) - Number(ingredient.stock || 0);
-        if (missing <= 0) return 0;
-        const quantity = Math.ceil(missing / step) * step;
-        const moq = Math.max(1, Number(ingredient.min_order_quantity) || 1);
-        return quantity < moq ? Math.ceil(moq / step) * step : quantity;
+      /**
+       * Jednostka do wyświetlenia. W danych zostaje krótki zapis ("szt", "g",
+       * "ml"), bo to on jest kluczem w recepturach - tłumaczymy tylko to, co
+       * widać na ekranie.
+       */
+      function unitLabel(unit) {
+        if (unit === 'g') return translate('unitGram');
+        if (unit === 'ml') return translate('unitMl');
+        if (unit === 'szt') return translate('unitPcs');
+        return String(unit || '');
+      }
+
+      /** Zakładka magazynu to wiersz z type = 'section' (tak samo jak w menu). */
+      function isIngredientSection(item) {
+        return item?.type === 'section';
+      }
+
+      /**
+       * Kolejność magazynu. Dopóki nie ma zakładek ani ustawionej kolejności,
+       * lista jest alfabetyczna - stare dane wyglądają więc tak jak dotąd.
+       */
+      function getSortedIngredients() {
+        const list = [...(state.ingredients || [])];
+        const ordered = list.some(item => Number(item.sort_order || 0) > 0) || list.some(isIngredientSection);
+        if (!ordered) return list.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        return list.sort((a, b) => (Number(a.sort_order || 0) - Number(b.sort_order || 0))
+          || String(a.name).localeCompare(String(b.name)));
+      }
+
+      /** Składniki razem z kolorem zakładki, w której leżą (jak w menu). */
+      function getIngredientsWithColors() {
+        let color = null;
+        return getSortedIngredients().map(item => {
+          const section = isIngredientSection(item);
+          if (section) color = sectionColorOf(item);
+          return { item, color, section };
+        });
+      }
+
+      /** Nowa pozycja ląduje na końcu listy - tak samo jak w menu. */
+      function nextIngredientOrder() {
+        const orders = (state.ingredients || []).map(item => Number(item.sort_order || 0));
+        return orders.length ? Math.max(...orders, 0) + 1 : 0;
+      }
+
+      /** Przepisuje kolejność całej listy na 0..n-1 (po przesunięciu pozycji). */
+      function writeIngredientOrder(list) {
+        state.ingredients = list.map((item, index) => ({ ...item, sort_order: index }));
+      }
+
+      /** Nagłówek zakładki magazynu - ten sam wygląd co zakładki w menu. */
+      function ingredientSectionHeader(section, color) {
+        const style = color === null
+          ? ''
+          : ` style="background-color: ${tint(color, 91)}; border-color: ${tint(color, 62)}; color: ${tint(color, 27, 55)}"`;
+        return `<div class="mt-2 rounded-xl border-b-2 px-3 py-1 text-sm font-black uppercase tracking-[0.12em] text-orange-600"${style}>${escapeHtml(section.name)}</div>`;
+      }
+
+      /** Tło karty zakładki w edycji magazynu (paleta jak w menu). */
+      function ingredientSectionCardStyle(color) {
+        return color === null ? '' : ` style="background-color: ${tint(color, 93)}; border-color: ${tint(color, 78)}"`;
       }
 
       function renderWarehouse() {
         const ingredients = state.ingredients || [];
-        const totalValue = ingredients.reduce((sum, item) => sum + Number(item.stock || 0) * Number(item.unit_price || 0), 0);
+        const products = ingredients.filter(item => !isIngredientSection(item));
+        const totalValue = products.reduce((sum, item) => sum + Number(item.stock || 0) * Number(item.unit_price || 0), 0);
         warehouseValueBadge.textContent = formatCurrency(totalValue);
-        ingredientCountBadge.textContent = getCounterLabel(ingredients.length, 'item', 'items');
+        ingredientCountBadge.textContent = getCounterLabel(products.length, 'item', 'items');
 
         if (!ingredients.length) {
           ingredientList.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${translate('noIngredients')}</div>`;
           return;
         }
 
-        ingredientList.innerHTML = ingredients
-          .slice()
-          .sort((a, b) => String(a.name).localeCompare(String(b.name)))
-          .map(ingredient => {
-            const belowMinimum = Number(ingredient.stock || 0) < Number(ingredient.min_stock || 0);
-            const stockValue = Number(ingredient.stock || 0) * Number(ingredient.unit_price || 0);
+        ingredientList.innerHTML = getIngredientsWithColors()
+          .map(({ item, color, section }) => {
+            if (section) return ingredientSectionHeader(item, color);
+
+            const belowMinimum = Number(item.stock || 0) < Number(item.min_stock || 0);
+            const stockValue = Number(item.stock || 0) * Number(item.unit_price || 0);
+            const unit = unitLabel(item.unit);
+            // Pozycja poniżej stanu min. ma zostać czerwona, więc dla niej kolor
+            // zakładki wyłączamy - czerwoną poświatę widać lepiej na białym tle.
+            const cardStyle = color === null || belowMinimum
+              ? ''
+              : ` style="background-color: ${tint(color, 98)}; border-color: ${tint(color, 90)}; border-left: 4px solid ${tint(color, 66)}"`;
 
             return `
-              <div class="rounded-2xl border p-3 ${belowMinimum ? 'stock-low border-rose-300' : 'border-slate-200 bg-white shadow-sm'}">
+              <div class="rounded-2xl border p-3 ${belowMinimum ? 'stock-low border-rose-300' : 'border-slate-200 bg-white shadow-sm'}"${cardStyle}>
                 <div class="flex items-start justify-between gap-3">
-                  <div>
-                    <p class="text-base font-bold text-slate-800">${escapeHtml(ingredient.name)}</p>
-                    <p class="text-sm font-semibold text-slate-700">${formatNumber(ingredient.stock)} ${escapeHtml(ingredient.unit)}</p>
+                  <div class="min-w-0">
+                    <p class="text-base font-bold text-slate-800">${escapeHtml(item.name)}</p>
+                    <p class="text-sm font-semibold text-slate-700">${formatNumber(item.stock)} ${unit}</p>
                   </div>
-                  <div class="text-right">
-                    <p class="text-sm font-bold text-orange-600">${formatCurrency(ingredient.unit_price)} / ${escapeHtml(ingredient.unit)}</p>
+                  <div class="flex-none text-right">
+                    <p class="text-sm font-bold text-orange-600">${formatCurrency(item.unit_price)} / ${unit}</p>
                     <p class="text-xs text-slate-500">${formatCurrency(stockValue)}</p>
                   </div>
                 </div>
-                ${belowMinimum ? `<p class="mt-2 text-xs font-bold uppercase tracking-wide text-rose-600">${translate('belowMin')} · ${translate('ingredientMinStock')}: ${formatNumber(ingredient.min_stock)} ${escapeHtml(ingredient.unit)}</p>` : ''}
+                ${belowMinimum ? `<p class="mt-2 text-xs font-bold uppercase tracking-wide text-rose-600">${translate('belowMin')} · ${translate('ingredientMinStock')}: ${formatNumber(item.min_stock)} ${unit}</p>` : ''}
               </div>
             `;
           })
@@ -1670,94 +1832,142 @@ const defaultState = window.KedaiConfig.defaultState;
 
       function renderWarehouseEdit() {
         const ingredients = state.ingredients || [];
-        ingredientEditCountBadge.textContent = getCounterLabel(ingredients.length, 'item', 'items');
+        const products = ingredients.filter(item => !isIngredientSection(item));
+        ingredientEditCountBadge.textContent = getCounterLabel(products.length, 'item', 'items');
 
         if (!ingredients.length) {
           ingredientEditList.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${translate('noIngredients')}</div>`;
-        } else {
-          ingredientEditList.innerHTML = ingredients
-            .slice()
-            .sort((a, b) => String(a.name).localeCompare(String(b.name)))
-            .map(ingredient => {
-              const belowMinimum = Number(ingredient.stock || 0) < Number(ingredient.min_stock || 0);
-              const stockValue = Number(ingredient.stock || 0) * Number(ingredient.unit_price || 0);
+          return;
+        }
 
+        const rows = getIngredientsWithColors();
+        ingredientEditList.innerHTML = rows
+          .map(({ item, color, section }, index) => {
+            const first = index === 0;
+            const last = index === rows.length - 1;
+            const moveButtons = `
+                  <div class="flex gap-2">
+                    <button data-action="move-ingredient-up" data-id="${item.id}" class="touch-btn menu-move-btn rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-xs font-bold text-slate-700 ${first ? 'opacity-40' : ''}" ${first ? 'disabled' : ''}>↑</button>
+                    <button data-action="move-ingredient-down" data-id="${item.id}" class="touch-btn menu-move-btn rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-xs font-bold text-slate-700 ${last ? 'opacity-40' : ''}" ${last ? 'disabled' : ''}>↓</button>
+                  </div>`;
+
+            if (section) {
               return `
-                <div class="rounded-2xl border p-3 ${belowMinimum ? 'stock-low border-rose-300' : 'border-slate-200 bg-white shadow-sm'}">
-                  <div class="flex items-start justify-between gap-3">
-                    <div>
-                      <p class="text-base font-bold text-slate-800">${escapeHtml(ingredient.name)}</p>
-                      <p class="text-sm font-semibold text-orange-600">${formatCurrency(ingredient.unit_price)} / ${escapeHtml(ingredient.unit)}</p>
-                    </div>
-                    ${belowMinimum ? `<span class="rounded-full bg-rose-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-rose-700">${translate('belowMin')}</span>` : ''}
+              <div class="rounded-2xl border border-orange-200 bg-orange-50 p-3 shadow-sm"${ingredientSectionCardStyle(color)}>
+                <div class="flex items-center justify-between gap-3">
+                  <div class="min-w-0">
+                    <p class="text-base font-bold text-slate-800">▰ ${escapeHtml(item.name)}</p>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-orange-600">${translate('sectionType')}</p>
                   </div>
+                  ${moveButtons}
+                </div>
 
-                  <div class="mt-2 grid grid-cols-2 gap-1 text-xs text-slate-600">
-                    <span>${translate('ingredientStock')}: <b>${formatNumber(ingredient.stock)} ${escapeHtml(ingredient.unit)}</b></span>
-                    <span>${translate('stockValue')}: <b>${formatCurrency(stockValue)}</b></span>
-                    <span>${translate('ingredientMinStock')}: <b>${formatNumber(ingredient.min_stock)}</b></span>
-                    <span>${translate('ingredientTargetStock')}: <b>${formatNumber(ingredient.target_stock)}</b></span>
-                    <span>${translate('ingredientMoq')}: <b>${formatNumber(ingredient.min_order_quantity)}</b></span>
-                    <span>${translate('ingredientStep')}: <b>${formatNumber(ingredient.unit_step)}</b></span>
+                <div class="mt-3 grid grid-cols-2 gap-2">
+                  <button data-action="edit-ingredient-section" data-id="${item.id}" class="touch-btn rounded-xl bg-amber-100 px-3 py-2 text-sm font-bold text-amber-700">${translate('editSection')}</button>
+                  <button data-action="delete-ingredient-section" data-id="${item.id}" class="touch-btn rounded-xl bg-rose-100 px-3 py-2 text-sm font-bold text-rose-700">${translate('delete')}</button>
+                </div>
+
+                <div class="mt-3 rounded-xl bg-white/70 px-3 py-2">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-xs font-bold text-slate-600">${translate('sectionColor')}</span>
+                    <span class="text-[11px] font-semibold text-slate-500">${color === null ? translate('sectionColorNone') : `${Math.round(color)}°`}</span>
                   </div>
-
-                  <div class="mt-3 grid grid-cols-2 gap-2">
-                    <button data-action="edit-ingredient" data-id="${ingredient.id}" class="touch-btn rounded-xl bg-amber-100 px-3 py-2 text-sm font-bold text-amber-700">${translate('edit')}</button>
-                    <button data-action="delete-ingredient" data-id="${ingredient.id}" class="touch-btn rounded-xl bg-rose-100 px-3 py-2 text-sm font-bold text-rose-700">${translate('delete')}</button>
+                  <div class="mt-2 flex items-center gap-2">
+                    <input type="range" min="0" max="360" step="1" value="${color === null ? 0 : Math.round(color)}" data-action="ingredient-section-color" data-id="${item.id}" class="color-range" aria-label="${translate('sectionColor')}" />
+                    <button data-action="clear-ingredient-section-color" data-id="${item.id}" class="touch-btn rounded-xl border border-slate-300 bg-white px-2 py-2 text-[11px] font-bold text-slate-600">${translate('sectionColorClear')}</button>
                   </div>
                 </div>
-              `;
-            })
-            .join('');
-        }
+              </div>
+            `;
+            }
 
-        const saveButton = document.getElementById('saveIngredientBtn');
-        if (editingIngredientId) {
-          saveButton.textContent = translate('saveChanges');
-          document.getElementById('cancelIngredientEditBtn').textContent = translate('cancel');
-          document.getElementById('cancelIngredientEditBtn').classList.remove('hidden');
-        } else {
-          saveButton.textContent = translate('addIngredient');
-          document.getElementById('cancelIngredientEditBtn').classList.add('hidden');
-        }
+            const belowMinimum = Number(item.stock || 0) < Number(item.min_stock || 0);
+            const stockValue = Number(item.stock || 0) * Number(item.unit_price || 0);
+            const unit = unitLabel(item.unit);
+            const packageSize = Number(item.unit_step || 0);
+            // Pozycja poniżej stanu min. ma zostać czerwona, więc dla niej kolor
+            // zakładki wyłączamy - czerwoną poświatę widać lepiej na białym tle.
+            const cardStyle = color === null || belowMinimum
+              ? ''
+              : ` style="background-color: ${tint(color, 98)}; border-color: ${tint(color, 90)}; border-left: 4px solid ${tint(color, 66)}"`;
+
+            return `
+              <div class="rounded-2xl border p-3 ${belowMinimum ? 'stock-low border-rose-300' : 'border-slate-200 bg-white shadow-sm'}"${cardStyle}>
+                <div class="flex items-start justify-between gap-3">
+                  <div class="min-w-0">
+                    <p class="text-base font-bold text-slate-800">${escapeHtml(item.name)}</p>
+                    <p class="text-sm font-semibold text-orange-600">${formatCurrency(item.unit_price)} / ${unit}</p>
+                  </div>
+                  ${moveButtons}
+                </div>
+
+                <div class="mt-2 grid grid-cols-2 gap-1 text-xs text-slate-600">
+                  <span>${translate('ingredientStock')}: <b>${formatNumber(item.stock)} ${unit}</b></span>
+                  <span>${translate('stockValue')}: <b>${formatCurrency(stockValue)}</b></span>
+                  <span>${translate('ingredientMinStock')}: <b>${formatNumber(item.min_stock)} ${unit}</b></span>
+                  <span>${translate('ingredientPackage')}: <b>${packageSize > 0 ? `${formatNumber(packageSize)} ${unit}` : '—'}</b></span>
+                </div>
+
+                ${belowMinimum ? `<p class="mt-2 text-xs font-bold uppercase tracking-wide text-rose-600">${translate('belowMin')}</p>` : ''}
+
+                <div class="mt-3 grid grid-cols-2 gap-2">
+                  <button data-action="edit-ingredient" data-id="${item.id}" class="touch-btn rounded-xl bg-amber-100 px-3 py-2 text-sm font-bold text-amber-700">${translate('edit')}</button>
+                  <button data-action="delete-ingredient" data-id="${item.id}" class="touch-btn rounded-xl bg-rose-100 px-3 py-2 text-sm font-bold text-rose-700">${translate('delete')}</button>
+                </div>
+              </div>
+            `;
+          })
+          .join('');
       }
 
       function renderPurchase() {
         const ingredients = state.ingredients || [];
+        // Zakładka bez składników pod sobą nic nie wnosi na liście zakupów.
+        const rows = getIngredientsWithColors().filter((row, index, all) => {
+          if (!row.section) return true;
+          const next = all[index + 1];
+          return Boolean(next && !next.section);
+        });
 
-        if (!ingredients.length) {
+        if (!rows.length) {
           purchaseItems.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${translate('noIngredients')}</div>`;
-        } else {
-          purchaseItems.innerHTML = ingredients
-            .slice()
-            .sort((a, b) => String(a.name).localeCompare(String(b.name)))
-            .map(ingredient => {
-              const quantity = Number(currentPurchaseSelection[ingredient.id] || 0);
-              const recommended = getRecommendedQuantity(ingredient);
-
-              return `
-                <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-                  <div class="flex items-center justify-between gap-3">
-                    <div>
-                      <p class="text-base font-bold text-slate-800">${escapeHtml(ingredient.name)}</p>
-                      <p class="text-sm font-semibold text-orange-600">${formatCurrency(ingredient.unit_price)} / ${escapeHtml(ingredient.unit)}</p>
-                      <p class="text-xs text-slate-500">${translate('ingredientStock')}: ${formatNumber(ingredient.stock)} ${escapeHtml(ingredient.unit)} · ${translate('ingredientStep')}: ${formatNumber(ingredient.unit_step)}</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                      <button data-action="purchase-decrease" data-id="${ingredient.id}" class="qty-btn border border-slate-200 bg-slate-100 text-slate-700">−</button>
-                      <span class="min-w-[2rem] text-center text-lg font-black text-slate-800">${formatNumber(quantity)}</span>
-                      <button data-action="purchase-increase" data-id="${ingredient.id}" class="qty-btn border border-orange-200 bg-orange-50 text-orange-600">+</button>
-                    </div>
-                  </div>
-                  ${recommended > 0 ? `<button data-action="purchase-recommended" data-id="${ingredient.id}" class="mt-2 w-full rounded-xl bg-slate-100 px-3 py-2 text-xs font-bold text-slate-600">${translate('recommended')}: ${formatNumber(recommended)} ${escapeHtml(ingredient.unit)}</button>` : ''}
-                </div>
-              `;
-            })
-            .join('');
+          return;
         }
 
-        const details = ingredients
-          .filter(ingredient => Number(currentPurchaseSelection[ingredient.id] || 0) > 0)
+        purchaseItems.innerHTML = rows
+          .map(({ item, color, section }) => {
+            if (section) return ingredientSectionHeader(item, color);
+
+            const quantity = Number(currentPurchaseSelection[item.id] || 0);
+            const unit = unitLabel(item.unit);
+            const packageSize = Number(item.unit_step || 0);
+            // Krok zamawiania to wielkość opakowania - nie ma już liczenia
+            // "ile brakuje do stanu zalecanego".
+            const cardStyle = color === null
+              ? ''
+              : ` style="background-color: ${tint(color, 98)}; border-color: ${tint(color, 88)}; border-left: 4px solid ${tint(color, 62)}"`;
+
+            return `
+              <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm"${cardStyle}>
+                <div class="flex items-center justify-between gap-3">
+                  <div class="min-w-0">
+                    <p class="text-base font-bold text-slate-800">${escapeHtml(item.name)}</p>
+                    <p class="text-sm font-semibold text-orange-600">${formatCurrency(item.unit_price)} / ${unit}</p>
+                    <p class="text-xs text-slate-500">${translate('ingredientStock')}: ${formatNumber(item.stock)} ${unit} · ${translate('ingredientPackage')}: ${packageSize > 0 ? `${formatNumber(packageSize)} ${unit}` : '—'}</p>
+                  </div>
+                  <div class="flex flex-none items-center gap-2">
+                    <button data-action="purchase-decrease" data-id="${item.id}" class="qty-btn border border-slate-200 bg-slate-100 text-slate-700">−</button>
+                    <span class="min-w-[2rem] text-center text-lg font-black text-slate-800">${formatNumber(quantity)}</span>
+                    <button data-action="purchase-increase" data-id="${item.id}" class="qty-btn border border-orange-200 bg-orange-50 text-orange-600">+</button>
+                  </div>
+                </div>
+              </div>
+            `;
+          })
+          .join('');
+
+        const details = (state.ingredients || [])
+          .filter(ingredient => !isIngredientSection(ingredient) && Number(currentPurchaseSelection[ingredient.id] || 0) > 0)
           .map(ingredient => {
             const quantity = Number(currentPurchaseSelection[ingredient.id] || 0);
             return { ...ingredient, quantity, lineTotal: quantity * Number(ingredient.unit_price || 0) };
@@ -1768,7 +1978,7 @@ const defaultState = window.KedaiConfig.defaultState;
 
         purchaseSummaryDetails.innerHTML = details.length
           ? details
-            .map(item => `<div class="flex items-center justify-between gap-2"><span>${formatNumber(item.quantity)} ${escapeHtml(item.unit)} ${escapeHtml(item.name)}</span><span>${formatCurrency(item.lineTotal)}</span></div>`)
+            .map(item => `<div class="flex items-center justify-between gap-2"><span>${formatNumber(item.quantity)} ${unitLabel(item.unit)} ${escapeHtml(item.name)}</span><span>${formatCurrency(item.lineTotal)}</span></div>`)
             .join('')
           : `<p class="text-sm text-slate-300">${translate('noPurchaseItems')}</p>`;
 
@@ -1788,7 +1998,7 @@ const defaultState = window.KedaiConfig.defaultState;
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .map(order => {
             const summary = order.items
-              .map(item => `${formatNumber(item.quantity)} ${item.unit} ${item.name}`)
+              .map(item => `${formatNumber(item.quantity)} ${unitLabel(item.unit)} ${item.name}`)
               .join(', ') || translate('noPurchaseItems');
 
             return `
@@ -1924,7 +2134,9 @@ const defaultState = window.KedaiConfig.defaultState;
       }
 
       function renderRecipeList() {
+        // Zakładki magazynu nie są składnikami - nie mają czego zużywać.
         const ingredients = [...(state.ingredients || [])]
+          .filter(ingredient => !isIngredientSection(ingredient))
           .sort((first, second) => String(first.name).localeCompare(String(second.name), 'pl'));
         const knownIds = new Set(ingredients.map(ingredient => ingredient.id));
         const missing = recipeDraft.filter(entry => !knownIds.has(entry.id));
@@ -1942,11 +2154,11 @@ const defaultState = window.KedaiConfig.defaultState;
                 <div class="flex items-center justify-between gap-2">
                   <div class="min-w-0">
                     <p class="truncate text-sm font-bold text-slate-800">${escapeHtml(ingredient.name)}</p>
-                    <p class="text-[11px] text-slate-500">${translate('recipeStock')}: ${formatNumber(ingredient.stock)} ${escapeHtml(ingredient.unit || '')}</p>
+                    <p class="text-[11px] text-slate-500">${translate('recipeStock')}: ${formatNumber(ingredient.stock)} ${unitLabel(ingredient.unit)}</p>
                   </div>
                   <div class="flex flex-none items-center gap-1">
                     <input type="number" inputmode="decimal" min="0" step="any" data-recipe-ingredient="${ingredient.id}" value="${qty || ''}" placeholder="0" class="w-24 rounded-lg border border-slate-300 px-2 py-2 text-right text-sm text-slate-800" />
-                    <span class="w-10 text-xs font-semibold text-slate-500">${escapeHtml(ingredient.unit || '')}</span>
+                    <span class="w-10 text-xs font-semibold text-slate-500">${unitLabel(ingredient.unit)}</span>
                   </div>
                 </div>
               </div>
@@ -2345,79 +2557,308 @@ const defaultState = window.KedaiConfig.defaultState;
         });
       }
 
-      function resetIngredientForm() {
+      /* --------------------------------------------------- okno składnika */
+
+      /** Liczba z pola tekstowego; puste pole liczy się jako 0. */
+      function numberFromInput(input) {
+        const value = Number(String(input.value ?? '').replace(',', '.'));
+        return Number.isFinite(value) ? value : NaN;
+      }
+
+      function setInputValue(input, value) {
+        input.value = value === null || value === undefined || value === '' ? '' : String(value);
+      }
+
+      /**
+       * Podpisy zależą od wybranej jednostki ("Cena za 1 g"), więc odświeżamy
+       * je przy otwarciu okna i po każdej zmianie jednostki.
+       */
+      function updateIngredientUnitHints() {
+        const unit = unitLabel(ingredientUnitSelect.value);
+        ingredientPriceLabel.textContent = translate('ingredientPriceFor', { unit });
+        ingredientPackageHint.textContent = translate('ingredientPackageHint', { unit });
+        renderCalculatorResult();
+      }
+
+      function openIngredientModal(ingredientId = null) {
+        const ingredient = ingredientId ? (state.ingredients || []).find(item => item.id === ingredientId) : null;
+        ingredientModalId = ingredient ? ingredient.id : null;
+
         ingredientForm.reset();
         ingredientUnitSelect.value = 'szt';
-        editingIngredientId = null;
-        document.getElementById('cancelIngredientEditBtn').classList.add('hidden');
+
+        if (ingredient) {
+          ingredientNameInput.value = ingredient.name;
+          if (ingredient.unit) ingredientUnitSelect.value = ingredient.unit;
+          setInputValue(ingredientStockInput, ingredient.stock);
+          setInputValue(ingredientPriceInput, ingredient.unit_price);
+          setInputValue(ingredientMinStockInput, ingredient.min_stock);
+          setInputValue(ingredientPackageInput, Number(ingredient.unit_step || 0) > 0 ? ingredient.unit_step : '');
+        }
+
+        ingredientModalTitle.textContent = translate(ingredient ? 'editIngredientTitle' : 'addIngredient');
+        ingredientModalHint.textContent = translate('ingredientModalHint');
+        ingredientAcceptBtn.textContent = translate(ingredient ? 'saveChanges' : 'ingredientAccept');
+        updateIngredientUnitHints();
+
+        closePriceCalculator();
+        ingredientModal.classList.remove('hidden');
+        ingredientNameInput.focus();
+      }
+
+      function closeIngredientModal() {
+        ingredientModalId = null;
+        ingredientForm.reset();
+        ingredientModal.classList.add('hidden');
       }
 
       function handleIngredientFormSubmit(event) {
         event.preventDefault();
         const name = ingredientNameInput.value.trim();
         const unit = ingredientUnitSelect.value;
-        const stock = Number(ingredientStockInput.value);
-        const unitPrice = Number(ingredientPriceInput.value);
-        const minStock = Number(ingredientMinStockInput.value);
-        const targetStock = Number(ingredientTargetStockInput.value);
-        const moq = Number(ingredientMoqInput.value);
-        const unitStep = Number(ingredientStepInput.value);
+        const stock = numberFromInput(ingredientStockInput);
+        const unitPrice = numberFromInput(ingredientPriceInput);
+        const minStock = numberFromInput(ingredientMinStockInput);
+        const unitStep = numberFromInput(ingredientPackageInput);
 
-        const numbersValid = [stock, unitPrice, minStock, targetStock, moq, unitStep]
+        const numbersValid = [stock, unitPrice, minStock, unitStep]
           .every(value => Number.isFinite(value) && value >= 0);
 
-        if (!name || !numbersValid || moq < 1 || unitStep < 1) {
+        if (!name || !numbersValid) {
           showToast(translate('fillIngredient'), 'warning');
           return;
         }
 
+        // "Stan zalecany" i "minimalne zamówienie" już nie istnieją - przy
+        // zamawianiu krokiem jest wielkość opakowania (unit_step).
         const payload = {
           name,
           unit,
           stock,
           unit_price: unitPrice,
           min_stock: minStock,
-          target_stock: targetStock,
-          min_order_quantity: moq,
           unit_step: unitStep
         };
 
-        if (editingIngredientId) {
-          const ingredient = state.ingredients.find(item => item.id === editingIngredientId);
+        if (ingredientModalId) {
+          const ingredient = state.ingredients.find(item => item.id === ingredientModalId);
           if (ingredient) Object.assign(ingredient, payload);
           showToast(translate('ingredientUpdated'), 'success');
         } else {
-          state.ingredients.push({ id: makeId('ing'), ...payload });
+          // Nowa pozycja ląduje na końcu listy - tak samo jak w menu.
+          state.ingredients.push({ id: makeId('ing'), type: 'product', ...payload, sort_order: nextIngredientOrder() });
           showToast(translate('ingredientAdded'), 'success');
         }
 
-        resetIngredientForm();
+        closeIngredientModal();
         saveState();
         renderAll();
       }
 
-      function startIngredientEdit(ingredientId) {
-        const ingredient = (state.ingredients || []).find(item => item.id === ingredientId);
-        if (!ingredient) return;
+      /* ------------------------------------------------- kalkulator ceny */
 
-        editingIngredientId = ingredientId;
-        ingredientNameInput.value = ingredient.name;
-        ingredientUnitSelect.value = ingredient.unit;
-        ingredientStockInput.value = ingredient.stock;
-        ingredientPriceInput.value = ingredient.unit_price;
-        ingredientMinStockInput.value = ingredient.min_stock;
-        ingredientTargetStockInput.value = ingredient.target_stock;
-        ingredientMoqInput.value = ingredient.min_order_quantity;
-        ingredientStepInput.value = ingredient.unit_step;
-        ingredientNameInput.focus();
-        renderWarehouseEdit();
+      /**
+       * Z opakowania wychodzi cena jednostki. Przycisk "Użyj tej ceny" wpisuje
+       * ją z powrotem do okna składnika razem z wielkością opakowania, żeby nie
+       * trzeba było przepisywać jej ręcznie.
+       */
+      function calculatorUnitPrice() {
+        const packageSize = numberFromInput(calcPackageInput);
+        const packagePrice = numberFromInput(calcPriceInput);
+        if (!Number.isFinite(packageSize) || packageSize <= 0) return null;
+        if (!Number.isFinite(packagePrice) || packagePrice < 0) return null;
+        return packagePrice / packageSize;
       }
 
-      function cancelIngredientEdit() {
-        showConfirmDialog(translate('confirmCancelSelection'), () => {
-          resetIngredientForm();
-          renderWarehouseEdit();
+      function renderCalculatorResult() {
+        const unit = unitLabel(ingredientUnitSelect.value);
+        const unitPrice = calculatorUnitPrice();
+
+        calcPackageLabel.textContent = `${translate('ingredientPackage')} (${unit})`;
+        calcResultLabel.textContent = translate('ingredientPriceFor', { unit });
+
+        if (unitPrice === null) {
+          calcResult.textContent = translate('calcResultMissing');
+          calcResult.classList.add('text-slate-400');
+          calcResult.classList.remove('text-slate-800');
+          calcApplyBtn.classList.add('opacity-50');
+          return;
+        }
+
+        calcResult.textContent = formatCurrency(unitPrice);
+        calcResult.classList.remove('text-slate-400');
+        calcResult.classList.add('text-slate-800');
+        calcApplyBtn.classList.remove('opacity-50');
+      }
+
+      function openPriceCalculator() {
+        // Wielkość opakowania jest już wpisana w oknie składnika - nie każemy
+        // jej podawać drugi raz.
+        calcPackageInput.value = ingredientPackageInput.value || '';
+        calcPriceInput.value = '';
+        renderCalculatorResult();
+        priceCalcModal.classList.remove('hidden');
+        calcPriceInput.focus();
+      }
+
+      function closePriceCalculator() {
+        if (priceCalcModal) priceCalcModal.classList.add('hidden');
+      }
+
+      function applyCalculatorResult() {
+        const unitPrice = calculatorUnitPrice();
+        const packageSize = numberFromInput(calcPackageInput);
+
+        if (unitPrice === null) {
+          showToast(translate('calcResultMissing'), 'warning');
+          return;
+        }
+
+        // Cena jednostki bywa ułamkiem (np. 34,5 za gram) - zapisujemy ją bez
+        // ogona zer, ale z rozsądną dokładnością.
+        ingredientPriceInput.value = String(Number(unitPrice.toFixed(4)));
+        if (Number.isFinite(packageSize) && packageSize > 0) {
+          ingredientPackageInput.value = String(packageSize);
+        }
+
+        closePriceCalculator();
+        updateIngredientUnitHints();
+        showToast(translate('calcApplied'), 'success');
+      }
+
+      /* --------------------------------------------- zakładki magazynu */
+
+      function renderIngredientSectionPreview() {
+        const name = ingredientSectionNameInput.value.trim() || translate('ingredientSectionPreview');
+        const draft = ingredientSectionDraft;
+
+        ingredientSectionColorValue.textContent = draft === null ? translate('sectionColorNone') : `${Math.round(draft)}°`;
+        ingredientSectionPreview.textContent = name;
+        ingredientSectionPreview.style.cssText = draft === null
+          ? 'background-color: #f1f5f9; border-color: #cbd5e1; color: #475569'
+          : `background-color: ${tint(draft, 91)}; border-color: ${tint(draft, 62)}; color: ${tint(draft, 27, 55)}`;
+      }
+
+      function openIngredientSectionModal(sectionId = null) {
+        const section = sectionId
+          ? (state.ingredients || []).find(item => item.id === sectionId && isIngredientSection(item))
+          : null;
+
+        editingIngredientSectionId = section ? section.id : null;
+        ingredientSectionDraft = section ? sectionColorOf(section) : null;
+        ingredientSectionNameInput.value = section ? section.name : '';
+        ingredientSectionColorInput.value = ingredientSectionDraft === null ? 0 : Math.round(ingredientSectionDraft);
+        ingredientSectionTitle.textContent = translate(section ? 'ingredientSectionEditTitle' : 'ingredientSectionNewTitle');
+        ingredientSectionSaveBtn.textContent = translate(section ? 'saveChanges' : 'ingredientSectionSave');
+        renderIngredientSectionPreview();
+        ingredientSectionModal.classList.remove('hidden');
+        ingredientSectionNameInput.focus();
+      }
+
+      function closeIngredientSectionModal() {
+        editingIngredientSectionId = null;
+        ingredientSectionDraft = null;
+        ingredientSectionModal.classList.add('hidden');
+      }
+
+      function saveIngredientSection() {
+        const name = ingredientSectionNameInput.value.trim();
+        if (!name) {
+          showToast(translate('fillSectionName'), 'warning');
+          return;
+        }
+
+        const color = ingredientSectionDraft === null ? null : Math.round(ingredientSectionDraft);
+
+        if (editingIngredientSectionId) {
+          const section = state.ingredients.find(item => item.id === editingIngredientSectionId && isIngredientSection(item));
+          if (!section) {
+            closeIngredientSectionModal();
+            return;
+          }
+          section.name = name;
+          if (color === null) delete section.color;
+          else section.color = color;
+          showToast(translate('ingredientSectionUpdated'), 'success');
+        } else {
+          const section = {
+            id: makeId('ing'),
+            name,
+            type: 'section',
+            unit: '',
+            stock: 0,
+            unit_price: 0,
+            min_stock: 0,
+            unit_step: 0,
+            sort_order: nextIngredientOrder()
+          };
+          if (color !== null) section.color = color;
+          state.ingredients.push(section);
+          // Zakładka porządkuje magazyn, więc od tej chwili kolejność trzymamy
+          // wprost - inaczej lista alfabetyczna przeskoczyłaby nad zakładką.
+          writeIngredientOrder(getSortedIngredients());
+          showToast(translate('ingredientSectionAdded'), 'success');
+        }
+
+        closeIngredientSectionModal();
+        saveState();
+        renderAll();
+      }
+
+      function deleteIngredientSection(sectionId) {
+        const section = (state.ingredients || []).find(item => item.id === sectionId && isIngredientSection(item));
+        if (!section) return;
+
+        // Usuwamy sam nagłówek - składniki pod nim zostają w magazynie.
+        showConfirmDialog(translate('confirmDeleteIngredientSection', { name: section.name }), () => {
+          window.KedaiSync?.softDelete('ingredients', [section]);
+          state.ingredients = state.ingredients.filter(item => item.id !== sectionId);
+          // Bez tego wiersz wróciłby po restarcie: zapis stanu tylko nadpisuje
+          // pozycje, nigdy ich nie kasuje.
+          window.KedaiDatabase.deleteIngredient(sectionId);
+          if (editingIngredientSectionId === sectionId) closeIngredientSectionModal();
+          saveState();
+          renderAll();
+          showToast(translate('ingredientSectionRemoved'), 'success');
         });
+      }
+
+      function moveIngredient(ingredientId, direction) {
+        const list = getSortedIngredients();
+        const index = list.findIndex(item => item.id === ingredientId);
+        if (index < 0) return;
+
+        const targetIndex = direction === 'up' ? index - 1 : index + 1;
+        if (targetIndex < 0 || targetIndex >= list.length) return;
+
+        const temp = list[index];
+        list[index] = list[targetIndex];
+        list[targetIndex] = temp;
+
+        writeIngredientOrder(list);
+        saveState();
+        renderAll();
+      }
+
+      /**
+       * Kolor zakładki magazynu. `live` = przeciąganie paska: podgląd od razu,
+       * zapis dopiero po puszczeniu (żeby chmura nie dostała kilkudziesięciu
+       * wysyłek w trakcie jednego ruchu palca).
+       */
+      function setIngredientSectionColor(sectionId, hue, live) {
+        const section = (state.ingredients || []).find(item => item.id === sectionId && isIngredientSection(item));
+        if (!section) return;
+
+        if (hue === null) delete section.color;
+        else section.color = Math.max(0, Math.min(360, Math.round(Number(hue))));
+
+        if (live) {
+          renderWarehouse();
+          return;
+        }
+
+        saveState();
+        renderAll();
       }
 
       function deleteIngredient(ingredientId) {
@@ -2429,7 +2870,8 @@ const defaultState = window.KedaiConfig.defaultState;
           state.ingredients = state.ingredients.filter(item => item.id !== ingredientId);
           delete currentPurchaseSelection[ingredientId];
           window.KedaiDatabase.deleteIngredient(ingredientId);
-          if (editingIngredientId === ingredientId) resetIngredientForm();
+          // Otwarte okno usuwanego składnika nie może zostać na ekranie.
+          if (ingredientModalId === ingredientId) closeIngredientModal();
           saveState();
           renderAll();
           showToast(translate('ingredientRemoved'), 'success');
@@ -2463,12 +2905,11 @@ const defaultState = window.KedaiConfig.defaultState;
 
       async function acceptPurchaseOrder() {
         const selected = (state.ingredients || [])
-          .filter(ingredient => Number(currentPurchaseSelection[ingredient.id] || 0) > 0)
+          .filter(ingredient => !isIngredientSection(ingredient) && Number(currentPurchaseSelection[ingredient.id] || 0) > 0)
           .map(ingredient => ({
             ingredient,
             quantity: Number(currentPurchaseSelection[ingredient.id] || 0),
-            step: getStep(ingredient),
-            moq: Math.max(1, Number(ingredient.min_order_quantity) || 1)
+            step: getStep(ingredient)
           }));
 
         if (!selected.length) {
@@ -2476,22 +2917,13 @@ const defaultState = window.KedaiConfig.defaultState;
           return;
         }
 
+        // Zamawiamy całymi opakowaniami - krokiem jest wielkość opakowania.
         const misaligned = selected.find(item => !isStepAligned(item.quantity, item.step));
         if (misaligned) {
           showToast(translate('stepWarning', {
             name: misaligned.ingredient.name,
             step: formatNumber(misaligned.step),
-            unit: misaligned.ingredient.unit
-          }), 'warning');
-          return;
-        }
-
-        const tooSmall = selected.find(item => item.quantity < item.moq);
-        if (tooSmall) {
-          showToast(translate('moqWarning', {
-            name: tooSmall.ingredient.name,
-            moq: formatNumber(tooSmall.moq),
-            unit: tooSmall.ingredient.unit
+            unit: unitLabel(misaligned.ingredient.unit)
           }), 'warning');
           return;
         }
@@ -2551,7 +2983,27 @@ const defaultState = window.KedaiConfig.defaultState;
       recipeCancelBtn.addEventListener('click', closeRecipeEditor);
 
       ingredientForm.addEventListener('submit', handleIngredientFormSubmit);
-      document.getElementById('cancelIngredientEditBtn').addEventListener('click', cancelIngredientEdit);
+      addIngredientBtn.addEventListener('click', () => openIngredientModal());
+      addIngredientSectionBtn.addEventListener('click', () => openIngredientSectionModal());
+      ingredientCancelBtn.addEventListener('click', closeIngredientModal);
+      ingredientCalcBtn.addEventListener('click', openPriceCalculator);
+      ingredientUnitSelect.addEventListener('change', updateIngredientUnitHints);
+      calcCancelBtn.addEventListener('click', closePriceCalculator);
+      calcApplyBtn.addEventListener('click', applyCalculatorResult);
+      calcPackageInput.addEventListener('input', renderCalculatorResult);
+      calcPriceInput.addEventListener('input', renderCalculatorResult);
+      ingredientSectionCancelBtn.addEventListener('click', closeIngredientSectionModal);
+      ingredientSectionSaveBtn.addEventListener('click', saveIngredientSection);
+      ingredientSectionNameInput.addEventListener('input', renderIngredientSectionPreview);
+      ingredientSectionColorInput.addEventListener('input', event => {
+        ingredientSectionDraft = Number(event.target.value);
+        renderIngredientSectionPreview();
+      });
+      ingredientSectionColorClear.addEventListener('click', () => {
+        ingredientSectionDraft = null;
+        ingredientSectionColorInput.value = 0;
+        renderIngredientSectionPreview();
+      });
       document.getElementById('acceptPurchaseBtn').addEventListener('click', acceptPurchaseOrder);
       document.getElementById('cancelPurchaseBtn').addEventListener('click', cancelPurchaseSelection);
 
@@ -2664,11 +3116,31 @@ const defaultState = window.KedaiConfig.defaultState;
         }
 
         if (action === 'edit-ingredient') {
-          startIngredientEdit(id);
+          openIngredientModal(id);
         }
 
         if (action === 'delete-ingredient') {
           deleteIngredient(id);
+        }
+
+        if (action === 'move-ingredient-up') {
+          moveIngredient(id, 'up');
+        }
+
+        if (action === 'move-ingredient-down') {
+          moveIngredient(id, 'down');
+        }
+
+        if (action === 'edit-ingredient-section') {
+          openIngredientSectionModal(id);
+        }
+
+        if (action === 'delete-ingredient-section') {
+          deleteIngredientSection(id);
+        }
+
+        if (action === 'clear-ingredient-section-color') {
+          setIngredientSectionColor(id, null, false);
         }
 
         if (action === 'purchase-increase') {
@@ -2677,11 +3149,6 @@ const defaultState = window.KedaiConfig.defaultState;
 
         if (action === 'purchase-decrease') {
           updatePurchaseQuantity(id, -1);
-        }
-
-        if (action === 'purchase-recommended') {
-          const ingredient = (state.ingredients || []).find(item => item.id === id);
-          if (ingredient) setPurchaseQuantity(id, getRecommendedQuantity(ingredient));
         }
 
         if (action === 'delete-purchase') {
@@ -2710,7 +3177,21 @@ const defaultState = window.KedaiConfig.defaultState;
       document.getElementById('appDrawerBackdrop').addEventListener('click', closeDrawer);
 
       document.addEventListener('keydown', event => {
-        if (event.key === 'Escape') closeDrawer();
+        if (event.key !== 'Escape') return;
+        // Zamykamy to, co jest na wierzchu - najpierw kalkulator, potem okna.
+        if (priceCalcModal && !priceCalcModal.classList.contains('hidden')) {
+          closePriceCalculator();
+          return;
+        }
+        if (ingredientSectionModal && !ingredientSectionModal.classList.contains('hidden')) {
+          closeIngredientSectionModal();
+          return;
+        }
+        if (ingredientModal && !ingredientModal.classList.contains('hidden')) {
+          closeIngredientModal();
+          return;
+        }
+        closeDrawer();
       });
 
       document.querySelectorAll('button[data-nav-mode]').forEach(button => {
@@ -2743,15 +3224,19 @@ const defaultState = window.KedaiConfig.defaultState;
       // Kolor zakładki: podczas przeciągania paska tylko podglądamy (bez zapisu,
       // żeby nie zasypać chmury), a po puszczeniu zapisujemy raz.
       document.addEventListener('input', event => {
-        const input = event.target.closest?.('[data-action="section-color"]');
-        if (!input) return;
-        setSectionColor(input.dataset.id, Number(input.value), true);
+        const sectionInput = event.target.closest?.('[data-action="section-color"]');
+        if (sectionInput) setSectionColor(sectionInput.dataset.id, Number(sectionInput.value), true);
+
+        const ingredientInput = event.target.closest?.('[data-action="ingredient-section-color"]');
+        if (ingredientInput) setIngredientSectionColor(ingredientInput.dataset.id, Number(ingredientInput.value), true);
       });
 
       document.addEventListener('change', event => {
-        const input = event.target.closest?.('[data-action="section-color"]');
-        if (!input) return;
-        setSectionColor(input.dataset.id, Number(input.value), false);
+        const sectionInput = event.target.closest?.('[data-action="section-color"]');
+        if (sectionInput) setSectionColor(sectionInput.dataset.id, Number(sectionInput.value), false);
+
+        const ingredientInput = event.target.closest?.('[data-action="ingredient-section-color"]');
+        if (ingredientInput) setIngredientSectionColor(ingredientInput.dataset.id, Number(ingredientInput.value), false);
       });
 
       document.addEventListener('dblclick', event => {

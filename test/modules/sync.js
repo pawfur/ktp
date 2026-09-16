@@ -455,6 +455,9 @@
           entry.item.target_stock,
           entry.item.min_order_quantity,
           entry.item.unit_step,
+          entry.item.type === 'section' ? 'section' : 'product',
+          entry.item.color ?? '',
+          entry.item.sort_order,
           entry.item.deleted === true ? 'deleted' : 'active'
         ]),
         row: entry => ({
@@ -468,6 +471,9 @@
           target_stock: Number(entry.item.target_stock || 0),
           min_order_quantity: Number(entry.item.min_order_quantity || 0),
           unit_step: Number(entry.item.unit_step || 0),
+          type: entry.item.type === 'section' ? 'section' : 'product',
+          color: Number.isFinite(Number(entry.item.color)) && entry.item.color !== null ? Math.round(Number(entry.item.color)) : null,
+          sort_order: Number.isFinite(Number(entry.item.sort_order)) ? Number(entry.item.sort_order) : entry.index,
           user_name: meta.userName,
           deleted: entry.item.deleted === true,
           deleted_at: entry.item.deleted_at || null,
