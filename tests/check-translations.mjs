@@ -30,15 +30,12 @@ const ALLOWED_IDENTICAL = new Set(['menu', 'edit', 'unitGram', 'unitMl']);
  * (np. 'syncErrTables'), a app.js tłumaczy ją w syncDetailText().
  * Statyczna analiza takich odwołań nie widzi, więc są wypisane tutaj.
  *
- * `orderIngredients` trafia tu z tego samego powodu: wiersz zamawiania
- * w karcie składnika trzyma nazwę klucza w kodzie warunkowo.
  */
 const DYNAMIC_KEYS = new Set([
   'syncErrTables',
   'syncErrColumn',
   'syncErrAccess',
   'syncErrOffline',
-  'orderIngredients',
   // Komunikat po wgraniu danych zależy od tego, który plik zadziałał
   // (seed magazynu, lustro testowe, uzupełnienie magazynu lokalu).
   'seedApplied',

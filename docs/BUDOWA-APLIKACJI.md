@@ -227,8 +227,9 @@ Przy pierwszym uruchomieniu aplikacja wprowadza przykładowe składniki ułatwia
 
 Zamawianie nie ma już własnej zakładki. Każda karta składnika kończy się **wierszem zamawiania**, a cała reszta bez zmian pokazuje stan, więc nie trzeba przełączać widoków, żeby zobaczyć, czego brakuje i od razu to zamówić:
 
-- zwinięty wiersz to napis `Zamów` i okrągły przycisk **+** — dotknięcie dodaje jedno **opakowanie** (tyle, ile wynosi `unit_step`),
-- po dodaniu karta dostaje pomarańczową obwódkę, a w wierszu pojawia się `−  500 g  +` oraz wartość tej pozycji — od razu widać, co jest już w zamówieniu,
+- zwinięty wiersz to sam okrągły przycisk **+** — napis „Zamów” okazał się zbędny, plus jest czytelny sam z siebie; dotknięcie dodaje jedno **opakowanie** (tyle, ile wynosi `unit_step`),
+- po dodaniu karta dostaje pomarańczową obwódkę, a w wierszu pojawia się `−  500 g  +` oraz wartość tej pozycji — od razu widać, co jest już wybrane,
+- jeśli pozycja jest już na **otwartych zakupach** (czegoś jeszcze nie przyjęto), w wierszu pojawia się znaczek `zamówione`. To tylko informacja: kolejne opakowanie można dokupić bez żadnych przeszkód (`orderedIngredients()` w app.js),
 - nic nie znika z ekranu: kolor zakładki, wykrzyknik niskiego stanu i ceny zostają na miejscu.
 
 Na dole ekranu, nad dolnym paskiem, pojawia się **pasek zamówienia** (`#orderBar`) z liczbą pozycji i wartością. Pokazuje się tylko wtedy, gdy coś jest wybrane — dopóki nie zamawiasz, nie zabiera ani piksela. Pasek ma dwie akcje:
@@ -244,10 +245,16 @@ Ilości zmienia się całymi opakowaniami, więc nie da się zamówić ilości s
 
 Lista zamówień zakupowych ma teraz **własny przycisk w dolnym pasku** (piąta zakładka, `data-tab="purchaseList"`), bo po scaleniu stanu z zamawianiem nie miała już gdzie mieszkać. Wygląda jak lista zakupowa: data i wartość na górze, pod nimi pozycje **jedna pod drugą** (ilość, jednostka, nazwa, kwota), a na dole cztery przyciski:
 
-- **Przyjmij** — otwiera okno przyjęcia towaru,
-- **Edytuj** — wraca do zakładki Magazyn z pozycjami tego zamówienia,
-- **Kopiuj** — kopiuje do schowka **wyłącznie pozycje, których jeszcze nie przyjęto**: sam wykaz `- ilość jednostka nazwa`, bez daty, cen i podsumowania (gotowe do wysłania dostawcy),
-- **Usuń** — usuwa zamówienie (w chmurze zostaje ślad — nagrobek).
+Wszystkie przyciski mają **ikony**, żeby dało się je rozpoznać bez czytania (rysowane kreską, jak w nawigacji — `.btn-icon` w `styles.css`):
+
+- **Przyjmij** (strzałka w dół) — otwiera okno przyjęcia towaru,
+- **Edytuj** (ołówek) — wraca do zakładki Magazyn z pozycjami tych zakupów,
+- **Kopiuj** (kartki) — kopiuje do schowka **wyłącznie pozycje, których jeszcze nie przyjęto**: sam wykaz `- ilość jednostka nazwa`, bez daty, cen i podsumowania (gotowe do wysłania dostawcy),
+- **Usuń** (kosz) — usuwa wpis (w chmurze zostaje ślad — nagrobek).
+
+Gdy **wszystko jest już przyjęte**, na miejscu **Przyjmij** pojawia się **Archiwizuj** (skrzynka): zakupy przenoszą się do tego samego archiwum, w którym leżą zamówienia klientów — wiersz dostaje `status = 'archived'`, zostaje w chmurze i przestaje zajmować listę zakupów. Wpis zakupów jest w archiwum pokazany jako **wydatek**: kwota na czerwono i z minusem, znaczek „Zakupy”, a nagłówek archiwum obok „Sumy sprzedaży” pokazuje osobną pozycję **Zakupy (koszt)**. Znaczek `zamówione` przy składniku znika, bo nic już nie czeka na dostawę.
+
+**Słownictwo:** słowo „zamówienie” w aplikacji dotyczy wyłącznie zamówienia klienta (zakładka **Zamówienia**). Wszystko, co kupuje lokal — lista zakupów, przyjęcie towaru, koszt w archiwum — to **zakupy**.
 
 **Okno przyjęcia** (zielony **Akceptuj**, czerwony **Anuluj**) pokazuje każdą pozycję z checkboxem, ilością do wpisania i aktualnym stanem magazynu. W polu ilości podpowiadamy **resztę do przyjęcia**, więc przy pełnej dostawie wystarczy zaznaczyć i zaakceptować. Zaznaczenie przekreśla pozycję i pokazuje, ile sztuk przyjmiemy i za ile; akceptacja dodaje je do stanu magazynu i zapisuje przyjętą ilość.
 
