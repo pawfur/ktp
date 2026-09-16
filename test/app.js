@@ -170,16 +170,18 @@ const defaultState = window.KedaiConfig.defaultState;
           purchasePartial: 'Częściowo',
           receivePurchase: 'Przyjmij',
           receiveTitle: 'Przyjęcie zamówienia z {date}',
-          receiveHint: 'Zaznacz, co dotarło — zaznaczona pozycja zostanie przekreślona. Zielony przycisk doda ją do magazynu.',
+          receiveHint: 'Zaznacz, co dotarło — zaznaczona pozycja zostanie przekreślona. Przyjęte w całości pozycje są zablokowane.',
           receiveSummary: 'Do przyjęcia: {count} pozycji · {value}',
           receiveNothing: 'Nic nie zaznaczono.',
+          receiveAllDone: 'Wszystko już przyjęte.',
+          receivedOfOrdered: 'przyjęto {received} z {ordered}',
           receiveSkipped: 'Nie można przyjąć: tego składnika nie ma już w magazynie.',
           receivedOne: 'Przyjęto na magazyn 1 pozycję.',
           receivedMany: 'Przyjęto na magazyn: {count} pozycji.',
           copyPurchase: 'Kopiuj',
-          purchaseCopyTitle: 'Zamówienie z {date}',
           purchaseCopyDone: 'Lista skopiowana do schowka.',
           purchaseCopyFailed: 'Nie udało się skopiować listy.',
+          copyNothingToSend: 'Nie ma czego kopiować — wszystko już przyjęte.',
           stepWarning: '{name}: ilość musi być wielokrotnością opakowania ({step} {unit}).',
           ordered: 'Zamówione',
           totalSales: 'Suma sprzedaży',
@@ -429,16 +431,18 @@ const defaultState = window.KedaiConfig.defaultState;
           purchasePartial: 'Partial',
           receivePurchase: 'Receive',
           receiveTitle: 'Receive the order from {date}',
-          receiveHint: 'Tick what arrived — a ticked item is crossed out. The green button adds it to the warehouse.',
+          receiveHint: 'Tick what arrived — a ticked item is crossed out. Items already received in full are locked.',
           receiveSummary: 'To receive: {count} items · {value}',
           receiveNothing: 'Nothing is ticked.',
+          receiveAllDone: 'Everything is already received.',
+          receivedOfOrdered: 'received {received} of {ordered}',
           receiveSkipped: 'Cannot receive: this ingredient is no longer in the warehouse.',
           receivedOne: 'Added 1 item to the warehouse.',
           receivedMany: 'Added {count} items to the warehouse.',
           copyPurchase: 'Copy',
-          purchaseCopyTitle: 'Order from {date}',
           purchaseCopyDone: 'List copied to the clipboard.',
           purchaseCopyFailed: 'Could not copy the list.',
+          copyNothingToSend: 'Nothing to copy — everything is already received.',
           stepWarning: '{name}: the quantity must be a multiple of the package ({step} {unit}).',
           ordered: 'Ordered',
           totalSales: 'Total sales',
@@ -688,16 +692,18 @@ const defaultState = window.KedaiConfig.defaultState;
           purchasePartial: 'Sebagian',
           receivePurchase: 'Terima',
           receiveTitle: 'Terima pesanan {date}',
-          receiveHint: 'Centang yang sudah datang — item yang dicentang akan dicoret. Tombol hijau menambahkannya ke gudang.',
+          receiveHint: 'Centang yang sudah datang — item yang dicentang akan dicoret. Item yang sudah diterima penuh dikunci.',
           receiveSummary: 'Akan diterima: {count} item · {value}',
           receiveNothing: 'Belum ada yang dicentang.',
+          receiveAllDone: 'Semua sudah diterima.',
+          receivedOfOrdered: 'diterima {received} dari {ordered}',
           receiveSkipped: 'Tidak bisa diterima: bahan ini sudah tidak ada di gudang.',
           receivedOne: '1 item masuk ke gudang.',
           receivedMany: '{count} item masuk ke gudang.',
           copyPurchase: 'Salin',
-          purchaseCopyTitle: 'Pesanan {date}',
           purchaseCopyDone: 'Daftar disalin ke clipboard.',
           purchaseCopyFailed: 'Gagal menyalin daftar.',
+          copyNothingToSend: 'Tidak ada yang bisa disalin — semua sudah diterima.',
           stepWarning: '{name}: jumlah harus kelipatan kemasan ({step} {unit}).',
           ordered: 'Dipesan',
           totalSales: 'Total penjualan',
@@ -2094,19 +2100,25 @@ const defaultState = window.KedaiConfig.defaultState;
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .map(order => {
             const items = Array.isArray(order.items) ? order.items : [];
-            const receivedCount = items.filter(item => item.received_at).length;
-            const allReceived = items.length > 0 && receivedCount === items.length;
+            // "Częściowo" już wtedy, gdy cokolwiek dotarło - także gdy jedna
+            // pozycja przyszła w kawałku (np. 100 z 250 g).
+            const receivedCount = items.filter(item => receivedQuantity(item) > 0).length;
+            const allReceived = items.length > 0 && items.every(item => remainingQuantity(item) <= 0);
             const badge = allReceived
               ? ['bg-emerald-100', 'text-emerald-700', translate('purchaseReceived')]
               : (receivedCount ? ['bg-amber-100', 'text-amber-700', translate('purchasePartial')] : ['bg-sky-100', 'text-sky-700', translate('ordered')]);
 
             const lines = items.length
               ? items.map(item => {
-                const done = Boolean(item.received_at);
+                const received = receivedQuantity(item);
+                const done = remainingQuantity(item) <= 0 && received > 0;
                 const lineTotal = Number(item.line_total ?? Number(item.quantity || 0) * Number(item.unit_price || 0));
+                const note = !done && received > 0
+                  ? `<span class="mt-0.5 block text-[11px] font-semibold text-amber-600">${translate('receivedOfOrdered', { received: formatNumber(received), ordered: formatNumber(item.quantity) })}</span>`
+                  : '';
                 return `
                   <li class="flex items-start justify-between gap-2 py-1.5">
-                    <span class="min-w-0 text-sm ${done ? 'text-slate-400 line-through' : 'text-slate-700'}">${formatNumber(item.quantity)} ${unitLabel(item.unit)} ${escapeHtml(item.name)}</span>
+                    <span class="min-w-0 text-sm ${done ? 'text-slate-400 line-through' : 'text-slate-700'}">${formatNumber(item.quantity)} ${unitLabel(item.unit)} ${escapeHtml(item.name)}${note}</span>
                     <span class="flex-none text-xs font-semibold ${done ? 'text-slate-300 line-through' : 'text-slate-500'}">${formatCurrency(lineTotal)}</span>
                   </li>`;
               }).join('')
@@ -3056,9 +3068,13 @@ const defaultState = window.KedaiConfig.defaultState;
         if (existing) {
           const receivedAt = new Map((existing.items || [])
             .filter(item => item.received_at)
-            .map(item => [item.ingredient_id, item.received_at]));
+            .map(item => [item.ingredient_id, { at: item.received_at, qty: receivedQuantity(item) }]));
           items.forEach(item => {
-            if (receivedAt.has(item.ingredient_id)) item.received_at = receivedAt.get(item.ingredient_id);
+            const previous = receivedAt.get(item.ingredient_id);
+            if (!previous) return;
+            // Przyjęte już sztuki muszą przetrwać poprawkę zamówienia.
+            item.received_at = previous.at;
+            item.received_qty = previous.qty;
           });
 
           existing.items = items;
@@ -3066,7 +3082,9 @@ const defaultState = window.KedaiConfig.defaultState;
           existing.total_quantity = items.reduce((sum, item) => sum + item.quantity, 0);
           existing.editedAt = new Date().toISOString();
           if (existing.received_at) delete existing.received_at;
-          existing.status = items.every(item => item.received_at) ? 'received' : (items.some(item => item.received_at) ? 'partial' : 'ordered');
+          existing.status = items.every(item => remainingQuantity(item) <= 0)
+            ? 'received'
+            : (items.some(item => receivedQuantity(item) > 0) ? 'partial' : 'ordered');
 
           window.KedaiDatabase.updatePurchaseOrder(existing);
           editingPurchaseOrderId = null;
@@ -3127,21 +3145,46 @@ const defaultState = window.KedaiConfig.defaultState;
 
       /* --------------------------------------- przyjęcie zamówienia na magazyn */
 
+      /** Ile z tej pozycji już przyjęto. Starsze wiersze mają tylko datę. */
+      function receivedQuantity(item) {
+        const ordered = Number(item.quantity || 0);
+        if (item.received_qty === undefined || item.received_qty === null) {
+          return item.received_at ? ordered : 0;
+        }
+        return Number(item.received_qty);
+      }
+
+      /** Ile jeszcze nie dotarło (zamówione minus przyjęte). */
+      function remainingQuantity(item) {
+        return Math.max(0, Number((Number(item.quantity || 0) - receivedQuantity(item)).toFixed(3)));
+      }
+
       function openReceiveModal(orderId) {
         const order = (state.purchaseOrders || []).find(item => String(item.id) === String(orderId));
         if (!order) return;
 
         receivingOrderId = order.id;
-        receiptDraft = (order.items || []).map((item, index) => ({
-          index,
-          ingredientId: item.ingredient_id,
-          name: item.name,
-          unit: item.unit,
-          quantity: Number(item.quantity || 0),
-          unitPrice: Number(item.unit_price || 0),
-          received: Boolean(item.received_at),
-          checked: false
-        }));
+        receiptDraft = (order.items || []).map((item, index) => {
+          const ordered = Number(item.quantity || 0);
+          const received = receivedQuantity(item);
+          const remaining = remainingQuantity(item);
+
+          return {
+            index,
+            ingredientId: item.ingredient_id,
+            name: item.name,
+            unit: item.unit,
+            ordered,
+            received,
+            remaining,
+            // Wpisujemy to, czego jeszcze brakuje. Pozycja przyjęta w całości
+            // jest zablokowana - inaczej dałoby się przyjąć ją drugi raz.
+            quantity: remaining,
+            unitPrice: Number(item.unit_price || 0),
+            done: remaining <= 0,
+            checked: remaining <= 0
+          };
+        });
 
         receiveTitle.textContent = translate('receiveTitle', { date: formatDateTime(order.createdAt) });
         receiveHint.textContent = translate('receiveHint');
@@ -3168,20 +3211,26 @@ const defaultState = window.KedaiConfig.defaultState;
           // Składnik usunięty z magazynu nie ma gdzie się przyjąć.
           const missing = !ingredient;
           const unit = unitLabel(row.unit);
-          const border = row.received ? 'border-emerald-200 bg-emerald-50' : (row.checked ? 'border-orange-300 bg-orange-50' : 'border-slate-200 bg-white');
+          const locked = row.done || missing;
+          const border = row.done ? 'border-emerald-200 bg-emerald-50' : (row.checked ? 'border-orange-300 bg-orange-50' : 'border-slate-200 bg-white');
+
+          const note = [
+            `${translate('ingredientStock')}: ${formatNumber(ingredient ? ingredient.stock : 0)} ${unit}`,
+            row.received > 0 ? translate('receivedOfOrdered', { received: formatNumber(row.received), ordered: formatNumber(row.ordered) }) : '',
+            missing ? translate('recipeMissing') : '',
+            row.done ? translate('purchaseReceived') : ''
+          ].filter(Boolean).join(' · ');
 
           return `
             <div class="rounded-xl border ${border} p-3" data-receive-row="${row.index}">
               <div class="flex items-start gap-3">
-                <input type="checkbox" data-receive-check="${row.index}" class="receive-check" ${row.checked ? 'checked' : ''} ${missing ? 'disabled' : ''} aria-label="${escapeHtml(row.name)}" />
+                <input type="checkbox" data-receive-check="${row.index}" class="receive-check" ${row.checked ? 'checked' : ''} ${locked ? 'disabled' : ''} aria-label="${escapeHtml(row.name)}" />
                 <div class="min-w-0 flex-1">
-                  <p class="text-sm font-bold text-slate-800 ${row.checked ? 'line-through text-slate-400' : ''}" data-receive-name="${row.index}">${escapeHtml(row.name)}</p>
-                  <p class="text-[11px] text-slate-500">
-                    ${translate('ingredientStock')}: ${formatNumber(ingredient ? ingredient.stock : 0)} ${unit}${missing ? ` · ${translate('recipeMissing')}` : ''}${row.received ? ` · ${translate('purchaseReceived')}` : ''}
-                  </p>
+                  <p class="text-sm font-bold text-slate-800 ${row.done ? 'text-slate-400 line-through' : (row.checked ? 'line-through text-slate-400' : '')}" data-receive-name="${row.index}">${escapeHtml(row.name)}</p>
+                  <p class="text-[11px] text-slate-500">${note}</p>
                 </div>
                 <div class="flex flex-none items-center gap-1">
-                  <input type="number" inputmode="decimal" min="0" step="any" data-receive-qty="${row.index}" value="${row.quantity}" ${missing ? 'disabled' : ''} class="w-20 rounded-lg border border-slate-300 px-2 py-2 text-right text-sm text-slate-800 ${row.checked ? 'line-through text-slate-400' : ''}" />
+                  <input type="number" inputmode="decimal" min="0" step="any" data-receive-qty="${row.index}" value="${row.remaining}" ${locked ? 'disabled' : ''} class="w-20 rounded-lg border border-slate-300 px-2 py-2 text-right text-sm text-slate-800 ${row.checked ? 'line-through text-slate-400' : ''}" />
                   <span class="w-10 text-xs font-semibold text-slate-500">${unit}</span>
                 </div>
               </div>
@@ -3230,11 +3279,12 @@ const defaultState = window.KedaiConfig.defaultState;
       }
 
       function updateReceiveSummary() {
-        const checked = receiptDraft.filter(row => row.checked);
+        const checked = receiptDraft.filter(row => row.checked && !row.done);
         const value = checked.reduce((sum, row) => sum + Number(row.quantity || 0) * Number(row.unitPrice || 0), 0);
+        const anythingLeft = receiptDraft.some(row => !row.done);
         receiveSummary.textContent = checked.length
           ? translate('receiveSummary', { count: checked.length, value: formatCurrency(value) })
-          : translate('receiveNothing');
+          : translate(anythingLeft ? 'receiveNothing' : 'receiveAllDone');
       }
 
       /**
@@ -3254,7 +3304,9 @@ const defaultState = window.KedaiConfig.defaultState;
         let skipped = 0;
 
         receiptDraft.forEach(row => {
-          if (!row.checked) return;
+          // Pozycja przyjęta w całości jest zablokowana - drugie przyjęcie tej
+          // samej ilości zawyżyłoby stan magazynu.
+          if (!row.checked || row.done) return;
           const item = (order.items || [])[row.index];
           if (!item) return;
 
@@ -3266,24 +3318,26 @@ const defaultState = window.KedaiConfig.defaultState;
           }
 
           ingredient.stock = Number((Number(ingredient.stock || 0) + quantity).toFixed(3));
-          // Zapisujemy faktycznie przyjętą ilość - dostawa mogła się różnić.
-          item.quantity = quantity;
-          item.line_total = Number((quantity * Number(item.unit_price || 0)).toFixed(2));
+          // Ilość narastająco: dostawa może przyjść w częściach, a przyjęte
+          // wcześniej sztuki nie mogą policzyć się dwa razy.
+          const already = item.received_qty === undefined || item.received_qty === null
+            ? (item.received_at ? Number(item.quantity || 0) : 0)
+            : Number(item.received_qty);
+          item.received_qty = Number((already + quantity).toFixed(3));
           item.received_at = new Date().toISOString();
           applied += 1;
         });
 
         if (!applied) {
-          showToast(translate(skipped ? 'receiveSkipped' : 'receiveNothing'), 'warning');
+          const left = receiptDraft.some(row => !row.done);
+          showToast(translate(!left ? 'receiveAllDone' : (skipped ? 'receiveSkipped' : 'receiveNothing')), 'warning');
           return;
         }
 
         const items = order.items || [];
-        order.total_quantity = Number(items.reduce((sum, item) => sum + Number(item.quantity || 0), 0).toFixed(3));
-        order.total_price = Number(items.reduce((sum, item) => sum + Number(item.line_total || 0), 0).toFixed(2));
-        const allReceived = items.length > 0 && items.every(item => item.received_at);
-        order.status = allReceived ? 'received' : 'partial';
-        if (allReceived) order.received_at = new Date().toISOString();
+        const everythingIn = items.length > 0 && items.every(item => Number(item.received_qty || 0) >= Number(item.quantity || 0));
+        order.status = everythingIn ? 'received' : 'partial';
+        if (everythingIn) order.received_at = new Date().toISOString();
         else delete order.received_at;
 
         window.KedaiDatabase.updatePurchaseOrder(order);
@@ -3293,21 +3347,16 @@ const defaultState = window.KedaiConfig.defaultState;
         showToast(translate(applied === 1 ? 'receivedOne' : 'receivedMany', { count: applied }), 'success');
       }
 
-      /** Lista zamówienia jako tekst do schowka (np. do wysłania dostawcy). */
+      /**
+       * Lista do schowka: wyłącznie pozycje, których jeszcze nie przyjęto.
+       * Dostawca dostaje sam wykaz - bez daty, cen i podsumowania.
+       */
       function purchaseOrderText(order) {
-        const lines = (order.items || []).map(item => {
-          const mark = item.received_at ? '✓ ' : '';
-          const lineTotal = Number(item.line_total ?? Number(item.quantity || 0) * Number(item.unit_price || 0));
-          return `- ${mark}${formatNumber(item.quantity)} ${unitLabel(item.unit)} ${item.name} — ${formatCurrency(lineTotal)}`;
-        });
-
-        return [
-          translate('purchaseCopyTitle', { date: formatDateTime(order.createdAt) }),
-          '',
-          ...lines,
-          '',
-          `${translate('purchaseTotal')}: ${formatCurrency(order.total_price)}`
-        ].join('\n');
+        return (order.items || [])
+          .map(item => ({ item, remaining: remainingQuantity(item) }))
+          .filter(entry => entry.remaining > 0)
+          .map(entry => `- ${formatNumber(entry.remaining)} ${unitLabel(entry.item.unit)} ${entry.item.name}`)
+          .join('\n');
       }
 
       /**
@@ -3347,7 +3396,13 @@ const defaultState = window.KedaiConfig.defaultState;
         const order = (state.purchaseOrders || []).find(item => String(item.id) === String(orderId));
         if (!order) return;
 
-        const copied = await copyTextToClipboard(purchaseOrderText(order));
+        const text = purchaseOrderText(order);
+        if (!text) {
+          showToast(translate('copyNothingToSend'), 'warning');
+          return;
+        }
+
+        const copied = await copyTextToClipboard(text);
         showToast(translate(copied ? 'purchaseCopyDone' : 'purchaseCopyFailed'), copied ? 'success' : 'warning');
       }
 

@@ -4,7 +4,7 @@
  * PLIK GENEROWANY - nie edytuj ręcznie. Odświeżenie po zmianach w lokalu:
  *   node tools/build-seed-test.mjs
  *
- * Zbudowano: 16 września 2026 23:18
+ * Zbudowano: 16 września 2026 23:43
  * Odcisk treści (version): ca8edef7fd
  * Pozycje: 52 składników w 5 zakładkach, menu: 56 wierszy.
  *
@@ -13,7 +13,7 @@
  */
 window.KedaiSeedTest = {
   version: 'ca8edef7fd',
-  builtAt: '16 września 2026 23:18',
+  builtAt: '16 września 2026 23:43',
   menu: [
     { id: 'prod_1789313082708_bsvpo5', name: "Seblak", type: 'section', price: 0, order: 0, visible: true, color: 360 },
     { id: 'prod_1789404209043_zdo8az', name: "Seblak", type: 'section', price: 0, order: 1, visible: true, color: 360 },
