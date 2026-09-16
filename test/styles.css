@@ -735,3 +735,25 @@ body {
     font-size: 0.62rem;
   }
 }
+
+/* Znaczek „zamówione” przy pozycji magazynu, która jest już na liście zakupów. */
+.ordered-flag {
+  display: inline-block;
+  flex: none;
+  border-radius: 9999px;
+  background-color: #e0f2fe;
+  color: #0369a1;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Ikona w przycisku listy zakupów - rozmiar tekstu, kolor dziedziczony. */
+.btn-icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex: none;
+}

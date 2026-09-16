@@ -967,6 +967,32 @@
     };
   }
 
+  /**
+   * Zapomina o usunięciu podanych pozycji: kasuje nagrobki i znaczniki
+   * `#deleted` z rejestru wysyłki.
+   *
+   * Potrzebne wtedy, gdy aplikacja SAMA przywraca pozycję (np. uzupełnienie
+   * magazynu wpisami z konfiguracji). Bez tego wiersz nigdy nie wróciłby do
+   * chmury: znacznik usunięcia jest trwały, żeby odtworzenie starej kopii na
+   * telefonie nie „odmrażało” skasowanych danych.
+   */
+  function clearDeletion(name, ids) {
+    if (!TABLE_LIST.some(entry => entry[0] === name)) return 0;
+    const list = (Array.isArray(ids) ? ids : [ids]).map(id => String(id || '')).filter(Boolean);
+    if (!list.length) return 0;
+
+    const tombstones = readTombstones(name);
+    list.forEach(id => { delete tombstones[id]; });
+    writeTombstones(name, tombstones);
+
+    const synced = { ...readSynced(name) };
+    list.forEach(id => { if (synced[id] === DELETED_MARK) delete synced[id]; });
+    writeSynced(name, synced);
+
+    invalidatePending();
+    return list.length;
+  }
+
   window.KedaiSync = {
     isConfigured,
     isSignedIn,
@@ -981,6 +1007,7 @@
     pushNow,
     countRows,
     softDelete,
+    clearDeletion,
     isSent,
     forgetSynced
   };

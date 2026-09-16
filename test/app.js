@@ -103,7 +103,7 @@ const defaultState = window.KedaiConfig.defaultState;
           navModeIcon: 'Tylko ikona',
           editWarehouse: 'Edycja magazynu',
           warehouse: 'Magazyn',
-          warehouseHint: 'Plus przy składniku dodaje jedno opakowanie do zamówienia. Podsumowanie pojawi się na dole ekranu.',
+          warehouseHint: 'Plus przy składniku dodaje jedno opakowanie do zakupów. Podsumowanie pojawi się na dole ekranu.',
           ingredients: 'Składniki',
           addIngredient: 'Dodaj nowy składnik',
           ingredientName: 'Nazwa',
@@ -150,33 +150,34 @@ const defaultState = window.KedaiConfig.defaultState;
           warehouseValue: 'Wartość magazynu',
           stockValue: 'Wartość stanu',
           belowMin: 'Poniżej stanu min.',
-          orderIngredients: 'Zamów',
           orderAddPackage: 'Dodaj opakowanie',
           orderRemovePackage: 'Odejmij opakowanie',
-          orderBarClear: 'Wyczyść zamówienie',
+          orderBarClear: 'Wyczyść zakupy',
           orderSheetHint: 'Popraw ilości i zaakceptuj. Ilość zmienia się całymi opakowaniami.',
           orderSheetClose: 'Zamknij',
           receivedShort: 'przyjęto {received}',
-          purchaseKeepReceived: 'Nie można zamówić mniej niż już przyjęto ({quantity} {unit}).',
+          purchaseKeepReceived: 'Nie można kupić mniej niż już przyjęto ({quantity} {unit}).',
           purchaseListShort: 'Zakupy',
-          purchaseTitle: 'Zamawianie składników',
-          purchaseList: 'Lista zamówień',
-          purchaseTotal: 'Wartość zamówienia',
+          purchaseTitle: 'Zakupy składników',
+          purchaseList: 'Lista zakupów',
+          purchaseTotal: 'Wartość zakupów',
           acceptOrder: 'Akceptuj',
           noPurchaseItems: 'Nie wybrano składników.',
           chooseIngredient: 'Wybierz co najmniej jeden składnik.',
-          purchaseSaved: 'Zamówienie zostało zapisane.',
-          purchaseEmpty: 'Brak zamówień.',
-          purchaseDeleted: 'Zamówienie zostało usunięte.',
-          confirmDeletePurchase: 'Usunąć to zamówienie?',
-          confirmCancelPurchase: 'Czy na pewno chcesz anulować zamówienie?',
-          purchaseCleared: 'Zamówienie zostało anulowane.',
-          purchaseUpdated: 'Zamówienie zostało zaktualizowane.',
-          purchaseEditNotice: 'Edytujesz zamówienie z {date}.',
+          purchaseSaved: 'Zakupy zostały zapisane.',
+          purchaseEmpty: 'Brak zakupów.',
+          purchaseDeleted: 'Zakupy zostały usunięte.',
+          purchaseArchived: 'Zakupy przeniesione do archiwum.',
+          confirmDeletePurchase: 'Usunąć te zakupy?',
+          confirmCancelPurchase: 'Czy na pewno chcesz anulować te zakupy?',
+          purchaseCleared: 'Zakupy zostały anulowane.',
+          purchaseUpdated: 'Zakupy zostały zaktualizowane.',
+          purchaseEditNotice: 'Edytujesz zakupy z {date}.',
           purchaseReceived: 'Przyjęte',
           purchasePartial: 'Częściowo',
           receivePurchase: 'Przyjmij',
-          receiveTitle: 'Przyjęcie zamówienia z {date}',
+          archivePurchase: 'Archiwizuj',
+          receiveTitle: 'Przyjęcie zakupów z {date}',
           receiveHint: 'Zaznacz, co dotarło — zaznaczona pozycja zostanie przekreślona. Przyjęte w całości pozycje są zablokowane.',
           receiveSummary: 'Do przyjęcia: {count} pozycji · {value}',
           receiveNothing: 'Nic nie zaznaczono.',
@@ -191,7 +192,9 @@ const defaultState = window.KedaiConfig.defaultState;
           copyNothingToSend: 'Nie ma czego kopiować — wszystko już przyjęte.',
           stepWarning: '{name}: ilość musi być wielokrotnością opakowania ({step} {unit}).',
           ordered: 'Zamówione',
+          orderedFlag: 'zamówione',
           totalSales: 'Suma sprzedaży',
+          archivePurchasesTotal: 'Zakupy (koszt)',
           language: 'Język',
           item: 'pozycja',
           items: 'pozycji',
@@ -208,14 +211,14 @@ const defaultState = window.KedaiConfig.defaultState;
           noItems: 'Brak wybranych pozycji.',
           activeOrders: 'Aktywne zamówienia',
           noActiveOrders: 'Brak aktywnych zamówień.',
-          noArchive: 'Brak zarchiwizowanych zamówień.',
-          noArchiveRange: 'Brak zamówień w wybranym zakresie.',
+          noArchive: 'Archiwum jest puste.',
+          noArchiveRange: 'Brak wpisów w wybranym zakresie.',
           archiveRangeLabel: 'Zakres dat',
           archiveRangeDay: 'Dzień',
           archiveRangeWeek: 'Tydzień',
           archiveRangeMonth: 'Miesiąc',
           archiveRangeAll: 'Wszystkie',
-          archiveCount: 'Liczba zamówień: {count}',
+          archiveCount: 'Liczba wpisów: {count}',
           edit: 'Edytuj',
           delete: 'Usuń',
           archiveLabel: 'Archiwizuj',
@@ -268,6 +271,7 @@ const defaultState = window.KedaiConfig.defaultState;
           orderStockNone: 'Nic nie zeszło ze stanu.',
           seedApplied: 'Magazyn i receptury zostały uzupełnione.',
           testSeedApplied: 'Środowisko testowe: wgrano menu i magazyn lokalu.',
+          warehouseSeedApplied: 'Magazyn: dodano brakujące pozycje i zakładki.',
           menuCountWithHidden: '{visible} widocznych · {hidden} ukrytych',
           confirmDeleteOrder: 'Usunąć aktywne zamówienie z dnia {date}?',
           confirmCancelSelection: 'Czy na pewno chcesz anulować bieżące zamówienie?',
@@ -371,7 +375,7 @@ const defaultState = window.KedaiConfig.defaultState;
           navModeIcon: 'Icon only',
           editWarehouse: 'Edit warehouse',
           warehouse: 'Warehouse',
-          warehouseHint: 'The plus button adds one package to the order. The summary shows at the bottom of the screen.',
+          warehouseHint: 'The plus button adds one package to the shopping list. The summary shows at the bottom of the screen.',
           ingredients: 'Ingredients',
           addIngredient: 'Add new ingredient',
           ingredientName: 'Name',
@@ -418,33 +422,34 @@ const defaultState = window.KedaiConfig.defaultState;
           warehouseValue: 'Warehouse value',
           stockValue: 'Stock value',
           belowMin: 'Below minimum',
-          orderIngredients: 'Order',
           orderAddPackage: 'Add a package',
           orderRemovePackage: 'Remove a package',
-          orderBarClear: 'Clear the order',
+          orderBarClear: 'Clear the shopping list',
           orderSheetHint: 'Adjust the quantities and accept. Quantities change in whole packages.',
           orderSheetClose: 'Close',
           receivedShort: 'received {received}',
-          purchaseKeepReceived: 'You cannot order less than already received ({quantity} {unit}).',
+          purchaseKeepReceived: 'You cannot buy less than already received ({quantity} {unit}).',
           purchaseListShort: 'Shopping',
-          purchaseTitle: 'Order ingredients',
-          purchaseList: 'Order list',
-          purchaseTotal: 'Order value',
+          purchaseTitle: 'Buy ingredients',
+          purchaseList: 'Purchases',
+          purchaseTotal: 'Purchase value',
           acceptOrder: 'Accept',
           noPurchaseItems: 'No ingredients selected.',
           chooseIngredient: 'Please select at least one ingredient.',
-          purchaseSaved: 'Order saved.',
-          purchaseEmpty: 'No orders yet.',
-          purchaseDeleted: 'Order deleted.',
-          confirmDeletePurchase: 'Delete this order?',
-          confirmCancelPurchase: 'Are you sure you want to cancel the order?',
-          purchaseCleared: 'Order cancelled.',
-          purchaseUpdated: 'Order updated.',
-          purchaseEditNotice: 'You are editing the order from {date}.',
+          purchaseSaved: 'Purchases saved.',
+          purchaseEmpty: 'No purchases yet.',
+          purchaseDeleted: 'Purchases deleted.',
+          purchaseArchived: 'Purchases moved to the archive.',
+          confirmDeletePurchase: 'Delete these purchases?',
+          confirmCancelPurchase: 'Are you sure you want to cancel these purchases?',
+          purchaseCleared: 'Purchases cancelled.',
+          purchaseUpdated: 'Purchases updated.',
+          purchaseEditNotice: 'You are editing the purchases from {date}.',
           purchaseReceived: 'Received',
           purchasePartial: 'Partial',
           receivePurchase: 'Receive',
-          receiveTitle: 'Receive the order from {date}',
+          archivePurchase: 'Archive',
+          receiveTitle: 'Receive the purchases from {date}',
           receiveHint: 'Tick what arrived — a ticked item is crossed out. Items already received in full are locked.',
           receiveSummary: 'To receive: {count} items · {value}',
           receiveNothing: 'Nothing is ticked.',
@@ -459,7 +464,9 @@ const defaultState = window.KedaiConfig.defaultState;
           copyNothingToSend: 'Nothing to copy — everything is already received.',
           stepWarning: '{name}: the quantity must be a multiple of the package ({step} {unit}).',
           ordered: 'Ordered',
+          orderedFlag: 'ordered',
           totalSales: 'Total sales',
+          archivePurchasesTotal: 'Purchases (cost)',
           language: 'Language',
           item: 'item',
           items: 'items',
@@ -476,14 +483,14 @@ const defaultState = window.KedaiConfig.defaultState;
           noItems: 'No items selected.',
           activeOrders: 'Active orders',
           noActiveOrders: 'No active orders.',
-          noArchive: 'No archived orders.',
-          noArchiveRange: 'No orders in the selected range.',
+          noArchive: 'The archive is empty.',
+          noArchiveRange: 'No entries in the selected range.',
           archiveRangeLabel: 'Date range',
           archiveRangeDay: 'Day',
           archiveRangeWeek: 'Week',
           archiveRangeMonth: 'Month',
           archiveRangeAll: 'All',
-          archiveCount: 'Orders: {count}',
+          archiveCount: 'Entries: {count}',
           edit: 'Edit',
           delete: 'Delete',
           archiveLabel: 'Archive',
@@ -536,6 +543,7 @@ const defaultState = window.KedaiConfig.defaultState;
           orderStockNone: 'Nothing was taken from stock.',
           seedApplied: 'Warehouse and recipes have been filled in.',
           testSeedApplied: 'Test environment: the shop menu and warehouse were loaded.',
+          warehouseSeedApplied: 'Warehouse: missing items and sections were added.',
           menuCountWithHidden: '{visible} visible · {hidden} hidden',
           confirmDeleteOrder: 'Delete the active order from {date}?',
           confirmCancelSelection: 'Are you sure you want to cancel the current order?',
@@ -639,7 +647,7 @@ const defaultState = window.KedaiConfig.defaultState;
           navModeIcon: 'Ikon saja',
           editWarehouse: 'Ubah gudang',
           warehouse: 'Gudang',
-          warehouseHint: 'Tombol plus menambah satu kemasan ke pesanan. Ringkasan muncul di bawah layar.',
+          warehouseHint: 'Tombol plus menambah satu kemasan ke belanja. Ringkasan muncul di bawah layar.',
           ingredients: 'Bahan',
           addIngredient: 'Tambah bahan baru',
           ingredientName: 'Nama',
@@ -686,33 +694,34 @@ const defaultState = window.KedaiConfig.defaultState;
           warehouseValue: 'Nilai gudang',
           stockValue: 'Nilai stok',
           belowMin: 'Di bawah minimum',
-          orderIngredients: 'Pesan',
           orderAddPackage: 'Tambah kemasan',
           orderRemovePackage: 'Kurangi kemasan',
-          orderBarClear: 'Kosongkan pesanan',
+          orderBarClear: 'Kosongkan belanja',
           orderSheetHint: 'Sesuaikan jumlah lalu terima. Jumlah berubah per kemasan.',
           orderSheetClose: 'Tutup',
           receivedShort: 'diterima {received}',
-          purchaseKeepReceived: 'Tidak bisa memesan kurang dari yang sudah diterima ({quantity} {unit}).',
+          purchaseKeepReceived: 'Tidak bisa membeli kurang dari yang sudah diterima ({quantity} {unit}).',
           purchaseListShort: 'Belanja',
-          purchaseTitle: 'Pesan bahan',
-          purchaseList: 'Daftar pesanan',
-          purchaseTotal: 'Nilai pesanan',
+          purchaseTitle: 'Belanja bahan',
+          purchaseList: 'Daftar belanja',
+          purchaseTotal: 'Nilai belanja',
           acceptOrder: 'Terima',
           noPurchaseItems: 'Belum ada bahan dipilih.',
           chooseIngredient: 'Pilih minimal satu bahan.',
-          purchaseSaved: 'Pesanan disimpan.',
-          purchaseEmpty: 'Belum ada pesanan.',
-          purchaseDeleted: 'Pesanan dihapus.',
-          confirmDeletePurchase: 'Hapus pesanan ini?',
-          confirmCancelPurchase: 'Apakah Anda yakin ingin membatalkan pesanan?',
-          purchaseCleared: 'Pesanan dibatalkan.',
-          purchaseUpdated: 'Pesanan diperbarui.',
-          purchaseEditNotice: 'Anda mengedit pesanan {date}.',
+          purchaseSaved: 'Belanja disimpan.',
+          purchaseEmpty: 'Belum ada belanja.',
+          purchaseDeleted: 'Belanja dihapus.',
+          purchaseArchived: 'Belanja dipindahkan ke arsip.',
+          confirmDeletePurchase: 'Hapus belanja ini?',
+          confirmCancelPurchase: 'Apakah Anda yakin ingin membatalkan belanja ini?',
+          purchaseCleared: 'Belanja dibatalkan.',
+          purchaseUpdated: 'Belanja diperbarui.',
+          purchaseEditNotice: 'Anda mengedit belanja {date}.',
           purchaseReceived: 'Diterima',
           purchasePartial: 'Sebagian',
           receivePurchase: 'Terima',
-          receiveTitle: 'Terima pesanan {date}',
+          archivePurchase: 'Arsipkan',
+          receiveTitle: 'Terima belanja {date}',
           receiveHint: 'Centang yang sudah datang — item yang dicentang akan dicoret. Item yang sudah diterima penuh dikunci.',
           receiveSummary: 'Akan diterima: {count} item · {value}',
           receiveNothing: 'Belum ada yang dicentang.',
@@ -727,7 +736,9 @@ const defaultState = window.KedaiConfig.defaultState;
           copyNothingToSend: 'Tidak ada yang bisa disalin — semua sudah diterima.',
           stepWarning: '{name}: jumlah harus kelipatan kemasan ({step} {unit}).',
           ordered: 'Dipesan',
+          orderedFlag: 'dipesan',
           totalSales: 'Total penjualan',
+          archivePurchasesTotal: 'Belanja (biaya)',
           language: 'Bahasa',
           item: 'item',
           items: 'item',
@@ -744,14 +755,14 @@ const defaultState = window.KedaiConfig.defaultState;
           noItems: 'Belum ada item yang dipilih.',
           activeOrders: 'Pesanan aktif',
           noActiveOrders: 'Belum ada pesanan aktif.',
-          noArchive: 'Belum ada arsip pesanan.',
-          noArchiveRange: 'Tidak ada pesanan dalam rentang yang dipilih.',
+          noArchive: 'Arsip masih kosong.',
+          noArchiveRange: 'Tidak ada catatan dalam rentang yang dipilih.',
           archiveRangeLabel: 'Rentang tanggal',
           archiveRangeDay: 'Hari',
           archiveRangeWeek: 'Minggu',
           archiveRangeMonth: 'Bulan',
           archiveRangeAll: 'Semua',
-          archiveCount: 'Jumlah pesanan: {count}',
+          archiveCount: 'Jumlah catatan: {count}',
           edit: 'Edit',
           delete: 'Hapus',
           archiveLabel: 'Arsipkan',
@@ -804,6 +815,7 @@ const defaultState = window.KedaiConfig.defaultState;
           orderStockNone: 'Tidak ada yang diambil dari stok.',
           seedApplied: 'Gudang dan resep sudah diisi.',
           testSeedApplied: 'Lingkungan uji: menu dan gudang toko sudah dimuat.',
+          warehouseSeedApplied: 'Gudang: posisi dan tab yang kurang sudah ditambahkan.',
           menuCountWithHidden: '{visible} terlihat · {hidden} disembunyikan',
           confirmDeleteOrder: 'Hapus pesanan aktif dari {date}?',
           confirmCancelSelection: 'Apakah Anda yakin ingin membatalkan pesanan saat ini?',
@@ -929,6 +941,7 @@ const defaultState = window.KedaiConfig.defaultState;
       const ingredientCountBadge = document.getElementById('ingredientCountBadge');
       const warehouseValueBadge = document.getElementById('warehouseValueBadge');
       const purchaseOrderList = document.getElementById('purchaseOrderList');
+      const archivePurchasesTotal = document.getElementById('archivePurchasesTotal');
       const syncUserNameInput = document.getElementById('syncUserName');
       const syncStatusLabel = document.getElementById('syncStatus');
       const syncLoginFields = document.getElementById('syncLoginFields');
@@ -1683,6 +1696,18 @@ const defaultState = window.KedaiConfig.defaultState;
         });
       }
 
+      /** Zakupy przeniesione do archiwum, w tym samym zakresie dat. */
+      function getArchiveFilteredPurchases() {
+        const orders = (state.purchaseOrders || []).filter(order => order.status === 'archived');
+        const range = getArchiveFilterRange();
+        if (!range) return orders;
+
+        return orders.filter(order => {
+          const time = new Date(order.createdAt).getTime();
+          return Number.isFinite(time) && time >= range.start && time < range.end;
+        });
+      }
+
       function describeArchiveRange() {
         const range = getArchiveFilterRange();
         if (!range) return translate('archiveRangeAll');
@@ -1755,23 +1780,36 @@ const defaultState = window.KedaiConfig.defaultState;
         syncArchiveFilterUi();
 
         const orders = getArchiveFilteredOrders();
-        const total = orders.reduce((sum, order) => sum + Number(order.total || 0), 0);
-        archiveTotal.textContent = formatCurrency(total);
-
-        if (archiveCount) {
-          archiveCount.textContent = translate('archiveCount', { count: orders.length });
+        const purchases = getArchiveFilteredPurchases();
+        const salesTotal = orders.reduce((sum, order) => sum + Number(order.total || 0), 0);
+        const purchasesTotal = purchases.reduce((sum, order) => sum + Number(order.total_price || 0), 0);
+        archiveTotal.textContent = formatCurrency(salesTotal);
+        if (archivePurchasesTotal) {
+          archivePurchasesTotal.textContent = `−${formatCurrency(purchasesTotal)}`;
         }
 
-        if (!orders.length) {
+        if (archiveCount) {
+          archiveCount.textContent = translate('archiveCount', { count: orders.length + purchases.length });
+        }
+
+        if (!orders.length && !purchases.length) {
           const emptyMessage = archiveFilter.mode === 'all' ? translate('noArchive') : translate('noArchiveRange');
           archiveList.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${emptyMessage}</div>`;
           return;
         }
 
-        archiveList.innerHTML = orders
-          .slice()
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          .map(order => {
+        // Jedna lista, dwie rzeczy: sprzedaż klientów i koszt zakupów.
+        archiveList.innerHTML = [
+          ...orders.map(order => ({ at: new Date(order.createdAt).getTime(), html: archiveSalesEntry(order) })),
+          ...purchases.map(order => ({ at: new Date(order.createdAt).getTime(), html: archivePurchaseEntry(order) }))
+        ]
+          .sort((a, b) => b.at - a.at)
+          .map(entry => entry.html)
+          .join('');
+      }
+
+      /** Wpis sprzedaży w archiwum - zamówienie klienta. */
+      function archiveSalesEntry(order) {
             const summary = order.items
               .map(item => `${item.qty}× ${item.name}`)
               .join(', ') || translate('noItems');
@@ -1819,8 +1857,37 @@ const defaultState = window.KedaiConfig.defaultState;
                 </div>` : (hasCost ? `<p class="mt-2 text-xs text-slate-500">${translate('orderStockNone')}</p>` : '')}
               </div>
             `;
-          })
-          .join('');
+      }
+
+      /**
+       * Wpis zakupów w archiwum. To wydatek, więc kwota jest czerwona
+       * i z minusem - od razu widać, że to nie sprzedaż.
+       */
+      function archivePurchaseEntry(order) {
+        const items = Array.isArray(order.items) ? order.items : [];
+        const lines = items.length
+          ? items.map(item => {
+            const lineTotal = Number(item.line_total ?? Number(item.quantity || 0) * Number(item.unit_price || 0));
+            return `
+              <li class="flex items-start justify-between gap-2 py-1">
+                <span class="min-w-0 text-sm text-slate-700">${formatNumber(item.quantity)} ${unitLabel(item.unit)} ${escapeHtml(item.name || '')}</span>
+                <span class="flex-none text-xs font-semibold text-slate-500">${formatCurrency(lineTotal)}</span>
+              </li>`;
+          }).join('')
+          : `<li class="py-1 text-sm text-slate-500">${translate('noPurchaseItems')}</li>`;
+
+        return `
+          <div class="rounded-2xl border border-rose-200 bg-rose-50/50 p-3 shadow-sm">
+            <div class="mb-2 flex items-start justify-between gap-3">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">${formatDateTime(order.createdAt)}</p>
+                <p class="text-lg font-black text-rose-700">−${formatCurrency(order.total_price)}</p>
+              </div>
+              <span class="rounded-full bg-rose-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-rose-700">${translate('purchaseListShort')}</span>
+            </div>
+            <ul class="divide-y divide-rose-100">${lines}</ul>
+          </div>
+        `;
       }
 
       function getStep(ingredient) {
@@ -1908,6 +1975,10 @@ const defaultState = window.KedaiConfig.defaultState;
           return;
         }
 
+        // Pozycje, które są już na otwartych zakupach - dostają znaczek
+        // „zamówione”, ale nadal można dokupić kolejne opakowanie.
+        const ordered = orderedIngredients();
+
         ingredientList.innerHTML = getIngredientsWithColors()
           .map(({ item, color, section }) => {
             if (section) return ingredientSectionHeader(item, color);
@@ -1942,7 +2013,7 @@ const defaultState = window.KedaiConfig.defaultState;
                   </div>
                 </div>
                 ${belowMinimum ? `<p class="mt-2 text-xs font-bold uppercase tracking-wide text-rose-600">${translate('belowMin')} · ${translate('ingredientMinStock')}: ${formatNumber(item.min_stock)} ${unit}</p>` : ''}
-                ${ingredientOrderRow(item, quantity, unit, minimum)}
+                ${ingredientOrderRow(item, quantity, unit, minimum, ordered.has(item.id))}
               </div>
             `;
           })
@@ -1953,17 +2024,26 @@ const defaultState = window.KedaiConfig.defaultState;
        * Wiersz zamawiania w karcie składnika. Zwijnięty pokazuje sam przycisk
        * „+”, rozwinięty - ilość i przyciski minus/plus. Jedno miejsce w karcie
        * obsługuje całe zamawianie, więc nie trzeba przełączać widoków.
+       *
+       * Znaczek „zamówione” mówi, że pozycja jest już na liście zakupów, ale
+       * nie blokuje kolejnego zamówienia - to tylko informacja.
        */
-      function ingredientOrderRow(item, quantity, unit, minimum) {
+      function ingredientOrderRow(item, quantity, unit, minimum, onPurchase) {
         const selected = quantity > 0;
         const lineTotal = quantity * Number(item.unit_price || 0);
-        const leftText = minimum > 0
+        const amount = minimum > 0
           ? translate('receivedShort', { received: `${formatNumber(minimum)} ${unit}` })
-          : (selected ? formatCurrency(lineTotal) : translate('orderIngredients'));
+          : (selected ? formatCurrency(lineTotal) : '');
+        const orderedFlag = onPurchase
+          ? `<span class="ordered-flag">${translate('orderedFlag')}</span>`
+          : '';
 
         return `
           <div class="mt-2 flex items-center justify-between gap-2 border-t border-slate-100 pt-2">
-            <span class="text-xs font-bold ${minimum > 0 ? 'text-amber-600' : (selected ? 'text-orange-600' : 'text-slate-400')}">${leftText}</span>
+            <span class="flex min-w-0 items-center gap-2">
+              ${orderedFlag}
+              ${amount ? `<span class="text-xs font-bold ${minimum > 0 ? 'text-amber-600' : 'text-orange-600'}">${amount}</span>` : ''}
+            </span>
             <div class="flex flex-none items-center gap-2">
               ${selected ? `<button data-action="purchase-decrease" data-id="${item.id}" class="qty-btn border border-slate-200 bg-slate-100 text-slate-700" aria-label="${translate('orderRemovePackage')}">−</button>` : ''}
               ${selected ? `<span class="min-w-[3rem] text-center text-sm font-black text-slate-800">${formatNumber(quantity)} <span class="text-[11px] font-semibold text-slate-500">${unit}</span></span>` : ''}
@@ -2177,13 +2257,27 @@ const defaultState = window.KedaiConfig.defaultState;
         }
       }
 
+      /** Ikony przycisków listy zakupów (kreska, jak w nawigacji). */
+      const PURCHASE_ICONS = {
+        receive: '<path d="M12 4v10m0 0-4-4m4 4 4-4M5 19h14"/>',
+        archive: '<path d="M3 5h18v4H3zM5 9v10h14V9M9 13h6"/>',
+        edit: '<path d="M4 20h4L19 9a2.8 2.8 0 1 0-4-4L4 16v4z"/>',
+        copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/>',
+        remove: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'
+      };
+
+      function purchaseIcon(name) {
+        return `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PURCHASE_ICONS[name] || ''}</svg>`;
+      }
+
       /**
-       * Lista zamówienia jak lista zakupowa: jedna pozycja pod drugą, przyjęte
-       * przekreślone. Do tego cztery działania: przyjęcie, edycja, kopiowanie
-       * i usunięcie.
+       * Lista zakupów: jedna pozycja pod drugą, przyjęte przekreślone.
+       * Cztery działania z ikonami: przyjęcie, edycja, kopiowanie i usunięcie.
+       * Zakupy przyjęte w całości zamiast „Przyjmij” dostają „Archiwizuj” -
+       * idą do tego samego archiwum, co zamówienia klientów.
        */
       function renderPurchaseOrders() {
-        const orders = state.purchaseOrders || [];
+        const orders = (state.purchaseOrders || []).filter(order => order.status !== 'archived');
 
         if (!orders.length) {
           purchaseOrderList.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${translate('purchaseEmpty')}</div>`;
@@ -2232,10 +2326,12 @@ const defaultState = window.KedaiConfig.defaultState;
                 <ul class="divide-y divide-slate-100">${lines}</ul>
 
                 <div class="mt-3 grid grid-cols-2 gap-2">
-                  <button data-action="receive-purchase" data-id="${order.id}" class="touch-btn rounded-xl bg-emerald-100 px-3 py-2 text-sm font-bold text-emerald-700">${translate('receivePurchase')}</button>
-                  <button data-action="edit-purchase" data-id="${order.id}" class="touch-btn rounded-xl bg-amber-100 px-3 py-2 text-sm font-bold text-amber-700">${translate('edit')}</button>
-                  <button data-action="copy-purchase" data-id="${order.id}" class="touch-btn rounded-xl bg-sky-100 px-3 py-2 text-sm font-bold text-sky-700">${translate('copyPurchase')}</button>
-                  <button data-action="delete-purchase" data-id="${order.id}" class="touch-btn rounded-xl bg-rose-100 px-3 py-2 text-sm font-bold text-rose-700">${translate('delete')}</button>
+                  ${allReceived
+                    ? `<button data-action="archive-purchase" data-id="${order.id}" class="touch-btn inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-200 px-3 py-2 text-sm font-bold text-slate-700">${purchaseIcon('archive')}${translate('archivePurchase')}</button>`
+                    : `<button data-action="receive-purchase" data-id="${order.id}" class="touch-btn inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-100 px-3 py-2 text-sm font-bold text-emerald-700">${purchaseIcon('receive')}${translate('receivePurchase')}</button>`}
+                  <button data-action="edit-purchase" data-id="${order.id}" class="touch-btn inline-flex items-center justify-center gap-1.5 rounded-xl bg-amber-100 px-3 py-2 text-sm font-bold text-amber-700">${purchaseIcon('edit')}${translate('edit')}</button>
+                  <button data-action="copy-purchase" data-id="${order.id}" class="touch-btn inline-flex items-center justify-center gap-1.5 rounded-xl bg-sky-100 px-3 py-2 text-sm font-bold text-sky-700">${purchaseIcon('copy')}${translate('copyPurchase')}</button>
+                  <button data-action="delete-purchase" data-id="${order.id}" class="touch-btn inline-flex items-center justify-center gap-1.5 rounded-xl bg-rose-100 px-3 py-2 text-sm font-bold text-rose-700">${purchaseIcon('remove')}${translate('delete')}</button>
                 </div>
               </div>
             `;
@@ -3280,6 +3376,24 @@ const defaultState = window.KedaiConfig.defaultState;
         return Math.max(0, Number((Number(item.quantity || 0) - receivedQuantity(item)).toFixed(3)));
       }
 
+      /**
+       * Pozycje, które są już na otwartych zakupach: identyfikator składnika →
+       * ile jeszcze nie dotarło. Zakupy przeniesione do archiwum się nie liczą.
+       */
+      function orderedIngredients() {
+        const map = new Map();
+        (state.purchaseOrders || []).forEach(order => {
+          if (order.status === 'archived') return;
+          (order.items || []).forEach(item => {
+            const remaining = remainingQuantity(item);
+            if (remaining <= 0) return;
+            const sum = (map.get(item.ingredient_id) || 0) + remaining;
+            map.set(item.ingredient_id, Number(sum.toFixed(3)));
+          });
+        });
+        return map;
+      }
+
       function openReceiveModal(orderId) {
         const order = (state.purchaseOrders || []).find(item => String(item.id) === String(orderId));
         if (!order) return;
@@ -3543,6 +3657,29 @@ const defaultState = window.KedaiConfig.defaultState;
         });
       }
 
+      /**
+       * W pełni przyjęte zakupy wracają do archiwum - tego samego, w którym
+       * leżą zamówienia klientów. Wiersz zostaje w chmurze ze statusem
+       * `archived`, więc historia zakupów nie ginie z raportów.
+       */
+      function archivePurchaseOrder(orderId) {
+        const order = (state.purchaseOrders || []).find(item => String(item.id) === String(orderId));
+        if (!order) return;
+
+        order.status = 'archived';
+        order.archivedAt = new Date().toISOString();
+        if (String(editingPurchaseOrderId) === String(orderId)) {
+          editingPurchaseOrderId = null;
+          currentPurchaseSelection = {};
+        }
+        if (String(receivingOrderId) === String(orderId)) closeReceiveModal();
+
+        window.KedaiDatabase.updatePurchaseOrder(order);
+        saveState();
+        renderAll();
+        showToast(translate('purchaseArchived'), 'success');
+      }
+
       productForm.addEventListener('submit', handleProductFormSubmit);
       recipeSaveBtn.addEventListener('click', saveRecipeFromDialog);
       recipeCancelBtn.addEventListener('click', closeRecipeEditor);
@@ -3739,6 +3876,10 @@ const defaultState = window.KedaiConfig.defaultState;
 
         if (action === 'receive-purchase') {
           openReceiveModal(id);
+        }
+
+        if (action === 'archive-purchase') {
+          archivePurchaseOrder(id);
         }
 
         if (action === 'edit-purchase') {
@@ -4416,6 +4557,11 @@ const defaultState = window.KedaiConfig.defaultState;
         state.ingredients = seed.ingredients.map(entry => ({ ...entry }));
         state.menu = seed.menu.map(entry => ({ ...entry }));
 
+        // Po pełnej podmianie pozycje, które wcześniej usunięto na tym
+        // urządzeniu, muszą móc znów trafić do chmury.
+        window.KedaiSync?.clearDeletion('ingredients', seed.ingredients.map(entry => entry.id));
+        window.KedaiSync?.clearDeletion('menu', seed.menu.map(entry => entry.id));
+
         try {
           if (version) localStorage.setItem(TEST_SEED_KEY, version);
         } catch (error) {
@@ -4423,6 +4569,78 @@ const defaultState = window.KedaiConfig.defaultState;
         }
 
         return true;
+      }
+
+      /* --------------------------- uzupełnienie magazynu (wydanie lokalu) */
+
+      const WAREHOUSE_SEED_KEY = envKey('kedai_pos_warehouse_seed');
+
+      /**
+       * Uzupełnienie magazynu dla WYDANIA LOKALU (config/seed-warehouse.js).
+       *
+       * W przeciwieństwie do lustra testowego ten plik nic nie kasuje: dokłada
+       * brakujące pozycje (te, których nadal wymagają receptury, a zostały
+       * usunięte, oraz kilka nowych) i ustawia kolejność gotowych pozycji
+       * w zakładkach. Stany magazynowe, ceny i progi istniejących pozycji
+       * zostają bez zmian - to prawdziwy towar w lokalu. Środowisko testowe
+       * pomija ten plik, bo tam rządzi lustro.
+       */
+      async function applyWarehouseSeed() {
+        const seed = window.KedaiSeedWarehouse;
+        if (!seed || window.KedaiEnv?.isTest) return false;
+
+        // Ta sama bramka co poprzedni seed: dane lokalu idą wyłącznie na
+        // telefon prowadzący sklep, żeby inne urządzenie nie wniosło ich do
+        // chmury pod swoim imieniem (identyfikatory pozycji są wspólne).
+        const userName = (window.KedaiSync?.getUserName() || '').trim().toUpperCase();
+        if (!userName || userName !== String(seed.userName || '').trim().toUpperCase()) return false;
+
+        const version = String(seed.version || '');
+        try {
+          if (version && localStorage.getItem(WAREHOUSE_SEED_KEY) === version) return false;
+        } catch (error) {
+          console.warn('Brak dostępu do localStorage:', error);
+        }
+
+        const existing = new Set((state.ingredients || []).map(item => item.id));
+        let changed = false;
+
+        (seed.sections || []).forEach(entry => {
+          if (existing.has(entry.id)) return;
+          state.ingredients.push({ ...entry });
+          existing.add(entry.id);
+          changed = true;
+        });
+
+        (seed.items || []).forEach(entry => {
+          if (existing.has(entry.id)) return;
+          // Przywrócona pozycja wraca z tym samym identyfikatorem (receptury
+          // od razu ją widzą), ale ze stanem 0 - dawny stan jest nieaktualny,
+          // a towar trzeba policzyć w lokalu.
+          state.ingredients.push({ type: 'product', ...entry });
+          existing.add(entry.id);
+          changed = true;
+        });
+
+        // Kolejność i przydział do zakładek dla pozycji, które już były.
+        const order = new Map((seed.order || []).map(entry => [entry.id, Number(entry.sort_order)]));
+        (state.ingredients || []).forEach(item => {
+          if (!order.has(item.id)) return;
+          item.sort_order = order.get(item.id);
+          if (item.type !== 'section') item.type = 'product';
+        });
+
+        // Bez tego przywrócona pozycja nigdy nie wróciłaby do chmury: trwały
+        // znacznik usunięcia w rejestrze wysyłki wygrywa z żywym wierszem.
+        window.KedaiSync?.clearDeletion('ingredients', (seed.items || []).map(entry => entry.id));
+
+        try {
+          if (version) localStorage.setItem(WAREHOUSE_SEED_KEY, version);
+        } catch (error) {
+          console.warn('Nie udało się zapisać znacznika uzupełnienia magazynu:', error);
+        }
+
+        return changed;
       }
 
       async function initializeApp() {
@@ -4436,6 +4654,7 @@ const defaultState = window.KedaiConfig.defaultState;
           state = await window.KedaiDatabase.initialize(defaultState);
           const seedApplied = await applyPipinSeed();
           const mirrorApplied = await applyTestSeed();
+          const warehouseApplied = await applyWarehouseSeed();
           renderAll();
           renderStorageInfo();
           syncUserNameInput.value = window.KedaiSync?.getUserName() || '';
@@ -4446,9 +4665,12 @@ const defaultState = window.KedaiConfig.defaultState;
           window.KedaiSync?.start(state);
           renderSyncPanel();
           updateSyncBadge();
-          if (seedApplied || mirrorApplied) {
+          if (seedApplied || mirrorApplied || warehouseApplied) {
             saveState();
-            showToast(translate(mirrorApplied ? 'testSeedApplied' : 'seedApplied'), 'success');
+            const appliedKey = mirrorApplied
+              ? 'testSeedApplied'
+              : warehouseApplied ? 'warehouseSeedApplied' : 'seedApplied';
+            showToast(translate(appliedKey), 'success');
           }
         } catch (error) {
           console.error('Błąd uruchamiania IndexedDB:', error);
