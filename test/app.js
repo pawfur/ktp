@@ -164,6 +164,22 @@ const defaultState = window.KedaiConfig.defaultState;
           confirmDeletePurchase: 'Usunąć to zamówienie?',
           confirmCancelPurchase: 'Czy na pewno chcesz anulować zamówienie?',
           purchaseCleared: 'Zamówienie zostało anulowane.',
+          purchaseUpdated: 'Zamówienie zostało zaktualizowane.',
+          purchaseEditNotice: 'Edytujesz zamówienie z {date}.',
+          purchaseReceived: 'Przyjęte',
+          purchasePartial: 'Częściowo',
+          receivePurchase: 'Przyjmij',
+          receiveTitle: 'Przyjęcie zamówienia z {date}',
+          receiveHint: 'Zaznacz, co dotarło — zaznaczona pozycja zostanie przekreślona. Zielony przycisk doda ją do magazynu.',
+          receiveSummary: 'Do przyjęcia: {count} pozycji · {value}',
+          receiveNothing: 'Nic nie zaznaczono.',
+          receiveSkipped: 'Nie można przyjąć: tego składnika nie ma już w magazynie.',
+          receivedOne: 'Przyjęto na magazyn 1 pozycję.',
+          receivedMany: 'Przyjęto na magazyn: {count} pozycji.',
+          copyPurchase: 'Kopiuj',
+          purchaseCopyTitle: 'Zamówienie z {date}',
+          purchaseCopyDone: 'Lista skopiowana do schowka.',
+          purchaseCopyFailed: 'Nie udało się skopiować listy.',
           stepWarning: '{name}: ilość musi być wielokrotnością opakowania ({step} {unit}).',
           ordered: 'Zamówione',
           totalSales: 'Suma sprzedaży',
@@ -242,6 +258,7 @@ const defaultState = window.KedaiConfig.defaultState;
           orderStockUsed: 'Ze stanu zeszło',
           orderStockNone: 'Nic nie zeszło ze stanu.',
           seedApplied: 'Magazyn i receptury zostały uzupełnione.',
+          testSeedApplied: 'Środowisko testowe: wgrano menu i magazyn lokalu.',
           menuCountWithHidden: '{visible} widocznych · {hidden} ukrytych',
           confirmDeleteOrder: 'Usunąć aktywne zamówienie z dnia {date}?',
           confirmCancelSelection: 'Czy na pewno chcesz anulować bieżące zamówienie?',
@@ -406,6 +423,22 @@ const defaultState = window.KedaiConfig.defaultState;
           confirmDeletePurchase: 'Delete this order?',
           confirmCancelPurchase: 'Are you sure you want to cancel the order?',
           purchaseCleared: 'Order cancelled.',
+          purchaseUpdated: 'Order updated.',
+          purchaseEditNotice: 'You are editing the order from {date}.',
+          purchaseReceived: 'Received',
+          purchasePartial: 'Partial',
+          receivePurchase: 'Receive',
+          receiveTitle: 'Receive the order from {date}',
+          receiveHint: 'Tick what arrived — a ticked item is crossed out. The green button adds it to the warehouse.',
+          receiveSummary: 'To receive: {count} items · {value}',
+          receiveNothing: 'Nothing is ticked.',
+          receiveSkipped: 'Cannot receive: this ingredient is no longer in the warehouse.',
+          receivedOne: 'Added 1 item to the warehouse.',
+          receivedMany: 'Added {count} items to the warehouse.',
+          copyPurchase: 'Copy',
+          purchaseCopyTitle: 'Order from {date}',
+          purchaseCopyDone: 'List copied to the clipboard.',
+          purchaseCopyFailed: 'Could not copy the list.',
           stepWarning: '{name}: the quantity must be a multiple of the package ({step} {unit}).',
           ordered: 'Ordered',
           totalSales: 'Total sales',
@@ -484,6 +517,7 @@ const defaultState = window.KedaiConfig.defaultState;
           orderStockUsed: 'Taken from stock',
           orderStockNone: 'Nothing was taken from stock.',
           seedApplied: 'Warehouse and recipes have been filled in.',
+          testSeedApplied: 'Test environment: the shop menu and warehouse were loaded.',
           menuCountWithHidden: '{visible} visible · {hidden} hidden',
           confirmDeleteOrder: 'Delete the active order from {date}?',
           confirmCancelSelection: 'Are you sure you want to cancel the current order?',
@@ -648,6 +682,22 @@ const defaultState = window.KedaiConfig.defaultState;
           confirmDeletePurchase: 'Hapus pesanan ini?',
           confirmCancelPurchase: 'Apakah Anda yakin ingin membatalkan pesanan?',
           purchaseCleared: 'Pesanan dibatalkan.',
+          purchaseUpdated: 'Pesanan diperbarui.',
+          purchaseEditNotice: 'Anda mengedit pesanan {date}.',
+          purchaseReceived: 'Diterima',
+          purchasePartial: 'Sebagian',
+          receivePurchase: 'Terima',
+          receiveTitle: 'Terima pesanan {date}',
+          receiveHint: 'Centang yang sudah datang — item yang dicentang akan dicoret. Tombol hijau menambahkannya ke gudang.',
+          receiveSummary: 'Akan diterima: {count} item · {value}',
+          receiveNothing: 'Belum ada yang dicentang.',
+          receiveSkipped: 'Tidak bisa diterima: bahan ini sudah tidak ada di gudang.',
+          receivedOne: '1 item masuk ke gudang.',
+          receivedMany: '{count} item masuk ke gudang.',
+          copyPurchase: 'Salin',
+          purchaseCopyTitle: 'Pesanan {date}',
+          purchaseCopyDone: 'Daftar disalin ke clipboard.',
+          purchaseCopyFailed: 'Gagal menyalin daftar.',
           stepWarning: '{name}: jumlah harus kelipatan kemasan ({step} {unit}).',
           ordered: 'Dipesan',
           totalSales: 'Total penjualan',
@@ -726,6 +776,7 @@ const defaultState = window.KedaiConfig.defaultState;
           orderStockUsed: 'Diambil dari stok',
           orderStockNone: 'Tidak ada yang diambil dari stok.',
           seedApplied: 'Gudang dan resep sudah diisi.',
+          testSeedApplied: 'Lingkungan uji: menu dan gudang toko sudah dimuat.',
           menuCountWithHidden: '{visible} terlihat · {hidden} disembunyikan',
           confirmDeleteOrder: 'Hapus pesanan aktif dari {date}?',
           confirmCancelSelection: 'Apakah Anda yakin ingin membatalkan pesanan saat ini?',
@@ -748,6 +799,10 @@ const defaultState = window.KedaiConfig.defaultState;
       // Okno zakładki magazynu i jej kolor (null = zakładka bez koloru).
       let editingIngredientSectionId = null;
       let ingredientSectionDraft = null;
+      // Zamówienie zakupowe: edycja (powrót do zakładki Zamów) i przyjęcie towaru.
+      let editingPurchaseOrderId = null;
+      let receivingOrderId = null;
+      let receiptDraft = [];
 
       // Filtr archiwum: domyślnie dzisiejszy dzień.
       const archiveFilter = {
@@ -822,6 +877,14 @@ const defaultState = window.KedaiConfig.defaultState;
       const ingredientSectionPreview = document.getElementById('ingredientSectionPreview');
       const ingredientSectionSaveBtn = document.getElementById('ingredientSectionAcceptBtn');
       const ingredientSectionCancelBtn = document.getElementById('ingredientSectionCancelBtn');
+      const receiveModal = document.getElementById('receiveModal');
+      const receiveTitle = document.getElementById('receiveTitle');
+      const receiveHint = document.getElementById('receiveHint');
+      const receiveList = document.getElementById('receiveList');
+      const receiveSummary = document.getElementById('receiveSummary');
+      const receiveAcceptBtn = document.getElementById('receiveAcceptBtn');
+      const receiveCancelBtn = document.getElementById('receiveCancelBtn');
+      const purchaseEditNotice = document.getElementById('purchaseEditNotice');
       const ingredientList = document.getElementById('ingredientList');
       const ingredientEditList = document.getElementById('ingredientEditList');
       const ingredientEditCountBadge = document.getElementById('ingredientEditCountBadge');
@@ -1805,17 +1868,20 @@ const defaultState = window.KedaiConfig.defaultState;
             const belowMinimum = Number(item.stock || 0) < Number(item.min_stock || 0);
             const stockValue = Number(item.stock || 0) * Number(item.unit_price || 0);
             const unit = unitLabel(item.unit);
-            // Pozycja poniżej stanu min. ma zostać czerwona, więc dla niej kolor
-            // zakładki wyłączamy - czerwoną poświatę widać lepiej na białym tle.
-            const cardStyle = color === null || belowMinimum
+            // Pozycja poniżej stanu min. dostaje wykrzyknik, ale zachowuje kolor
+            // zakładki - ostrzeżenie niesie znaczek, nie całe tło karty.
+            const lowFlag = belowMinimum
+              ? ` <span class="low-flag" role="img" title="${translate('belowMin')}" aria-label="${translate('belowMin')}">!</span>`
+              : '';
+            const cardStyle = color === null
               ? ''
               : ` style="background-color: ${tint(color, 98)}; border-color: ${tint(color, 90)}; border-left: 4px solid ${tint(color, 66)}"`;
 
             return `
-              <div class="rounded-2xl border p-3 ${belowMinimum ? 'stock-low border-rose-300' : 'border-slate-200 bg-white shadow-sm'}"${cardStyle}>
+              <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm"${cardStyle}>
                 <div class="flex items-start justify-between gap-3">
                   <div class="min-w-0">
-                    <p class="text-base font-bold text-slate-800">${escapeHtml(item.name)}</p>
+                    <p class="text-base font-bold text-slate-800">${escapeHtml(item.name)}${lowFlag}</p>
                     <p class="text-sm font-semibold text-slate-700">${formatNumber(item.stock)} ${unit}</p>
                   </div>
                   <div class="flex-none text-right">
@@ -1885,17 +1951,20 @@ const defaultState = window.KedaiConfig.defaultState;
             const stockValue = Number(item.stock || 0) * Number(item.unit_price || 0);
             const unit = unitLabel(item.unit);
             const packageSize = Number(item.unit_step || 0);
-            // Pozycja poniżej stanu min. ma zostać czerwona, więc dla niej kolor
-            // zakładki wyłączamy - czerwoną poświatę widać lepiej na białym tle.
-            const cardStyle = color === null || belowMinimum
+            // Wykrzyknik zamiast czerwonej poświaty - karta zostaje w kolorze
+            // zakładki, a niski stan widać po znaczku i zdaniu na dole.
+            const lowFlag = belowMinimum
+              ? ` <span class="low-flag" role="img" title="${translate('belowMin')}" aria-label="${translate('belowMin')}">!</span>`
+              : '';
+            const cardStyle = color === null
               ? ''
               : ` style="background-color: ${tint(color, 98)}; border-color: ${tint(color, 90)}; border-left: 4px solid ${tint(color, 66)}"`;
 
             return `
-              <div class="rounded-2xl border p-3 ${belowMinimum ? 'stock-low border-rose-300' : 'border-slate-200 bg-white shadow-sm'}"${cardStyle}>
+              <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm"${cardStyle}>
                 <div class="flex items-start justify-between gap-3">
                   <div class="min-w-0">
-                    <p class="text-base font-bold text-slate-800">${escapeHtml(item.name)}</p>
+                    <p class="text-base font-bold text-slate-800">${escapeHtml(item.name)}${lowFlag}</p>
                     <p class="text-sm font-semibold text-orange-600">${formatCurrency(item.unit_price)} / ${unit}</p>
                   </div>
                   ${moveButtons}
@@ -1928,6 +1997,8 @@ const defaultState = window.KedaiConfig.defaultState;
           const next = all[index + 1];
           return Boolean(next && !next.section);
         });
+
+        renderPurchaseEditNotice();
 
         if (!rows.length) {
           purchaseItems.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${translate('noIngredients')}</div>`;
@@ -1983,8 +2054,33 @@ const defaultState = window.KedaiConfig.defaultState;
           : `<p class="text-sm text-slate-300">${translate('noPurchaseItems')}</p>`;
 
         purchaseTotalLabel.textContent = formatCurrency(total);
+
+        // Przycisk mówi wprost, czy zakładamy nowe zamówienie, czy poprawiamy
+        // to, które wróciło z listy przyciskiem Edytuj.
+        const acceptButton = document.getElementById('acceptPurchaseBtn');
+        if (acceptButton) {
+          acceptButton.textContent = translate(editingPurchaseOrderId ? 'saveChanges' : 'acceptOrder');
+        }
       }
 
+      /** Pasek nad listą: przypomina, że poprawiamy już złożone zamówienie. */
+      function renderPurchaseEditNotice() {
+        if (!purchaseEditNotice) return;
+        const order = editingPurchaseOrderId
+          ? (state.purchaseOrders || []).find(item => String(item.id) === String(editingPurchaseOrderId))
+          : null;
+
+        purchaseEditNotice.classList.toggle('hidden', !order);
+        if (order) {
+          purchaseEditNotice.textContent = translate('purchaseEditNotice', { date: formatDateTime(order.createdAt) });
+        }
+      }
+
+      /**
+       * Lista zamówienia jak lista zakupowa: jedna pozycja pod drugą, przyjęte
+       * przekreślone. Do tego cztery działania: przyjęcie, edycja, kopiowanie
+       * i usunięcie.
+       */
       function renderPurchaseOrders() {
         const orders = state.purchaseOrders || [];
 
@@ -1997,9 +2093,24 @@ const defaultState = window.KedaiConfig.defaultState;
           .slice()
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .map(order => {
-            const summary = order.items
-              .map(item => `${formatNumber(item.quantity)} ${unitLabel(item.unit)} ${item.name}`)
-              .join(', ') || translate('noPurchaseItems');
+            const items = Array.isArray(order.items) ? order.items : [];
+            const receivedCount = items.filter(item => item.received_at).length;
+            const allReceived = items.length > 0 && receivedCount === items.length;
+            const badge = allReceived
+              ? ['bg-emerald-100', 'text-emerald-700', translate('purchaseReceived')]
+              : (receivedCount ? ['bg-amber-100', 'text-amber-700', translate('purchasePartial')] : ['bg-sky-100', 'text-sky-700', translate('ordered')]);
+
+            const lines = items.length
+              ? items.map(item => {
+                const done = Boolean(item.received_at);
+                const lineTotal = Number(item.line_total ?? Number(item.quantity || 0) * Number(item.unit_price || 0));
+                return `
+                  <li class="flex items-start justify-between gap-2 py-1.5">
+                    <span class="min-w-0 text-sm ${done ? 'text-slate-400 line-through' : 'text-slate-700'}">${formatNumber(item.quantity)} ${unitLabel(item.unit)} ${escapeHtml(item.name)}</span>
+                    <span class="flex-none text-xs font-semibold ${done ? 'text-slate-300 line-through' : 'text-slate-500'}">${formatCurrency(lineTotal)}</span>
+                  </li>`;
+              }).join('')
+              : `<li class="py-1.5 text-sm text-slate-500">${translate('noPurchaseItems')}</li>`;
 
             return `
               <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
@@ -2008,10 +2119,17 @@ const defaultState = window.KedaiConfig.defaultState;
                     <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">${formatDateTime(order.createdAt)}</p>
                     <p class="text-lg font-black text-slate-800">${formatCurrency(order.total_price)}</p>
                   </div>
-                  <span class="rounded-full bg-sky-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-sky-700">${translate('ordered')}</span>
+                  <span class="rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-wide ${badge[0]} ${badge[1]}">${badge[2]}</span>
                 </div>
-                <p class="mb-3 text-sm text-slate-600">${escapeHtml(summary)}</p>
-                <button data-action="delete-purchase" data-id="${order.id}" class="touch-btn w-full rounded-xl bg-rose-100 px-3 py-2 text-sm font-bold text-rose-700">${translate('delete')}</button>
+
+                <ul class="divide-y divide-slate-100">${lines}</ul>
+
+                <div class="mt-3 grid grid-cols-2 gap-2">
+                  <button data-action="receive-purchase" data-id="${order.id}" class="touch-btn rounded-xl bg-emerald-100 px-3 py-2 text-sm font-bold text-emerald-700">${translate('receivePurchase')}</button>
+                  <button data-action="edit-purchase" data-id="${order.id}" class="touch-btn rounded-xl bg-amber-100 px-3 py-2 text-sm font-bold text-amber-700">${translate('edit')}</button>
+                  <button data-action="copy-purchase" data-id="${order.id}" class="touch-btn rounded-xl bg-sky-100 px-3 py-2 text-sm font-bold text-sky-700">${translate('copyPurchase')}</button>
+                  <button data-action="delete-purchase" data-id="${order.id}" class="touch-btn rounded-xl bg-rose-100 px-3 py-2 text-sm font-bold text-rose-700">${translate('delete')}</button>
+                </div>
               </div>
             `;
           })
@@ -2894,15 +3012,6 @@ const defaultState = window.KedaiConfig.defaultState;
         renderPurchase();
       }
 
-      function setPurchaseQuantity(ingredientId, quantity) {
-        if (!quantity || quantity <= 0) {
-          delete currentPurchaseSelection[ingredientId];
-        } else {
-          currentPurchaseSelection[ingredientId] = quantity;
-        }
-        renderPurchase();
-      }
-
       async function acceptPurchaseOrder() {
         const selected = (state.ingredients || [])
           .filter(ingredient => !isIngredientSection(ingredient) && Number(currentPurchaseSelection[ingredient.id] || 0) > 0)
@@ -2937,6 +3046,38 @@ const defaultState = window.KedaiConfig.defaultState;
           line_total: Number((item.quantity * Number(item.ingredient.unit_price || 0)).toFixed(2))
         }));
 
+        // Edycja zamówienia z listy: podmieniamy pozycje w tym samym wierszu,
+        // żeby nie robiły się dwie kopie tego samego zamówienia. Informacja
+        // o przyjęciu towaru musi przy tym zostać.
+        const existing = editingPurchaseOrderId
+          ? (state.purchaseOrders || []).find(item => String(item.id) === String(editingPurchaseOrderId))
+          : null;
+
+        if (existing) {
+          const receivedAt = new Map((existing.items || [])
+            .filter(item => item.received_at)
+            .map(item => [item.ingredient_id, item.received_at]));
+          items.forEach(item => {
+            if (receivedAt.has(item.ingredient_id)) item.received_at = receivedAt.get(item.ingredient_id);
+          });
+
+          existing.items = items;
+          existing.total_price = items.reduce((sum, item) => sum + item.line_total, 0);
+          existing.total_quantity = items.reduce((sum, item) => sum + item.quantity, 0);
+          existing.editedAt = new Date().toISOString();
+          if (existing.received_at) delete existing.received_at;
+          existing.status = items.every(item => item.received_at) ? 'received' : (items.some(item => item.received_at) ? 'partial' : 'ordered');
+
+          window.KedaiDatabase.updatePurchaseOrder(existing);
+          editingPurchaseOrderId = null;
+          currentPurchaseSelection = {};
+          saveState();
+          renderAll();
+          setActiveTab('purchaseList');
+          showToast(translate('purchaseUpdated'), 'success');
+          return;
+        }
+
         const createdAt = new Date().toISOString();
         const order = {
           createdAt,
@@ -2950,6 +3091,7 @@ const defaultState = window.KedaiConfig.defaultState;
         state.purchaseOrders.push({ id: orderId, ...order });
 
         currentPurchaseSelection = {};
+        editingPurchaseOrderId = null;
         saveState();
         renderAll();
         setActiveTab('purchaseList');
@@ -2959,9 +3101,254 @@ const defaultState = window.KedaiConfig.defaultState;
       function cancelPurchaseSelection() {
         showConfirmDialog(translate('confirmCancelPurchase'), () => {
           currentPurchaseSelection = {};
+          editingPurchaseOrderId = null;
           renderPurchase();
           showToast(translate('purchaseCleared'), 'warning');
         });
+      }
+
+      /** Powrót do zakładki Zamów z pozycjami wybranego zamówienia. */
+      function editPurchaseOrder(orderId) {
+        const order = (state.purchaseOrders || []).find(item => String(item.id) === String(orderId));
+        if (!order) return;
+
+        currentPurchaseSelection = {};
+        (order.items || []).forEach(item => {
+          const ingredient = (state.ingredients || []).find(entry => entry.id === item.ingredient_id);
+          if (!ingredient || isIngredientSection(ingredient)) return;
+          currentPurchaseSelection[item.ingredient_id] = Number(item.quantity || 0);
+        });
+
+        editingPurchaseOrderId = order.id;
+        setActiveTab('purchase');
+        renderPurchase();
+        showToast(translate('purchaseEditNotice', { date: formatDateTime(order.createdAt) }), 'warning');
+      }
+
+      /* --------------------------------------- przyjęcie zamówienia na magazyn */
+
+      function openReceiveModal(orderId) {
+        const order = (state.purchaseOrders || []).find(item => String(item.id) === String(orderId));
+        if (!order) return;
+
+        receivingOrderId = order.id;
+        receiptDraft = (order.items || []).map((item, index) => ({
+          index,
+          ingredientId: item.ingredient_id,
+          name: item.name,
+          unit: item.unit,
+          quantity: Number(item.quantity || 0),
+          unitPrice: Number(item.unit_price || 0),
+          received: Boolean(item.received_at),
+          checked: false
+        }));
+
+        receiveTitle.textContent = translate('receiveTitle', { date: formatDateTime(order.createdAt) });
+        receiveHint.textContent = translate('receiveHint');
+        receiveAcceptBtn.textContent = translate('ingredientAccept');
+        renderReceiveList();
+        receiveModal.classList.remove('hidden');
+      }
+
+      function closeReceiveModal() {
+        receivingOrderId = null;
+        receiptDraft = [];
+        receiveModal.classList.add('hidden');
+      }
+
+      function renderReceiveList() {
+        if (!receiptDraft.length) {
+          receiveList.innerHTML = `<div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-center text-sm text-slate-500">${translate('noPurchaseItems')}</div>`;
+          updateReceiveSummary();
+          return;
+        }
+
+        receiveList.innerHTML = receiptDraft.map(row => {
+          const ingredient = (state.ingredients || []).find(entry => entry.id === row.ingredientId);
+          // Składnik usunięty z magazynu nie ma gdzie się przyjąć.
+          const missing = !ingredient;
+          const unit = unitLabel(row.unit);
+          const border = row.received ? 'border-emerald-200 bg-emerald-50' : (row.checked ? 'border-orange-300 bg-orange-50' : 'border-slate-200 bg-white');
+
+          return `
+            <div class="rounded-xl border ${border} p-3" data-receive-row="${row.index}">
+              <div class="flex items-start gap-3">
+                <input type="checkbox" data-receive-check="${row.index}" class="receive-check" ${row.checked ? 'checked' : ''} ${missing ? 'disabled' : ''} aria-label="${escapeHtml(row.name)}" />
+                <div class="min-w-0 flex-1">
+                  <p class="text-sm font-bold text-slate-800 ${row.checked ? 'line-through text-slate-400' : ''}" data-receive-name="${row.index}">${escapeHtml(row.name)}</p>
+                  <p class="text-[11px] text-slate-500">
+                    ${translate('ingredientStock')}: ${formatNumber(ingredient ? ingredient.stock : 0)} ${unit}${missing ? ` · ${translate('recipeMissing')}` : ''}${row.received ? ` · ${translate('purchaseReceived')}` : ''}
+                  </p>
+                </div>
+                <div class="flex flex-none items-center gap-1">
+                  <input type="number" inputmode="decimal" min="0" step="any" data-receive-qty="${row.index}" value="${row.quantity}" ${missing ? 'disabled' : ''} class="w-20 rounded-lg border border-slate-300 px-2 py-2 text-right text-sm text-slate-800 ${row.checked ? 'line-through text-slate-400' : ''}" />
+                  <span class="w-10 text-xs font-semibold text-slate-500">${unit}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        updateReceiveSummary();
+      }
+
+      /** Zaznaczenie przekreśla pozycję - bez przerysowywania całej listy. */
+      function markReceiveRow(index) {
+        const row = receiptDraft[index];
+        const element = receiveList.querySelector(`[data-receive-row="${index}"]`);
+        if (!row || !element) return;
+
+        element.classList.toggle('border-orange-300', row.checked);
+        element.classList.toggle('bg-orange-50', row.checked);
+        element.classList.toggle('border-slate-200', !row.checked);
+        element.classList.toggle('bg-white', !row.checked);
+
+        const name = element.querySelector(`[data-receive-name="${index}"]`);
+        if (name) {
+          name.classList.toggle('line-through', row.checked);
+          name.classList.toggle('text-slate-400', row.checked);
+        }
+
+        const quantity = element.querySelector(`[data-receive-qty="${index}"]`);
+        if (quantity) {
+          quantity.classList.toggle('line-through', row.checked);
+          quantity.classList.toggle('text-slate-400', row.checked);
+        }
+      }
+
+      /** Przepisuje to, co użytkownik ma w oknie, do szkicu przyjęcia. */
+      function captureReceiveInputs() {
+        receiveList.querySelectorAll('[data-receive-qty]').forEach(input => {
+          const index = Number(input.dataset.receiveQty);
+          const value = Number(String(input.value).replace(',', '.'));
+          if (receiptDraft[index] && Number.isFinite(value) && value >= 0) receiptDraft[index].quantity = value;
+        });
+        receiveList.querySelectorAll('[data-receive-check]').forEach(input => {
+          const index = Number(input.dataset.receiveCheck);
+          if (receiptDraft[index]) receiptDraft[index].checked = input.checked;
+        });
+      }
+
+      function updateReceiveSummary() {
+        const checked = receiptDraft.filter(row => row.checked);
+        const value = checked.reduce((sum, row) => sum + Number(row.quantity || 0) * Number(row.unitPrice || 0), 0);
+        receiveSummary.textContent = checked.length
+          ? translate('receiveSummary', { count: checked.length, value: formatCurrency(value) })
+          : translate('receiveNothing');
+      }
+
+      /**
+       * Przyjęcie towaru: zaznaczone pozycje dodają się do stanu magazynu,
+       * pozycja dostaje datę przyjęcia (w liście będzie przekreślona), a gdy
+       * wszystko dotarło - zamówienie zmienia status na "przyjęte".
+       */
+      function acceptReceivedItems() {
+        const order = (state.purchaseOrders || []).find(item => String(item.id) === String(receivingOrderId));
+        if (!order) {
+          closeReceiveModal();
+          return;
+        }
+
+        captureReceiveInputs();
+        let applied = 0;
+        let skipped = 0;
+
+        receiptDraft.forEach(row => {
+          if (!row.checked) return;
+          const item = (order.items || [])[row.index];
+          if (!item) return;
+
+          const ingredient = (state.ingredients || []).find(entry => entry.id === item.ingredient_id);
+          const quantity = Number(row.quantity);
+          if (!ingredient || !Number.isFinite(quantity) || quantity <= 0) {
+            skipped += 1;
+            return;
+          }
+
+          ingredient.stock = Number((Number(ingredient.stock || 0) + quantity).toFixed(3));
+          // Zapisujemy faktycznie przyjętą ilość - dostawa mogła się różnić.
+          item.quantity = quantity;
+          item.line_total = Number((quantity * Number(item.unit_price || 0)).toFixed(2));
+          item.received_at = new Date().toISOString();
+          applied += 1;
+        });
+
+        if (!applied) {
+          showToast(translate(skipped ? 'receiveSkipped' : 'receiveNothing'), 'warning');
+          return;
+        }
+
+        const items = order.items || [];
+        order.total_quantity = Number(items.reduce((sum, item) => sum + Number(item.quantity || 0), 0).toFixed(3));
+        order.total_price = Number(items.reduce((sum, item) => sum + Number(item.line_total || 0), 0).toFixed(2));
+        const allReceived = items.length > 0 && items.every(item => item.received_at);
+        order.status = allReceived ? 'received' : 'partial';
+        if (allReceived) order.received_at = new Date().toISOString();
+        else delete order.received_at;
+
+        window.KedaiDatabase.updatePurchaseOrder(order);
+        closeReceiveModal();
+        saveState();
+        renderAll();
+        showToast(translate(applied === 1 ? 'receivedOne' : 'receivedMany', { count: applied }), 'success');
+      }
+
+      /** Lista zamówienia jako tekst do schowka (np. do wysłania dostawcy). */
+      function purchaseOrderText(order) {
+        const lines = (order.items || []).map(item => {
+          const mark = item.received_at ? '✓ ' : '';
+          const lineTotal = Number(item.line_total ?? Number(item.quantity || 0) * Number(item.unit_price || 0));
+          return `- ${mark}${formatNumber(item.quantity)} ${unitLabel(item.unit)} ${item.name} — ${formatCurrency(lineTotal)}`;
+        });
+
+        return [
+          translate('purchaseCopyTitle', { date: formatDateTime(order.createdAt) }),
+          '',
+          ...lines,
+          '',
+          `${translate('purchaseTotal')}: ${formatCurrency(order.total_price)}`
+        ].join('\n');
+      }
+
+      /**
+       * Schowek: najpierw nowe API, a gdy go nie ma (starsza przeglądarka albo
+       * strona bez HTTPS) - stara sztuczka z ukrytym polem tekstowym.
+       */
+      async function copyTextToClipboard(text) {
+        try {
+          if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(text);
+            return true;
+          }
+        } catch (error) {
+          console.warn('Schowek przez clipboard API nie zadziałał:', error);
+        }
+
+        try {
+          const field = document.createElement('textarea');
+          field.value = text;
+          field.setAttribute('readonly', '');
+          field.style.position = 'fixed';
+          field.style.top = '0';
+          field.style.opacity = '0';
+          document.body.appendChild(field);
+          field.select();
+          field.setSelectionRange(0, text.length);
+          const ok = document.execCommand('copy');
+          field.remove();
+          return ok;
+        } catch (error) {
+          console.warn('Nie udało się skopiować listy:', error);
+          return false;
+        }
+      }
+
+      async function copyPurchaseOrder(orderId) {
+        const order = (state.purchaseOrders || []).find(item => String(item.id) === String(orderId));
+        if (!order) return;
+
+        const copied = await copyTextToClipboard(purchaseOrderText(order));
+        showToast(translate(copied ? 'purchaseCopyDone' : 'purchaseCopyFailed'), copied ? 'success' : 'warning');
       }
 
       function deletePurchaseOrder(orderId) {
@@ -2972,8 +3359,10 @@ const defaultState = window.KedaiConfig.defaultState;
           window.KedaiSync?.softDelete('purchaseOrders', [order]);
           state.purchaseOrders = state.purchaseOrders.filter(item => String(item.id) !== String(orderId));
           window.KedaiDatabase.deletePurchaseOrder(order.id);
+          if (String(editingPurchaseOrderId) === String(orderId)) editingPurchaseOrderId = null;
+          if (String(receivingOrderId) === String(orderId)) closeReceiveModal();
           saveState();
-          renderPurchaseOrders();
+          renderAll();
           showToast(translate('purchaseDeleted'), 'success');
         });
       }
@@ -3005,6 +3394,21 @@ const defaultState = window.KedaiConfig.defaultState;
         renderIngredientSectionPreview();
       });
       document.getElementById('acceptPurchaseBtn').addEventListener('click', acceptPurchaseOrder);
+      receiveAcceptBtn.addEventListener('click', acceptReceivedItems);
+      receiveCancelBtn.addEventListener('click', closeReceiveModal);
+      receiveList.addEventListener('change', event => {
+        const check = event.target.closest?.('[data-receive-check]');
+        if (!check) return;
+        const index = Number(check.dataset.receiveCheck);
+        if (receiptDraft[index]) receiptDraft[index].checked = check.checked;
+        markReceiveRow(index);
+        updateReceiveSummary();
+      });
+      receiveList.addEventListener('input', event => {
+        if (!event.target.closest?.('[data-receive-qty]')) return;
+        captureReceiveInputs();
+        updateReceiveSummary();
+      });
       document.getElementById('cancelPurchaseBtn').addEventListener('click', cancelPurchaseSelection);
 
       document.getElementById('cancelProductEditBtn').addEventListener('click', cancelMenuEdit);
@@ -3151,6 +3555,18 @@ const defaultState = window.KedaiConfig.defaultState;
           updatePurchaseQuantity(id, -1);
         }
 
+        if (action === 'receive-purchase') {
+          openReceiveModal(id);
+        }
+
+        if (action === 'edit-purchase') {
+          editPurchaseOrder(id);
+        }
+
+        if (action === 'copy-purchase') {
+          copyPurchaseOrder(id);
+        }
+
         if (action === 'delete-purchase') {
           deletePurchaseOrder(id);
         }
@@ -3179,6 +3595,10 @@ const defaultState = window.KedaiConfig.defaultState;
       document.addEventListener('keydown', event => {
         if (event.key !== 'Escape') return;
         // Zamykamy to, co jest na wierzchu - najpierw kalkulator, potem okna.
+        if (receiveModal && !receiveModal.classList.contains('hidden')) {
+          closeReceiveModal();
+          return;
+        }
         if (priceCalcModal && !priceCalcModal.classList.contains('hidden')) {
           closePriceCalculator();
           return;
@@ -3724,6 +4144,63 @@ const defaultState = window.KedaiConfig.defaultState;
         return true;
       }
 
+      /* ------------------------------------------- lustro danych (KEDAI-test) */
+
+      const TEST_SEED_KEY = envKey('kedai_pos_test_seed');
+
+      /**
+       * Środowisko TESTOWE dostaje kopię tego, co ma lokal: menu, magazyn
+       * z zakładkami i kolorami oraz receptury, powiększone o sugerowane
+       * pozycje magazynu (config/seed-test.js).
+       *
+       * Wersją jest odcisk treści pliku: po zmianie danych lokalu plik się
+       * zmienia, więc testowe urządzenie wgra lustro jeszcze raz. Wydanie
+       * lokalu (window.KedaiEnv.isTest === false) nigdy tu nie wchodzi, a dane
+       * kasujemy tylko z tego urządzenia i tylko z jego chmury - projekt
+       * KTP-test jest do tego właśnie oddzielony.
+       */
+      async function applyTestSeed() {
+        const seed = window.KedaiSeedTest;
+        if (!seed || !window.KedaiEnv?.isTest) return false;
+        if (!Array.isArray(seed.menu) || !Array.isArray(seed.ingredients)) return false;
+
+        const version = String(seed.version || '');
+        try {
+          if (version && localStorage.getItem(TEST_SEED_KEY) === version) return false;
+        } catch (error) {
+          console.warn('Brak dostępu do localStorage:', error);
+        }
+
+        const now = new Date().toISOString();
+        const keptIngredients = new Set(seed.ingredients.map(entry => entry.id));
+        const keptMenu = new Set(seed.menu.map(entry => entry.id));
+
+        // Lustro: czego nie ma w seedzie, tego nie ma tutaj. Wiersze dostają
+        // nagrobek (chmura nic nie traci), a to, co lokalne, znika z telefonu.
+        const removedIngredients = (state.ingredients || []).filter(item => !keptIngredients.has(item.id));
+        for (const ingredient of removedIngredients) {
+          ingredient.deleted = true;
+          ingredient.deleted_at = now;
+          window.KedaiSync?.softDelete('ingredients', [ingredient]);
+          await window.KedaiDatabase.deleteIngredient(ingredient.id);
+        }
+
+        const removedMenu = (state.menu || []).filter(item => !keptMenu.has(item.id));
+        if (removedMenu.length) window.KedaiSync?.softDelete('menu', removedMenu);
+
+        // Kolejność i typy bierzemy wprost z pliku - on już je policzył.
+        state.ingredients = seed.ingredients.map(entry => ({ ...entry }));
+        state.menu = seed.menu.map(entry => ({ ...entry }));
+
+        try {
+          if (version) localStorage.setItem(TEST_SEED_KEY, version);
+        } catch (error) {
+          console.warn('Nie udało się zapisać znacznika lustra:', error);
+        }
+
+        return true;
+      }
+
       async function initializeApp() {
         try {
           updateMenuFormType();
@@ -3734,6 +4211,7 @@ const defaultState = window.KedaiConfig.defaultState;
           await window.KedaiDatabase.requestPersistence();
           state = await window.KedaiDatabase.initialize(defaultState);
           const seedApplied = await applyPipinSeed();
+          const mirrorApplied = await applyTestSeed();
           renderAll();
           renderStorageInfo();
           syncUserNameInput.value = window.KedaiSync?.getUserName() || '';
@@ -3744,9 +4222,9 @@ const defaultState = window.KedaiConfig.defaultState;
           window.KedaiSync?.start(state);
           renderSyncPanel();
           updateSyncBadge();
-          if (seedApplied) {
+          if (seedApplied || mirrorApplied) {
             saveState();
-            showToast(translate('seedApplied'), 'success');
+            showToast(translate(mirrorApplied ? 'testSeedApplied' : 'seedApplied'), 'success');
           }
         } catch (error) {
           console.error('Błąd uruchamiania IndexedDB:', error);

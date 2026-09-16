@@ -420,11 +420,31 @@ body {
   backdrop-filter: blur(14px);
 }
 
-/* Pozycje magazynowe poniżej stanu minimalnego. */
-.stock-low {
-  box-shadow: 0 0 18px rgba(244, 63, 94, 0.45);
-  border-color: #fda4af;
-  background: #fff1f2;
+/* Wykrzyknik przy pozycji poniżej stanu minimalnego. Tło karty zostaje
+   w kolorze zakładki - ostrzeżenie niesie znaczek, a nie kolor całej karty. */
+.low-flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-left: 6px;
+  border-radius: 9999px;
+  background: #e11d48;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 900;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+/* Pole wyboru w oknie przyjęcia towaru (magazyn). */
+.receive-check {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  margin-top: 2px;
+  accent-color: #10b981;
 }
 
 /* Przycisk dolnego paska: ikona nad podpisem. Które elementy są widoczne,

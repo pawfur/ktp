@@ -207,6 +207,12 @@
     return requestToPromise(database.transaction('PurchaseOrders', 'readwrite').objectStore('PurchaseOrders').delete(orderId));
   }
 
+  /** Zapis istniejącego zamówienia zakupowego (edycja, przyjęcie towaru). */
+  function updatePurchaseOrder(order) {
+    return requestToPromise(database.transaction('PurchaseOrders', 'readwrite')
+      .objectStore('PurchaseOrders').put({ ...order, status: order.status || 'ordered' }));
+  }
+
   async function saveLanguage(language) {
     if (!database) return;
     const current = await requestToPromise(database.transaction('AppState', 'readonly').objectStore('AppState').get(APP_STATE_KEY));
@@ -296,6 +302,7 @@
     clearOrders,
     deleteIngredient,
     addPurchaseOrder,
+    updatePurchaseOrder,
     deletePurchaseOrder,
     requestPersistence,
     getStorageInfo,
