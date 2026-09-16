@@ -1171,6 +1171,7 @@ const defaultState = window.KedaiConfig.defaultState;
         renderTabTitle();
       }
       function setActiveTab(tab, swipe) {
+        const previousPanel = document.querySelector('.tab-panel.active');
         activeTab = tab;
         closeDrawer();
         renderTabs();
@@ -1182,29 +1183,42 @@ const defaultState = window.KedaiConfig.defaultState;
         }
         // Pasek zamówienia pokazuje się tylko w Magazynie.
         renderOrderBar();
-        if (swipe) animatePanel(swipe);
+        if (swipe) slideTabPanels(previousPanel, document.getElementById(`panel-${tab}`), swipe);
       }
 
-      /** Krótkie wsunięcie zakładki po przesunięciu palcem. */
-      function animatePanel(direction) {
-        const panel = document.getElementById(`panel-${activeTab}`);
-        if (!panel) return;
+      /**
+       * Wsunięcie zakładki: stara odjeżdża w bok, nowa wjeżdża z przeciwnej
+       * strony. Animujemy wyłącznie `transform` i `opacity`, czyli pracę, którą
+       * przeglądarka oddaje kompozytorowi - układ strony nie jest liczony od
+       * nowa. Odjeżdżającą zakładkę na czas animacji wyjmujemy z układu
+       * (position: fixed na zmierzonej pozycji), żeby lista pod nią nie skakała.
+       */
+      function slideTabPanels(fromPanel, toPanel, direction) {
+        if (!fromPanel || !toPanel || fromPanel === toPanel) return;
 
-        const className = direction === 'from-right' ? 'swipe-from-right' : 'swipe-from-left';
-        panel.classList.remove('swipe-from-right', 'swipe-from-left');
-        // Wymuszenie odświeżenia stylów - bez tego druga animacja pod rząd nie startuje.
-        void panel.offsetWidth;
-        panel.classList.add(className);
-        setTimeout(() => panel.classList.remove(className), 260);
+        const rect = fromPanel.getBoundingClientRect();
+        fromPanel.style.top = `${rect.top}px`;
+        fromPanel.style.left = `${rect.left}px`;
+        fromPanel.style.width = `${rect.width}px`;
+        fromPanel.classList.add('tab-leaving', direction === 'from-right' ? 'leave-left' : 'leave-right');
+        toPanel.classList.add(direction === 'from-right' ? 'enter-right' : 'enter-left');
+
+        window.setTimeout(() => {
+          fromPanel.classList.remove('tab-leaving', 'leave-left', 'leave-right');
+          fromPanel.style.top = '';
+          fromPanel.style.left = '';
+          fromPanel.style.width = '';
+          toPanel.classList.remove('enter-right', 'enter-left');
+        }, 300);
       }
 
       /* ------------------------------------------- szuflada i dolny pasek */
 
       const NAV_MODE_KEY = envKey('kedai_pos_nav_mode');
       const NAV_MODES = ['text', 'both', 'icon'];
-      const DRAWER_TABS = ['settings', 'menu', 'warehouseEdit'];
+      const DRAWER_TABS = ['settings', 'menu', 'warehouseEdit', 'archive'];
       /** Zakładki dolnego paska - po nich przechodzi też przesunięcie palcem. */
-      const MAIN_TABS = ['customer', 'orders', 'archive', 'warehouse', 'purchaseList'];
+      const MAIN_TABS = ['customer', 'orders', 'warehouse', 'purchaseList'];
 
       function isDrawerOpen() {
         return !document.getElementById('appDrawer').classList.contains('hidden');

@@ -549,41 +549,79 @@ body {
   overflow-y: auto;
 }
 
-/* Zmiana zakładki przesunięciem palca - krótkie wsunięcie nowej treści. */
-.tab-panel.swipe-from-right {
-  animation: swipeFromRight 0.24s ease;
+/* Zmiana zakładki przesunięciem palca: stara strona odjeżdża w bok, a nowa
+   wjeżdża z przeciwnej strony. Animowane są wyłącznie `transform` i `opacity`,
+   więc pracę wykonuje kompozytor, a nie układ strony. */
+.tab-panel.tab-leaving {
+  display: block !important;
+  position: fixed;
+  z-index: 15;
+  margin: 0;
+  background: #ffffff;
+  pointer-events: none;
+  will-change: transform, opacity;
 }
 
-.tab-panel.swipe-from-left {
-  animation: swipeFromLeft 0.24s ease;
+.tab-panel.leave-left {
+  animation: tabLeaveLeft 0.3s ease forwards;
 }
 
-@keyframes swipeFromRight {
+.tab-panel.leave-right {
+  animation: tabLeaveRight 0.3s ease forwards;
+}
+
+.tab-panel.enter-right {
+  animation: tabEnterRight 0.3s ease;
+}
+
+.tab-panel.enter-left {
+  animation: tabEnterLeft 0.3s ease;
+}
+
+@keyframes tabLeaveLeft {
+  to {
+    transform: translateX(-100%);
+    opacity: 0.4;
+  }
+}
+
+@keyframes tabLeaveRight {
+  to {
+    transform: translateX(100%);
+    opacity: 0.4;
+  }
+}
+
+@keyframes tabEnterRight {
   from {
-    opacity: 0.35;
-    transform: translateX(28px);
+    transform: translateX(22%);
+    opacity: 0.55;
   }
   to {
-    opacity: 1;
     transform: none;
+    opacity: 1;
   }
 }
 
-@keyframes swipeFromLeft {
+@keyframes tabEnterLeft {
   from {
-    opacity: 0.35;
-    transform: translateX(-28px);
+    transform: translateX(-22%);
+    opacity: 0.55;
   }
   to {
-    opacity: 1;
     transform: none;
+    opacity: 1;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tab-panel.swipe-from-right,
-  .tab-panel.swipe-from-left {
+  .tab-panel.tab-leaving,
+  .tab-panel.leave-left,
+  .tab-panel.leave-right,
+  .tab-panel.enter-right,
+  .tab-panel.enter-left {
     animation: none;
+    display: none !important;
   }
 }
 
