@@ -20,25 +20,30 @@ const BASE_LANGUAGE = 'pl';
 /**
  * Wartości, które mogą być identyczne z polskimi, bo tak brzmią w obu językach.
  * Każdy wpis tutaj jest świadomą decyzją, a nie przeoczeniem.
+ * `unitGram` i `unitMl` to skróty jednostek - "g" i "ml" zapisuje się tak samo
+ * po polsku, angielsku i indonezyjsku.
  */
-const ALLOWED_IDENTICAL = new Set(['menu', 'edit']);
+const ALLOWED_IDENTICAL = new Set(['menu', 'edit', 'unitGram', 'unitMl']);
 
 /**
  * Klucze wybierane dynamicznie. Moduł chmury zwraca nazwę klucza
  * (np. 'syncErrTables'), a app.js tłumaczy ją w syncDetailText().
  * Statyczna analiza takich odwołań nie widzi, więc są wypisane tutaj.
  *
- * `warehouseStock` i `orderIngredients` trafiają tu z tego samego powodu:
- * przełącznik widoków magazynu (WAREHOUSE_VIEWS w app.js) trzyma nazwy
- * kluczy w danych, a nie wprost w wywołaniu translate().
+ * `orderIngredients` trafia tu z tego samego powodu: wiersz zamawiania
+ * w karcie składnika trzyma nazwę klucza w kodzie warunkowo.
  */
 const DYNAMIC_KEYS = new Set([
   'syncErrTables',
   'syncErrColumn',
   'syncErrAccess',
   'syncErrOffline',
-  'warehouseStock',
-  'orderIngredients'
+  'orderIngredients',
+  // Komunikat po wgraniu danych zależy od tego, który plik zadziałał
+  // (seed magazynu, lustro testowe, uzupełnienie magazynu lokalu).
+  'seedApplied',
+  'testSeedApplied',
+  'warehouseSeedApplied'
 ]);
 
 const colors = {
@@ -199,7 +204,8 @@ function checkTranslations(translations) {
 }
 
 function checkHtmlKeys(html, translations) {
-  const used = new Set([...html.matchAll(/data-i18n="([^"]+)"/g)].map(match => match[1]));
+  // data-i18n-aria to ten sam mechanizm, tylko dla czytników ekranu.
+  const used = new Set([...html.matchAll(/data-i18n(?:-aria)?="([^"]+)"/g)].map(match => match[1]));
   used.forEach(key => {
     LANGUAGES.forEach(language => {
       if (!(key in (translations[language] || {}))) {
@@ -211,7 +217,7 @@ function checkHtmlKeys(html, translations) {
 }
 
 function checkKeyUsage(appSource, html, translations) {
-  const fromHtml = [...html.matchAll(/data-i18n="([^"]+)"/g)].map(match => match[1]);
+  const fromHtml = [...html.matchAll(/data-i18n(?:-aria)?="([^"]+)"/g)].map(match => match[1]);
   // Bierzemy wszystkie literały z pierwszego argumentu, żeby złapać także
   // klucze wybierane warunkiem, np. translate(warunek ? 'a' : 'b').
   const fromTranslate = [...appSource.matchAll(/translate\(\s*([^)]*)/g)]

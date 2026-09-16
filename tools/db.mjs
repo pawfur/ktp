@@ -355,6 +355,7 @@ COMMANDS.help = {
     process.stdout.write(gray('  node tools/db.mjs orders --user PIPIN --days 3\n'));
     process.stdout.write(gray('  node tools/db.mjs sales --days 7 --user PIPIN\n'));
     process.stdout.write(gray('  node tools/db.mjs menu --user PIPIN\n'));
+    process.stdout.write(gray('  node tools/db.mjs warehouse --json > magazyn.json\n'));
     process.stdout.write(gray('  node tools/db.mjs gaps\n'));
     process.stdout.write(`\n${bold('Pierwsze uruchomienie:')} node tools/db.mjs login (pyta o e-mail i hasło konta lokalu)\n`);
   }
@@ -515,7 +516,7 @@ COMMANDS.sales = {
 COMMANDS.menu = {
   summary: 'pełne menu z zakładkami (--user, --device)',
   async run(options) {
-    const params = { select: 'device_id,user_name,sort_order,name,price,type,local_id,deleted', order: 'sort_order' };
+    const params = { select: 'device_id,user_name,sort_order,name,price,type,color,visible,recipe,local_id,deleted', order: 'sort_order' };
     if (options.device) params.device_id = `eq.${options.device}`;
     if (options.user && !options.device) params.user_name = `ilike.*${options.user}*`;
     params.deleted = 'eq.false';
@@ -541,6 +542,38 @@ COMMANDS.menu = {
         process.stdout.write(`    ${String(item.sort_order).padStart(3)}  ${item.name.padEnd(22)} ${rp(item.price)}  ${gray(item.local_id)}\n`);
       });
     });
+  }
+};
+
+COMMANDS.warehouse = {
+  summary: 'pełny magazyn z zakładkami (--user, --device, --all)',
+  async run(options) {
+    const params = {
+      select: 'device_id,user_name,sort_order,name,unit,stock,unit_price,min_stock,unit_step,type,color,local_id,deleted',
+      order: 'sort_order'
+    };
+    if (options.device) params.device_id = `eq.${options.device}`;
+    if (options.user && !options.device) params.user_name = `ilike.*${options.user}*`;
+    if (!options.all) params.deleted = 'eq.false';
+
+    const rows = await rest('ingredients', params);
+    if (options.json) return printJson(rows);
+
+    rows.sort((first, second) => Number(first.sort_order) - Number(second.sort_order));
+    rows.forEach(item => {
+      if (item.type === 'section') {
+        process.stdout.write(`\n  ${bold(`▸ ${item.name}`)} ${gray('(zakładka magazynu)')}\n`);
+        return;
+      }
+      const left = `${String(item.sort_order).padStart(3)}  ${String(item.name).padEnd(24)}`;
+      const right = `${String(item.unit).padEnd(4)} ${rp(item.unit_price).padStart(10)}  stan ${String(item.stock).padStart(8)}  ${gray(`min ${item.min_stock}, opak. ${item.unit_step}`)}`;
+      process.stdout.write(`  ${left} ${right}\n`);
+    });
+
+    const products = rows.filter(item => item.type !== 'section');
+    const value = products.reduce((sum, item) => sum + Number(item.stock || 0) * Number(item.unit_price || 0), 0);
+    const note = gray(`(${rows.length} wierszy razem z zakładkami)`);
+    process.stdout.write(`\n${bold('Razem')}: ${products.length} składników, wartość magazynu ${bold(rp(value))} ${note}\n`);
   }
 };
 

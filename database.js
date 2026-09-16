@@ -1,8 +1,12 @@
 (function () {
-  const DB_NAME = 'KedaiPOS';
+  // Nazwy zasobów przeglądarki zależą od środowiska (config/env.js). Wydanie
+  // oficjalne zostaje przy dotychczasowych nazwach - pusty sufiks - więc
+  // telefon lokalu nie traci ani danych, ani kopii zapasowej.
+  const ENV = window.KedaiEnv || { dbName: 'KedaiPOS', key: name => name };
+  const DB_NAME = ENV.dbName;
   const DB_VERSION = 3;
   const APP_STATE_KEY = 'main';
-  const BACKUP_KEY = 'kedai_pos_backup_v1';
+  const BACKUP_KEY = ENV.key('kedai_pos_backup_v1');
   let database;
 
   function requestToPromise(request) {
@@ -203,6 +207,12 @@
     return requestToPromise(database.transaction('PurchaseOrders', 'readwrite').objectStore('PurchaseOrders').delete(orderId));
   }
 
+  /** Zapis istniejącego zamówienia zakupowego (edycja, przyjęcie towaru). */
+  function updatePurchaseOrder(order) {
+    return requestToPromise(database.transaction('PurchaseOrders', 'readwrite')
+      .objectStore('PurchaseOrders').put({ ...order, status: order.status || 'ordered' }));
+  }
+
   async function saveLanguage(language) {
     if (!database) return;
     const current = await requestToPromise(database.transaction('AppState', 'readonly').objectStore('AppState').get(APP_STATE_KEY));
@@ -292,6 +302,7 @@
     clearOrders,
     deleteIngredient,
     addPurchaseOrder,
+    updatePurchaseOrder,
     deletePurchaseOrder,
     requestPersistence,
     getStorageInfo,

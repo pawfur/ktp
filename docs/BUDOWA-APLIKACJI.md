@@ -19,16 +19,22 @@ Kedai/
 ├── push-github.ps1
 ├── config/
 │   ├── default-state.js
+│   ├── env.js
 │   ├── seed-pipin.js
-│   └── supabase-config.js
+│   ├── seed-test.js
+│   ├── seed-warehouse.js
+│   ├── supabase-config.js
+│   └── supabase-config.test.js
 ├── modules/
 │   ├── dialogs.js
 │   ├── icon.svg
 │   ├── sync.js
 │   └── ui.js
 ├── tools/
+│   ├── build-seed-test.mjs
 │   ├── db.mjs
-│   └── push-release.mjs
+│   ├── push-release.mjs
+│   └── push-test.mjs
 ├── tests/
 │   ├── check-sync.mjs
 │   └── check-translations.mjs
@@ -51,12 +57,14 @@ Zawiera strukturę interfejsu: nagłówek, dolną nawigację, szufladę konfigur
 
 Ekrany są podzielone na dwie grupy i jest to decyzja projektowa, nie estetyka:
 
-- **Dolny pasek — strefa kciuka.** Cztery rzeczy, które robi się przy ladzie: Obsługa, Zamówienia, Archiwum, Magazyn. To przyciski `data-tab` w `<nav class="app-nav">`.
-- **Szuflada pod zębatką — prawy górny róg.** Rzeczy rzadkie: Ustawienia, Edytuj menu, Edycja magazynu. Róg u góry po prawej jest najtrudniej dostępny na telefonie, więc nie da się w niego kliknąć przez pomyłkę w trakcie obsługi klienta.
+- **Dolny pasek — strefa kciuka.** Cztery rzeczy, które robi się przy ladzie: Obsługa, Zamówienia, Magazyn, Zakupy. To przyciski `data-tab` w `<nav class="app-nav">`.
+- **Szuflada pod zębatką — prawy górny róg.** Rzeczy rzadsze: Ustawienia, Edytuj menu, Edycja magazynu i na końcu **Archiwum**. Róg u góry po prawej jest najtrudniej dostępny na telefonie, więc nie da się w niego kliknąć przez pomyłkę w trakcie obsługi klienta.
 
-Zakładki z szuflady nie mają przycisku na dole, dlatego gdy któraś jest otwarta, zamiast przycisku paska podświetla się zębatka — pasek nigdy nie „milczy”. Ustawienia nie mają już skrótów do edycji menu i magazynu: do każdego ekranu prowadzi jedna droga.
+Zakładki z szuflady nie mają przycisku na dole, dlatego gdy któraś jest otwarta, zamiast przycisku paska podświetla się zębatka — pasek nigdy nie „milczy”. Ustawienia nie mają już skrótów do edycji menu i magazynu: do każdego ekranu prowadzi jedna droga. Archiwum trafiło do szuflady razem z nimi: przegląda się je raz na jakiś czas (podsumowanie dnia, tygodnia), a nie przy każdej transakcji, więc nie musi zajmować miejsca w strefie kciuka. Wpis jest ostatni, po edycji magazynu.
 
-Magazyn ma trzy widoki (stan, zamówienie, lista zamówień) przełączane paskiem `Stan | Zamów | Lista zamówień`. Przełącznik jest wstrzykiwany do każdego z tych trzech paneli (`renderWarehouseNav`), więc widać go niezależnie od tego, gdzie się jest, a dolny pasek nadal podświetla Magazyn.
+**Przesunięcie palcem w prawo albo w lewo zmienia zakładkę** (kolejność jak w pasku, `MAIN_TABS` w app.js). Gest musi być zdecydowany i wyraźnie poziomy (co najmniej 60 px i półtora raza więcej w poziomie niż w pionie), więc przewijanie listy pionowo zostaje przewijaniem, a suwaki (np. kolor zakładki) i pola formularzy zachowują swoje gesty. Zakładki z szuflady nie biorą udziału w przesuwaniu — nie mają sąsiadów.
+
+**Widać, że jedna strona przesuwa się w miejsce drugiej.** Przed zmianą zapamiętujemy pozycję starej zakładki, na czas animacji wyjmujemy ją z układu (`position: fixed` na zmierzonych współrzędnych) i odsuwamy w bok, a nowa wjeżdża z przeciwnej strony. Animowane są wyłącznie `transform` i `opacity`, więc pracę wykonuje kompozytor, a układ strony nie jest liczony od nowa — na telefonie nie ma to odczuwalnego kosztu (patrz też `prefers-reduced-motion`, gdzie przesuwanie jest wyłączone).
 
 Wygląd paska ustawia się w Ustawieniach → **Wygląd dolnego paska**: `Tylko tekst` / `Tekst i ikona` / `Tylko ikona`. Ustawienie siedzi w `localStorage` (`kedai_pos_nav_mode`) i dotyczy wyłącznie paska — szuflada zawsze pokazuje ikonę razem z podpisem. Tryb „tylko ikona” nie może zostać bez etykiet dla czytników ekranu, dlatego przyciski mają `aria-label`, aktywna pozycja `aria-current="page"`, a tytuł zakładki w nagłówku nadal nazywa ekran. Uwaga przy zmianach: ten sam atrybut `data-nav-mode` nosi pasek (dla CSS) i przyciski (dla stanu), więc selektory w JavaScript muszą być zawężone do `button[data-nav-mode]`.
 
@@ -130,6 +138,19 @@ Jednorazowy zestaw danych (magazyn + receptury) dla telefonu PIPIN. To **dane, n
 
 Uwaga przy poprawkach: plik zapamiętuje swoją `version` na urządzeniu. Zmiana treści bez podniesienia `version` **nie** zostanie już zaaplikowana na telefonie, który tę wersję widział.
 
+### `config/seed-warehouse.js`
+
+Uzupełnienie magazynu dla **wydania lokalu**: zakładki i brakujące pozycje, których wymagają receptury. Plik jest **generowany** (`node tools/build-seed-test.mjs`) i w przeciwieństwie do pozostałych seedów nic nie kasuje ani nie podmienia:
+
+- `sections` — zakładki magazynu (nazwa, kolor, kolejność),
+- `items` — pozycje do dopisania, w tym odtworzone te, które usunięto z telefonu, a receptury nadal ich używają (wracają z tym samym identyfikatorem, ale ze stanem `0`),
+- `order` — kolejność istniejących pozycji; stany magazynowe, ceny i progi zostają bez zmian,
+- `userName` — nazwa użytkownika, na którego telefon plik ma trafić (identyfikatory pozycji są wspólne między telefonami, więc inne urządzenie wniosłoby je do chmury pod swoim imieniem).
+
+Wgrywanie: `applyWarehouseSeed()` w `app.js`, bramka `window.KedaiEnv.isTest === false` + `userName` + flaga `kedai_pos_warehouse_seed` z odciskiem treści pliku. Środowisko testowe pomija ten plik, bo tam rządzi lustro (`config/seed-test.js`).
+
+Odtworzenie pozycji wymaga wywołania `KedaiSync.clearDeletion('ingredients', …)`: znacznik usunięcia (`#deleted`) w rejestrze wysyłki jest trwały, żeby odtworzenie starej kopii na telefonie nie „odmrażało” skasowanych danych — bez tego kroku wiersz nigdy nie wróciłby do chmury.
+
 ### `modules/sync.js`
 
 Wysyła dane do Supabase. Odsłania `window.KedaiSync` i spełnia cztery warunki: kierunek jest tylko jeden (telefon wysyła, chmura przyjmuje), wysyłka nigdy nie blokuje zapisu lokalnego, brak internetu nie zużywa prób, a po trzech nieudanych próbach moduł czeka na kolejną zmianę danych. Każdy wiersz podpisuje nazwą użytkownika z Ustawień. Szczegóły wdrożenia opisuje [SUPABASE-SETUP.md](SUPABASE-SETUP.md).
@@ -153,7 +174,7 @@ Zakładka może mieć **kolor** (`color`) wybierany suwakiem w jej karcie (Ustaw
 
 Każda pozycja menu (produkt, nie zakładka) ma **recepturę** — przycisk „Receptura” w jej karcie (między Edytuj i Usuń) otwiera okno z listą składników magazynu. Przy każdym składniku wpisuje się ilość zużywaną na **jedną porcję** (pole liczbowe z klawiaturą numeryczną); puste pole oznacza, że składnik nie jest używany w tym daniu. Receptura może być pusta i wtedy nic nie schodzi z magazynu. Składniki usunięte z magazynu są oznaczane w oknie na żółto i można je jednym przyciskiem usunąć z receptury; dopóki tam są, nie są odejmowane.
 
-**Zużycie schodzi z magazynu w momencie przeniesienia zamówienia do archiwum.** Aplikacja sumuje receptury wszystkich pozycji zamówienia (ilość z receptury × liczba porcji), odejmuje wynik od `ingredient.stock` i pokazuje komunikat, z ilu składników zdjęto towar. Stan magazynu zmienia się więc lokalnie i — jak każda zmiana — jest wysyłany do chmury. Jeśli po odejmowaniu stan spadnie poniżej minimum, karta składnika w Magazynie podświetli się na czerwono (klasa `.stock-low`). Receptury są częścią wierszy menu w chmurze (kolumna `menu_items.recipe`), więc odtworzenie danych na innym telefonie przenosi je razem z menu.
+**Zużycie schodzi z magazynu w momencie przeniesienia zamówienia do archiwum.** Aplikacja sumuje receptury wszystkich pozycji zamówienia (ilość z receptury × liczba porcji), odejmuje wynik od `ingredient.stock` i pokazuje komunikat, z ilu składników zdjęto towar. Stan magazynu zmienia się więc lokalnie i — jak każda zmiana — jest wysyłany do chmury. Jeśli po odejmowaniu stan spadnie poniżej minimum, karta składnika w Magazynie dostanie czerwony wykrzyknik (`.low-flag`). Receptury są częścią wierszy menu w chmurze (kolumna `menu_items.recipe`), więc odtworzenie danych na innym telefonie przenosi je razem z menu.
 Aplikacja jest przeznaczona wyłącznie do pracy w pionie. `manifest.json` ustawia `portrait-primary`, a przy uruchomieniu aplikacja próbuje zablokować orientację ekranu przez Screen Orientation API.
 
 ### Koszt receptury i koszt zamówienia
@@ -177,30 +198,66 @@ Moduł magazynu jest podzielony na dwa osobne widoki, które mają różne zadan
 - łączną wartość magazynu,
 - listę składników z aktualną ilością i jednostką,
 - cenę jednostkową i wartość stanu danej pozycji,
-- wyróżnienie pozycji poniżej stanu minimalnego czerwoną poświatą.
+- wyróżnienie pozycji poniżej stanu minimalnego czerwonym wykrzyknikiem przy nazwie i zdaniem pod spodem (bez czerwonego tła, żeby nie zabierało koloru zakładki).
 
-W tym widoku nie ma możliwości edycji. Dostępne są wyłącznie przyciski **Zamów** i **Lista zamówień**.
+W tym widoku nie ma możliwości edycji składników — a jednocześnie **właśnie tu składa się zamówienie** (patrz niżej).
 
-**Edycja magazynu** to osobny ekran otwierany przyciskiem w Ustawieniach. Zawiera formularz dodawania i edycji składników oraz listę z przyciskami **Edytuj** i **Usuń**.
+**Edycja magazynu** to osobny ekran otwierany z szuflady pod zębatką. Na górze są tylko dwa przyciski — **Dodaj nowy składnik** i **Dodaj zakładkę** — a cała reszta ekranu należy do listy składników. Formularz nie zabiera już miejsca na stałe: otwiera się jako okno i po zapisaniu znika.
 
 Każdy składnik ma pola:
 
 - `name` – nazwa,
-- `unit` – jednostka: `szt`, `g` albo `ml`,
+- `unit` – jednostka: `szt`, `g` albo `ml` (na ekranie tłumaczona: „szt” / „pcs” / „buah”),
 - `stock` – aktualna ilość,
 - `unit_price` – cena jednostkowa,
 - `min_stock` – stan minimalny,
-- `target_stock` – stan zalecany, do którego dąży uzupełnienie,
-- `min_order_quantity` – minimalna ilość zamówienia,
-- `unit_step` – krok zamówienia, np. pieczywo zamawia się po 10 sztuk.
+- `unit_step` – **wielkość opakowania**: ile wchodzi w jedno opakowanie. To ona wyznacza krok przy zamawianiu (np. olej po 500 ml).
+
+Pola **stan zalecany** (`target_stock`) i **minimalne zamówienie** (`min_order_quantity`) zostały usunięte — zamawianie liczy się wyłącznie opakowaniami. Stare wiersze mogą jeszcze te kolumny mieć, ale aplikacja ich nie pokazuje ani nie zapisuje.
+
+W oknie składnika jest **kalkulator ceny** (kwadratowy przycisk obok ceny). Wpisuje się wielkość opakowania i jego cenę, a aplikacja liczy cenę jednostki; przycisk **Użyj tej ceny** wpisuje wynik do formularza razem z wielkością opakowania, więc nie trzeba nic przeliczać w głowie (np. opakowanie 1000 g za Rp 14 000 → Rp 14 za gram).
+
+**Zakładki magazynu** działają tak samo jak zakładki menu: to zwykłe wiersze z `type = 'section'`, mają nazwę i kolor wybierany suwakiem (`color`, 0–360). Składniki należą do zakładki, która jest **nad** nimi — przesuwa się je przyciskami **↑** / **↓**. Kolejność trzyma `sort_order`. Dopóki nie ma żadnej zakładki ani ustawionej kolejności, lista jest alfabetyczna, więc stare dane wyglądają tak jak dotąd. Kolor zakładki widać w podglądzie magazynu, w edycji i na liście zakupów. Pozycja poniżej stanu minimalnego zachowuje kolor zakładki, a ostrzeżenie niesie czerwony wykrzyknik (`.low-flag`) przy nazwie i zdanie na dole karty — wcześniej cała karta świeciła na czerwono, przez co kolor zakładki był niewidoczny.
+
+Usunięcie zakładki usuwa tylko nagłówek — składniki pod nim zostają w magazynie.
 
 Przy pierwszym uruchomieniu aplikacja wprowadza przykładowe składniki ułatwiające start. Wprowadzenie odbywa się tylko raz i jest zapamiętywane flagą `ingredientsSeeded` w `AppState`. Dzięki temu użytkownik, który celowo usunie wszystkie składniki, nie zobaczy ich ponownie.
 
-Ekran **Zamów** działa podobnie do obsługi klienta. Przyciski `−` i `+` zmieniają ilość o `unit_step`, więc nie da się zamówić ilości spoza kroku. Pod listą znajduje się podsumowanie z wartością zamówienia. Przycisk **Akceptuj** zapisuje zamówienie, a **Anuluj** czyści wybór. Jeżeli ilość nie jest wielokrotnością kroku lub jest mniejsza niż minimalna ilość zamówienia, aplikacja pokazuje komunikat i nie zapisuje zamówienia.
+### Zamawianie wprost z listy magazynu (zamiast osobnego ekranu „Zamów”)
 
-Dla każdego składnika wyświetlana jest proponowana ilość do zamówienia, wyliczana ze stanu zalecanego, kroku zamówienia i minimalnej ilości zamówienia.
+Zamawianie nie ma już własnej zakładki. Każda karta składnika kończy się **wierszem zamawiania**, a cała reszta bez zmian pokazuje stan, więc nie trzeba przełączać widoków, żeby zobaczyć, czego brakuje i od razu to zamówić:
 
-**Lista zamówień** pokazuje historię zapisanych zamówień zakupowych z możliwością usunięcia.
+- zwinięty wiersz to napis `Zamów` i okrągły przycisk **+** — dotknięcie dodaje jedno **opakowanie** (tyle, ile wynosi `unit_step`),
+- po dodaniu karta dostaje pomarańczową obwódkę, a w wierszu pojawia się `−  500 g  +` oraz wartość tej pozycji — od razu widać, co jest już w zamówieniu,
+- nic nie znika z ekranu: kolor zakładki, wykrzyknik niskiego stanu i ceny zostają na miejscu.
+
+Na dole ekranu, nad dolnym paskiem, pojawia się **pasek zamówienia** (`#orderBar`) z liczbą pozycji i wartością. Pokazuje się tylko wtedy, gdy coś jest wybrane — dopóki nie zamawiasz, nie zabiera ani piksela. Pasek ma dwie akcje:
+
+- dotknięcie paska otwiera **arkusz zamówienia** (`#orderSheetModal`) — wysuwaną od dołu listę wybranych pozycji z możliwością poprawiania ilości, sumą i przyciskami **Zamknij** / **Akceptuj**,
+- czerwony **✕** czyści cały wybór (z pytaniem o potwierdzenie).
+
+Ilości zmienia się całymi opakowaniami, więc nie da się zamówić ilości spoza kroku — przy próbie aplikacja pokazuje komunikat. Po zaakceptowaniu aplikacja zapisuje zamówienie i przenosi na zakładkę **Zakupy**.
+
+**Poprawianie istniejącego zamówienia** (przycisk **Edytuj** na liście zakupów) wraca na tę samą listę magazynu z zaznaczonymi pozycjami, a nad listą pojawia się przypomnienie. Obowiązuje przy tym twarda zasada: **nie można zejść poniżej ilości już przyjętej na magazyn** — przycisk `−` zatrzymuje się na przyjętej liczbie i tłumaczy dlaczego (`receivedInEditedOrder()` w app.js). Bez tego dałoby się wycofać z zamówienia towar, który fizycznie leży już na półce.
+
+### Lista zakupów (zakładka „Zakupy”)
+
+Lista zamówień zakupowych ma teraz **własny przycisk w dolnym pasku** (piąta zakładka, `data-tab="purchaseList"`), bo po scaleniu stanu z zamawianiem nie miała już gdzie mieszkać. Wygląda jak lista zakupowa: data i wartość na górze, pod nimi pozycje **jedna pod drugą** (ilość, jednostka, nazwa, kwota), a na dole cztery przyciski:
+
+- **Przyjmij** — otwiera okno przyjęcia towaru,
+- **Edytuj** — wraca do zakładki Magazyn z pozycjami tego zamówienia,
+- **Kopiuj** — kopiuje do schowka **wyłącznie pozycje, których jeszcze nie przyjęto**: sam wykaz `- ilość jednostka nazwa`, bez daty, cen i podsumowania (gotowe do wysłania dostawcy),
+- **Usuń** — usuwa zamówienie (w chmurze zostaje ślad — nagrobek).
+
+**Okno przyjęcia** (zielony **Akceptuj**, czerwony **Anuluj**) pokazuje każdą pozycję z checkboxem, ilością do wpisania i aktualnym stanem magazynu. W polu ilości podpowiadamy **resztę do przyjęcia**, więc przy pełnej dostawie wystarczy zaznaczyć i zaakceptować. Zaznaczenie przekreśla pozycję i pokazuje, ile sztuk przyjmiemy i za ile; akceptacja dodaje je do stanu magazynu i zapisuje przyjętą ilość.
+
+**Przyjęte ilości liczą się narastająco** (`received_qty` na pozycji zamówienia), więc:
+
+- pozycja przyjęta **w całości jest zablokowana** — jest zaznaczona, wyszarzona i nie da się jej przyjąć drugi raz (to był realny błąd: drugie kliknięcie „Przyjmij" pozwalało doliczyć ten sam towar dwa razy do stanu),
+- dostawa **na raty w jednej pozycji** też działa: przyjmujesz 100 z 250 g, następnym razem okno podpowiada 150 g,
+- zamówienie ma status **Zamówione**, potem **Częściowo** (cokolwiek dotarło, choćby część jednej pozycji), a na końcu **Przyjęte**; przyjęte pozycje są przekreślone także na liście.
+
+Składnik usunięty w międzyczasie z magazynu nie da się przyjąć; pozycja jest wtedy wyszarzona z wyjaśnieniem. Ceny nie zmieniamy przy przyjęciu — gdy dostawca podniesie cenę, popraw ją w edycji składnika. Wartość na karcie zamówienia to wartość zamówiona; obok niej widać, ile już przyjęto („przyjęto 100 z 250").
 
 ## 5. IndexedDB
 

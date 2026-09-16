@@ -24,6 +24,10 @@
  * dokładnie tak jak dotychczas – wyłącznie na danych lokalnych.
  */
 window.KedaiSupabaseConfig = {
+  // 'official' = baza lokalu. Wydanie testowe nadpisuje całą tę konfigurację
+  // w pliku supabase-config.test.js i ustawia tu 'test' - od tego zależą
+  // także nazwy kluczy przeglądarki (patrz config/env.js).
+  env: 'official',
   url: 'https://gbtiuowskxigyqvmaukw.supabase.co',
   anonKey: 'sb_publishable_auYiI3QTVh9EZPSycQ7Qrw_bcZTIpEx',
 

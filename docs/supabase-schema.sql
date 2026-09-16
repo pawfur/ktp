@@ -212,6 +212,24 @@ alter table public.client_orders add column if not exists stock_used jsonb;
 alter table public.client_orders add column if not exists cost_at timestamptz;
 
 -- ---------------------------------------------------------------------------
+-- 4i. Zakładki magazynu (sekcje składników, kolor, kolejność)
+--
+-- Magazyn działa tak samo jak menu: składniki można grupować w zakładki
+-- (type = 'section'), nadać zakładce kolor (sama barwa 0-360, jak w menu)
+-- i ustawiać kolejność strzałkami w górę/w dół (sort_order).
+--
+-- Gdy nic nie jest ustawione (sort_order = 0 i brak zakładek), magazyn
+-- pokazuje się alfabetycznie - istniejące wiersze nie wymagają zmian.
+-- ---------------------------------------------------------------------------
+alter table public.ingredients add column if not exists type text not null default 'product';
+alter table public.ingredients add column if not exists color integer;
+alter table public.ingredients add column if not exists sort_order integer not null default 0;
+
+alter table public.ingredients drop constraint if exists ingredients_color_range;
+alter table public.ingredients add constraint ingredients_color_range
+  check (color is null or (color >= 0 and color <= 360));
+
+-- ---------------------------------------------------------------------------
 -- 5. Zabezpieczenia (RLS)
 --
 -- Bez tego kroku klucz anon, który jest publicznie widoczny w aplikacji,

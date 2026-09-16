@@ -23,13 +23,21 @@
   const CONFIG = window.KedaiSupabaseConfig || {};
   const TABLES = CONFIG.tables || {};
 
-  const SESSION_KEY = 'kedai_pos_supabase_session';
-  const DEVICE_KEY = 'kedai_pos_device_id';
-  const USER_NAME_KEY = 'kedai_pos_user_name';
-  const SYNCED_PREFIX = 'kedai_pos_synced_';
-  const TOMBSTONE_PREFIX = 'kedai_pos_deleted_';
-  const FAILED_PREFIX = 'kedai_pos_sync_failed_';
-  const STATUS_KEY = 'kedai_pos_sync_status';
+  // Nazwy kluczy zależą od środowiska (config/env.js). Wydanie OFICJALNE -
+  // czyli to na telefonie lokalu - zostaje przy dotychczasowych nazwach, więc
+  // nic nie wymaga migracji i nie grozi utratą nagrobków. Sufiks `_test`
+  // dostaje tylko wydanie testowe, dzięki czemu obie aplikacje mogą mieszkać
+  // w tej samej przeglądarce, nie widząc nawzajem swoich sesji, odcisków,
+  // nagrobków ani kolejki odrzuconych wierszy.
+  const ENV = window.KedaiEnv || { key: name => name };
+
+  const SESSION_KEY = ENV.key('kedai_pos_supabase_session');
+  const DEVICE_KEY = ENV.key('kedai_pos_device_id');
+  const USER_NAME_KEY = ENV.key('kedai_pos_user_name');
+  const SYNCED_PREFIX = ENV.key('kedai_pos_synced_');
+  const TOMBSTONE_PREFIX = ENV.key('kedai_pos_deleted_');
+  const FAILED_PREFIX = ENV.key('kedai_pos_sync_failed_');
+  const STATUS_KEY = ENV.key('kedai_pos_sync_status');
 
   const MAX_ATTEMPTS = 3;
   const DEBOUNCE_MS = 2000;
@@ -447,6 +455,9 @@
           entry.item.target_stock,
           entry.item.min_order_quantity,
           entry.item.unit_step,
+          entry.item.type === 'section' ? 'section' : 'product',
+          entry.item.color ?? '',
+          entry.item.sort_order,
           entry.item.deleted === true ? 'deleted' : 'active'
         ]),
         row: entry => ({
@@ -460,6 +471,9 @@
           target_stock: Number(entry.item.target_stock || 0),
           min_order_quantity: Number(entry.item.min_order_quantity || 0),
           unit_step: Number(entry.item.unit_step || 0),
+          type: entry.item.type === 'section' ? 'section' : 'product',
+          color: Number.isFinite(Number(entry.item.color)) && entry.item.color !== null ? Math.round(Number(entry.item.color)) : null,
+          sort_order: Number.isFinite(Number(entry.item.sort_order)) ? Number(entry.item.sort_order) : entry.index,
           user_name: meta.userName,
           deleted: entry.item.deleted === true,
           deleted_at: entry.item.deleted_at || null,
@@ -953,6 +967,32 @@
     };
   }
 
+  /**
+   * Zapomina o usunięciu podanych pozycji: kasuje nagrobki i znaczniki
+   * `#deleted` z rejestru wysyłki.
+   *
+   * Potrzebne wtedy, gdy aplikacja SAMA przywraca pozycję (np. uzupełnienie
+   * magazynu wpisami z konfiguracji). Bez tego wiersz nigdy nie wróciłby do
+   * chmury: znacznik usunięcia jest trwały, żeby odtworzenie starej kopii na
+   * telefonie nie „odmrażało” skasowanych danych.
+   */
+  function clearDeletion(name, ids) {
+    if (!TABLE_LIST.some(entry => entry[0] === name)) return 0;
+    const list = (Array.isArray(ids) ? ids : [ids]).map(id => String(id || '')).filter(Boolean);
+    if (!list.length) return 0;
+
+    const tombstones = readTombstones(name);
+    list.forEach(id => { delete tombstones[id]; });
+    writeTombstones(name, tombstones);
+
+    const synced = { ...readSynced(name) };
+    list.forEach(id => { if (synced[id] === DELETED_MARK) delete synced[id]; });
+    writeSynced(name, synced);
+
+    invalidatePending();
+    return list.length;
+  }
+
   window.KedaiSync = {
     isConfigured,
     isSignedIn,
@@ -967,6 +1007,7 @@
     pushNow,
     countRows,
     softDelete,
+    clearDeletion,
     isSent,
     forgetSynced
   };
