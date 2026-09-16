@@ -447,6 +447,146 @@ body {
   accent-color: #10b981;
 }
 
+/* Pasek zamówienia nad dolnym paskiem. Pokazuje się tylko wtedy, gdy coś jest
+   wybrane w Magazynie - podsumowanie nie zabiera miejsca na stałe. */
+.order-bar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(480px, 100vw);
+  padding: 0 12px;
+}
+
+.order-bar-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 56px;
+  padding: 8px 14px;
+  border-radius: 16px;
+  background: #0f172a;
+  color: #ffffff;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.32);
+  transition: transform 0.15s ease;
+}
+
+.order-bar-main:active {
+  transform: scale(0.99);
+}
+
+.order-bar-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.order-bar-total {
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.order-bar-clear {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: #ffffff;
+  color: #e11d48;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+}
+
+.order-bar-clear svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Gdy pasek zamówienia jest widoczny, lista potrzebuje zapasu miejsca na dole. */
+.tab-panel.order-bar-open {
+  padding-bottom: 5.5rem;
+}
+
+/* Arkusz zamówienia: wysuwana od dołu lista wybranych pozycji. */
+.order-sheet {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  width: min(480px, 100vw);
+  max-height: 86vh;
+  padding: 10px 16px calc(16px + env(safe-area-inset-bottom));
+  border-radius: 22px 22px 0 0;
+  background: #ffffff;
+  box-shadow: 0 -18px 40px rgba(15, 23, 42, 0.28);
+}
+
+.order-sheet-grab {
+  width: 44px;
+  height: 5px;
+  margin: 0 auto 10px;
+  border-radius: 9999px;
+  background: #cbd5e1;
+}
+
+.order-sheet-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  overflow-y: auto;
+}
+
+/* Zmiana zakładki przesunięciem palca - krótkie wsunięcie nowej treści. */
+.tab-panel.swipe-from-right {
+  animation: swipeFromRight 0.24s ease;
+}
+
+.tab-panel.swipe-from-left {
+  animation: swipeFromLeft 0.24s ease;
+}
+
+@keyframes swipeFromRight {
+  from {
+    opacity: 0.35;
+    transform: translateX(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes swipeFromLeft {
+  from {
+    opacity: 0.35;
+    transform: translateX(-28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-panel.swipe-from-right,
+  .tab-panel.swipe-from-left {
+    animation: none;
+  }
+}
+
 /* Przycisk dolnego paska: ikona nad podpisem. Które elementy są widoczne,
    decyduje atrybut data-nav-mode na pasku (Ustawienia → Wygląd dolnego paska). */
 .tab-btn {

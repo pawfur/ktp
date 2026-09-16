@@ -1,5 +1,5 @@
 window.KedaiConfig = {
-  version: '26.09.16.2343',
+  version: '26.09.17.0028',
   defaultState: {
     menu: [
       { id: 'prod_1', name: 'Seblak Biasa', price: 8000, order: 0 },

@@ -101,10 +101,9 @@ const defaultState = window.KedaiConfig.defaultState;
           navModeText: 'Tylko tekst',
           navModeBoth: 'Tekst i ikona',
           navModeIcon: 'Tylko ikona',
-          warehouseStock: 'Stan',
           editWarehouse: 'Edycja magazynu',
           warehouse: 'Magazyn',
-          warehouseHint: 'Podgląd stanu magazynu. Aby dodać lub zmienić składniki, użyj pozycji Edycja magazynu w menu pod zębatką.',
+          warehouseHint: 'Plus przy składniku dodaje jedno opakowanie do zamówienia. Podsumowanie pojawi się na dole ekranu.',
           ingredients: 'Składniki',
           addIngredient: 'Dodaj nowy składnik',
           ingredientName: 'Nazwa',
@@ -152,6 +151,14 @@ const defaultState = window.KedaiConfig.defaultState;
           stockValue: 'Wartość stanu',
           belowMin: 'Poniżej stanu min.',
           orderIngredients: 'Zamów',
+          orderAddPackage: 'Dodaj opakowanie',
+          orderRemovePackage: 'Odejmij opakowanie',
+          orderBarClear: 'Wyczyść zamówienie',
+          orderSheetHint: 'Popraw ilości i zaakceptuj. Ilość zmienia się całymi opakowaniami.',
+          orderSheetClose: 'Zamknij',
+          receivedShort: 'przyjęto {received}',
+          purchaseKeepReceived: 'Nie można zamówić mniej niż już przyjęto ({quantity} {unit}).',
+          purchaseListShort: 'Zakupy',
           purchaseTitle: 'Zamawianie składników',
           purchaseList: 'Lista zamówień',
           purchaseTotal: 'Wartość zamówienia',
@@ -362,10 +369,9 @@ const defaultState = window.KedaiConfig.defaultState;
           navModeText: 'Text only',
           navModeBoth: 'Text and icon',
           navModeIcon: 'Icon only',
-          warehouseStock: 'Stock',
           editWarehouse: 'Edit warehouse',
           warehouse: 'Warehouse',
-          warehouseHint: 'Warehouse preview. To add or change ingredients, use Edit warehouse in the menu under the gear.',
+          warehouseHint: 'The plus button adds one package to the order. The summary shows at the bottom of the screen.',
           ingredients: 'Ingredients',
           addIngredient: 'Add new ingredient',
           ingredientName: 'Name',
@@ -413,6 +419,14 @@ const defaultState = window.KedaiConfig.defaultState;
           stockValue: 'Stock value',
           belowMin: 'Below minimum',
           orderIngredients: 'Order',
+          orderAddPackage: 'Add a package',
+          orderRemovePackage: 'Remove a package',
+          orderBarClear: 'Clear the order',
+          orderSheetHint: 'Adjust the quantities and accept. Quantities change in whole packages.',
+          orderSheetClose: 'Close',
+          receivedShort: 'received {received}',
+          purchaseKeepReceived: 'You cannot order less than already received ({quantity} {unit}).',
+          purchaseListShort: 'Shopping',
           purchaseTitle: 'Order ingredients',
           purchaseList: 'Order list',
           purchaseTotal: 'Order value',
@@ -623,10 +637,9 @@ const defaultState = window.KedaiConfig.defaultState;
           navModeText: 'Teks saja',
           navModeBoth: 'Teks dan ikon',
           navModeIcon: 'Ikon saja',
-          warehouseStock: 'Stok',
           editWarehouse: 'Ubah gudang',
           warehouse: 'Gudang',
-          warehouseHint: 'Pratinjau gudang. Untuk menambah atau mengubah bahan, gunakan Ubah gudang di menu bawah ikon roda gigi.',
+          warehouseHint: 'Tombol plus menambah satu kemasan ke pesanan. Ringkasan muncul di bawah layar.',
           ingredients: 'Bahan',
           addIngredient: 'Tambah bahan baru',
           ingredientName: 'Nama',
@@ -674,6 +687,14 @@ const defaultState = window.KedaiConfig.defaultState;
           stockValue: 'Nilai stok',
           belowMin: 'Di bawah minimum',
           orderIngredients: 'Pesan',
+          orderAddPackage: 'Tambah kemasan',
+          orderRemovePackage: 'Kurangi kemasan',
+          orderBarClear: 'Kosongkan pesanan',
+          orderSheetHint: 'Sesuaikan jumlah lalu terima. Jumlah berubah per kemasan.',
+          orderSheetClose: 'Tutup',
+          receivedShort: 'diterima {received}',
+          purchaseKeepReceived: 'Tidak bisa memesan kurang dari yang sudah diterima ({quantity} {unit}).',
+          purchaseListShort: 'Belanja',
           purchaseTitle: 'Pesan bahan',
           purchaseList: 'Daftar pesanan',
           purchaseTotal: 'Nilai pesanan',
@@ -891,15 +912,22 @@ const defaultState = window.KedaiConfig.defaultState;
       const receiveAcceptBtn = document.getElementById('receiveAcceptBtn');
       const receiveCancelBtn = document.getElementById('receiveCancelBtn');
       const purchaseEditNotice = document.getElementById('purchaseEditNotice');
+      const orderBar = document.getElementById('orderBar');
+      const orderBarOpenBtn = document.getElementById('orderBarOpenBtn');
+      const orderBarClearBtn = document.getElementById('orderBarClearBtn');
+      const orderBarCount = document.getElementById('orderBarCount');
+      const orderBarTotal = document.getElementById('orderBarTotal');
+      const orderSheetModal = document.getElementById('orderSheetModal');
+      const orderSheetList = document.getElementById('orderSheetList');
+      const orderSheetTotal = document.getElementById('orderSheetTotal');
+      const orderSheetAcceptBtn = document.getElementById('orderSheetAcceptBtn');
+      const orderSheetCloseBtn = document.getElementById('orderSheetCloseBtn');
+      const warehousePanel = document.getElementById('panel-warehouse');
       const ingredientList = document.getElementById('ingredientList');
       const ingredientEditList = document.getElementById('ingredientEditList');
       const ingredientEditCountBadge = document.getElementById('ingredientEditCountBadge');
       const ingredientCountBadge = document.getElementById('ingredientCountBadge');
       const warehouseValueBadge = document.getElementById('warehouseValueBadge');
-      const purchaseItems = document.getElementById('purchaseItems');
-      const purchaseSummaryCount = document.getElementById('purchaseSummaryCount');
-      const purchaseSummaryDetails = document.getElementById('purchaseSummaryDetails');
-      const purchaseTotalLabel = document.getElementById('purchaseTotal');
       const purchaseOrderList = document.getElementById('purchaseOrderList');
       const syncUserNameInput = document.getElementById('syncUserName');
       const syncStatusLabel = document.getElementById('syncStatus');
@@ -1121,10 +1149,7 @@ const defaultState = window.KedaiConfig.defaultState;
 
         document.querySelectorAll('.tab-btn').forEach(button => {
           const tab = button.dataset.tab;
-          // Zamów i Lista zamówień to widoki wewnątrz Magazynu - pasek ma wtedy
-          // podświetlać Magazyn, a nie milczeć.
-          const active = tab === activeTab
-            || (tab === 'warehouse' && WAREHOUSE_VIEW_TABS.includes(activeTab));
+          const active = tab === activeTab;
           button.classList.toggle('bg-orange-500', active);
           button.classList.toggle('text-white', active);
           button.classList.toggle('bg-slate-100', !active);
@@ -1145,8 +1170,7 @@ const defaultState = window.KedaiConfig.defaultState;
         renderWarehouseNav();
         renderTabTitle();
       }
-
-      function setActiveTab(tab) {
+      function setActiveTab(tab, swipe) {
         activeTab = tab;
         closeDrawer();
         renderTabs();
@@ -1156,6 +1180,22 @@ const defaultState = window.KedaiConfig.defaultState;
           resetArchiveFilter();
           renderArchive();
         }
+        // Pasek zamówienia pokazuje się tylko w Magazynie.
+        renderOrderBar();
+        if (swipe) animatePanel(swipe);
+      }
+
+      /** Krótkie wsunięcie zakładki po przesunięciu palcem. */
+      function animatePanel(direction) {
+        const panel = document.getElementById(`panel-${activeTab}`);
+        if (!panel) return;
+
+        const className = direction === 'from-right' ? 'swipe-from-right' : 'swipe-from-left';
+        panel.classList.remove('swipe-from-right', 'swipe-from-left');
+        // Wymuszenie odświeżenia stylów - bez tego druga animacja pod rząd nie startuje.
+        void panel.offsetWidth;
+        panel.classList.add(className);
+        setTimeout(() => panel.classList.remove(className), 260);
       }
 
       /* ------------------------------------------- szuflada i dolny pasek */
@@ -1163,12 +1203,8 @@ const defaultState = window.KedaiConfig.defaultState;
       const NAV_MODE_KEY = envKey('kedai_pos_nav_mode');
       const NAV_MODES = ['text', 'both', 'icon'];
       const DRAWER_TABS = ['settings', 'menu', 'warehouseEdit'];
-      const WAREHOUSE_VIEWS = [
-        { tab: 'warehouse', key: 'warehouseStock' },
-        { tab: 'purchase', key: 'orderIngredients' },
-        { tab: 'purchaseList', key: 'purchaseList' }
-      ];
-      const WAREHOUSE_VIEW_TABS = WAREHOUSE_VIEWS.map(view => view.tab);
+      /** Zakładki dolnego paska - po nich przechodzi też przesunięcie palcem. */
+      const MAIN_TABS = ['customer', 'orders', 'archive', 'warehouse', 'purchaseList'];
 
       function isDrawerOpen() {
         return !document.getElementById('appDrawer').classList.contains('hidden');
@@ -1228,20 +1264,11 @@ const defaultState = window.KedaiConfig.defaultState;
       }
 
       /**
-       * Przełącznik trzech widoków magazynu (stan, zamówienie, lista zamówień).
-       * Wstawiany do każdego z tych paneli, żeby było widać, gdzie się jest.
+       * Przełącznik trzech widoków magazynu zastąpiło jedno wspólne okno:
+       * stan i zamawianie są teraz na jednej liście, a lista zamówień ma
+       * własny przycisk w dolnym pasku.
        */
-      function renderWarehouseNav() {
-        const current = WAREHOUSE_VIEWS.some(view => view.tab === activeTab) ? activeTab : 'warehouse';
-        const buttons = WAREHOUSE_VIEWS.map(view => {
-          const active = view.tab === current;
-          return `<button type="button" data-action="warehouse-view" data-view="${view.tab}" class="touch-btn rounded-xl px-2 py-2 text-xs font-bold ${active ? 'bg-orange-500 text-white' : 'bg-slate-100 text-slate-700'}">${translate(view.key)}</button>`;
-        }).join('');
-
-        document.querySelectorAll('[data-warehouse-nav]').forEach(holder => {
-          holder.innerHTML = `<div class="grid grid-cols-3 gap-2">${buttons}</div>`;
-        });
-      }
+      function renderWarehouseNav() {}
 
       function compareVersions(firstVersion, secondVersion) {
         const first = firstVersion.split('.').map(Number);
@@ -1871,6 +1898,11 @@ const defaultState = window.KedaiConfig.defaultState;
           .map(({ item, color, section }) => {
             if (section) return ingredientSectionHeader(item, color);
 
+            // Ilość w bieżącym zamówieniu oraz to, czego nie wolno zejść niżej
+            // przy poprawianiu istniejącego zamówienia (już przyjęte sztuki).
+            const quantity = Number(currentPurchaseSelection[item.id] || 0);
+            const minimum = receivedInEditedOrder(item.id);
+
             const belowMinimum = Number(item.stock || 0) < Number(item.min_stock || 0);
             const stockValue = Number(item.stock || 0) * Number(item.unit_price || 0);
             const unit = unitLabel(item.unit);
@@ -1884,7 +1916,7 @@ const defaultState = window.KedaiConfig.defaultState;
               : ` style="background-color: ${tint(color, 98)}; border-color: ${tint(color, 90)}; border-left: 4px solid ${tint(color, 66)}"`;
 
             return `
-              <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm"${cardStyle}>
+              <div class="rounded-2xl border ${quantity > 0 ? 'border-orange-300 ring-1 ring-orange-200' : 'border-slate-200'} bg-white p-3 shadow-sm"${cardStyle}>
                 <div class="flex items-start justify-between gap-3">
                   <div class="min-w-0">
                     <p class="text-base font-bold text-slate-800">${escapeHtml(item.name)}${lowFlag}</p>
@@ -1896,10 +1928,35 @@ const defaultState = window.KedaiConfig.defaultState;
                   </div>
                 </div>
                 ${belowMinimum ? `<p class="mt-2 text-xs font-bold uppercase tracking-wide text-rose-600">${translate('belowMin')} · ${translate('ingredientMinStock')}: ${formatNumber(item.min_stock)} ${unit}</p>` : ''}
+                ${ingredientOrderRow(item, quantity, unit, minimum)}
               </div>
             `;
           })
           .join('');
+      }
+
+      /**
+       * Wiersz zamawiania w karcie składnika. Zwijnięty pokazuje sam przycisk
+       * „+”, rozwinięty - ilość i przyciski minus/plus. Jedno miejsce w karcie
+       * obsługuje całe zamawianie, więc nie trzeba przełączać widoków.
+       */
+      function ingredientOrderRow(item, quantity, unit, minimum) {
+        const selected = quantity > 0;
+        const lineTotal = quantity * Number(item.unit_price || 0);
+        const leftText = minimum > 0
+          ? translate('receivedShort', { received: `${formatNumber(minimum)} ${unit}` })
+          : (selected ? formatCurrency(lineTotal) : translate('orderIngredients'));
+
+        return `
+          <div class="mt-2 flex items-center justify-between gap-2 border-t border-slate-100 pt-2">
+            <span class="text-xs font-bold ${minimum > 0 ? 'text-amber-600' : (selected ? 'text-orange-600' : 'text-slate-400')}">${leftText}</span>
+            <div class="flex flex-none items-center gap-2">
+              ${selected ? `<button data-action="purchase-decrease" data-id="${item.id}" class="qty-btn border border-slate-200 bg-slate-100 text-slate-700" aria-label="${translate('orderRemovePackage')}">−</button>` : ''}
+              ${selected ? `<span class="min-w-[3rem] text-center text-sm font-black text-slate-800">${formatNumber(quantity)} <span class="text-[11px] font-semibold text-slate-500">${unit}</span></span>` : ''}
+              <button data-action="purchase-increase" data-id="${item.id}" class="qty-btn border border-orange-200 bg-orange-50 text-orange-600" aria-label="${translate('orderAddPackage')}">+</button>
+            </div>
+          </div>
+        `;
       }
 
       function renderWarehouseEdit() {
@@ -1995,78 +2052,102 @@ const defaultState = window.KedaiConfig.defaultState;
           .join('');
       }
 
-      function renderPurchase() {
-        const ingredients = state.ingredients || [];
-        // Zakładka bez składników pod sobą nic nie wnosi na liście zakupów.
-        const rows = getIngredientsWithColors().filter((row, index, all) => {
-          if (!row.section) return true;
-          const next = all[index + 1];
-          return Boolean(next && !next.section);
-        });
+      /* ------------------------------------------------- zamówienie (koszyk) */
 
-        renderPurchaseEditNotice();
+      /** Pozycje wybrane do zamówienia, w kolejności magazynu. */
+      function currentPurchaseDetails() {
+        return (state.ingredients || [])
+          .filter(ingredient => !isIngredientSection(ingredient) && Number(currentPurchaseSelection[ingredient.id] || 0) > 0)
+          .map(ingredient => {
+            const quantity = Number(currentPurchaseSelection[ingredient.id] || 0);
+            return {
+              ingredient,
+              quantity,
+              lineTotal: quantity * Number(ingredient.unit_price || 0),
+              minimum: receivedInEditedOrder(ingredient.id)
+            };
+          });
+      }
 
-        if (!rows.length) {
-          purchaseItems.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-500">${translate('noIngredients')}</div>`;
+      /**
+       * Pasek zamówienia: pokazuje się nad dolnym paskiem tylko wtedy, gdy coś
+       * jest wybrane w Magazynie. Dotknięcie otwiera arkusz z całą listą,
+       * krzyżyk czyści wybór. Dzięki temu podsumowanie nie zabiera miejsca,
+       * dopóki nie jest potrzebne.
+       */
+      function renderOrderBar() {
+        if (!orderBar) return;
+
+        const details = currentPurchaseDetails();
+        const total = details.reduce((sum, item) => sum + item.lineTotal, 0);
+        const visible = activeTab === 'warehouse' && details.length > 0;
+
+        orderBar.classList.toggle('hidden', !visible);
+        if (warehousePanel) warehousePanel.classList.toggle('order-bar-open', visible);
+        if (!visible) {
+          closeOrderSheet();
           return;
         }
 
-        purchaseItems.innerHTML = rows
-          .map(({ item, color, section }) => {
-            if (section) return ingredientSectionHeader(item, color);
+        orderBarCount.textContent = getCounterLabel(details.length, 'item', 'items');
+        orderBarTotal.textContent = formatCurrency(total);
+      }
 
-            const quantity = Number(currentPurchaseSelection[item.id] || 0);
-            const unit = unitLabel(item.unit);
-            const packageSize = Number(item.unit_step || 0);
-            // Krok zamawiania to wielkość opakowania - nie ma już liczenia
-            // "ile brakuje do stanu zalecanego".
-            const cardStyle = color === null
-              ? ''
-              : ` style="background-color: ${tint(color, 98)}; border-color: ${tint(color, 88)}; border-left: 4px solid ${tint(color, 62)}"`;
+      /** Arkusz zamówienia: pełna lista z możliwością poprawiania ilości. */
+      function renderOrderSheet() {
+        if (!orderSheetModal || orderSheetModal.classList.contains('hidden')) return;
+
+        const details = currentPurchaseDetails();
+        if (!details.length) {
+          closeOrderSheet();
+          return;
+        }
+
+        orderSheetList.innerHTML = details
+          .map(({ ingredient, quantity, lineTotal, minimum }) => {
+            const unit = unitLabel(ingredient.unit);
+            const received = minimum > 0
+              ? `<p class="text-[11px] font-semibold text-amber-600">${translate('receivedShort', { received: `${formatNumber(minimum)} ${unit}` })}</p>`
+              : '';
 
             return `
-              <div class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm"${cardStyle}>
+              <div class="rounded-xl border border-slate-200 bg-white p-3">
                 <div class="flex items-center justify-between gap-3">
-                  <div class="min-w-0">
-                    <p class="text-base font-bold text-slate-800">${escapeHtml(item.name)}</p>
-                    <p class="text-sm font-semibold text-orange-600">${formatCurrency(item.unit_price)} / ${unit}</p>
-                    <p class="text-xs text-slate-500">${translate('ingredientStock')}: ${formatNumber(item.stock)} ${unit} · ${translate('ingredientPackage')}: ${packageSize > 0 ? `${formatNumber(packageSize)} ${unit}` : '—'}</p>
-                  </div>
+                  <p class="min-w-0 truncate text-sm font-bold text-slate-800">${escapeHtml(ingredient.name)}</p>
                   <div class="flex flex-none items-center gap-2">
-                    <button data-action="purchase-decrease" data-id="${item.id}" class="qty-btn border border-slate-200 bg-slate-100 text-slate-700">−</button>
-                    <span class="min-w-[2rem] text-center text-lg font-black text-slate-800">${formatNumber(quantity)}</span>
-                    <button data-action="purchase-increase" data-id="${item.id}" class="qty-btn border border-orange-200 bg-orange-50 text-orange-600">+</button>
+                    <button data-action="purchase-decrease" data-id="${ingredient.id}" class="qty-btn border border-slate-200 bg-slate-100 text-slate-700" aria-label="${translate('orderRemovePackage')}">−</button>
+                    <span class="min-w-[3rem] text-center text-sm font-black text-slate-800">${formatNumber(quantity)} <span class="text-[11px] font-semibold text-slate-500">${unit}</span></span>
+                    <button data-action="purchase-increase" data-id="${ingredient.id}" class="qty-btn border border-orange-200 bg-orange-50 text-orange-600" aria-label="${translate('orderAddPackage')}">+</button>
                   </div>
                 </div>
+                <p class="mt-1 text-[11px] text-slate-500">${formatCurrency(ingredient.unit_price)} / ${unit} · <span class="font-bold text-slate-700">${formatCurrency(lineTotal)}</span></p>
+                ${received}
               </div>
             `;
           })
           .join('');
 
-        const details = (state.ingredients || [])
-          .filter(ingredient => !isIngredientSection(ingredient) && Number(currentPurchaseSelection[ingredient.id] || 0) > 0)
-          .map(ingredient => {
-            const quantity = Number(currentPurchaseSelection[ingredient.id] || 0);
-            return { ...ingredient, quantity, lineTotal: quantity * Number(ingredient.unit_price || 0) };
-          });
+        orderSheetTotal.textContent = formatCurrency(details.reduce((sum, item) => sum + item.lineTotal, 0));
+        orderSheetAcceptBtn.textContent = translate(editingPurchaseOrderId ? 'saveChanges' : 'acceptOrder');
+      }
 
-        const total = details.reduce((sum, item) => sum + item.lineTotal, 0);
-        purchaseSummaryCount.textContent = getCounterLabel(details.length, 'item', 'items');
+      function openOrderSheet() {
+        if (!currentPurchaseDetails().length) return;
+        orderSheetModal.classList.remove('hidden');
+        renderOrderSheet();
+      }
 
-        purchaseSummaryDetails.innerHTML = details.length
-          ? details
-            .map(item => `<div class="flex items-center justify-between gap-2"><span>${formatNumber(item.quantity)} ${unitLabel(item.unit)} ${escapeHtml(item.name)}</span><span>${formatCurrency(item.lineTotal)}</span></div>`)
-            .join('')
-          : `<p class="text-sm text-slate-300">${translate('noPurchaseItems')}</p>`;
+      function closeOrderSheet() {
+        if (orderSheetModal) orderSheetModal.classList.add('hidden');
+      }
 
-        purchaseTotalLabel.textContent = formatCurrency(total);
-
-        // Przycisk mówi wprost, czy zakładamy nowe zamówienie, czy poprawiamy
-        // to, które wróciło z listy przyciskiem Edytuj.
-        const acceptButton = document.getElementById('acceptPurchaseBtn');
-        if (acceptButton) {
-          acceptButton.textContent = translate(editingPurchaseOrderId ? 'saveChanges' : 'acceptOrder');
-        }
+      /** Odświeża wszystko, co pokazuje bieżący wybór do zamówienia. */
+      function renderOrderUi() {
+        renderWarehouse();
+        renderOrderBar();
+        renderOrderSheet();
+        // Pasek przypomnienia znika razem z edycją zamówienia.
+        renderPurchaseEditNotice();
       }
 
       /** Pasek nad listą: przypomina, że poprawiamy już złożone zamówienie. */
@@ -2158,8 +2239,10 @@ const defaultState = window.KedaiConfig.defaultState;
         renderArchive();
         renderWarehouse();
         renderWarehouseEdit();
-        renderPurchase();
+        renderOrderBar();
+        renderOrderSheet();
         renderPurchaseOrders();
+        renderPurchaseEditNotice();
         renderTabs();
       }
 
@@ -3008,20 +3091,41 @@ const defaultState = window.KedaiConfig.defaultState;
         });
       }
 
+      /**
+       * Ile trzeba zostawić w poprawianym zamówieniu: tego, co już przyjęto na
+       * magazyn, nie da się z zamówienia wycofać (stan by kłamał).
+       */
+      function receivedInEditedOrder(ingredientId) {
+        if (!editingPurchaseOrderId) return 0;
+        const order = (state.purchaseOrders || []).find(item => String(item.id) === String(editingPurchaseOrderId));
+        if (!order) return 0;
+        const item = (order.items || []).find(entry => entry.ingredient_id === ingredientId);
+        return item ? receivedQuantity(item) : 0;
+      }
+
       function updatePurchaseQuantity(ingredientId, direction) {
         const ingredient = (state.ingredients || []).find(item => item.id === ingredientId);
         if (!ingredient) return;
 
         const step = getStep(ingredient);
+        const minimum = receivedInEditedOrder(ingredientId);
         const current = Number(currentPurchaseSelection[ingredientId] || 0);
         const next = Number((current + direction * step).toFixed(3));
+        const clamped = Math.max(next, minimum);
 
-        if (next <= 0) {
+        if (direction < 0 && clamped !== next) {
+          showToast(translate('purchaseKeepReceived', {
+            quantity: formatNumber(minimum),
+            unit: unitLabel(ingredient.unit)
+          }), 'warning');
+        }
+
+        if (clamped <= 0) {
           delete currentPurchaseSelection[ingredientId];
         } else {
-          currentPurchaseSelection[ingredientId] = next;
+          currentPurchaseSelection[ingredientId] = clamped;
         }
-        renderPurchase();
+        renderOrderUi();
       }
 
       async function acceptPurchaseOrder() {
@@ -3029,7 +3133,8 @@ const defaultState = window.KedaiConfig.defaultState;
           .filter(ingredient => !isIngredientSection(ingredient) && Number(currentPurchaseSelection[ingredient.id] || 0) > 0)
           .map(ingredient => ({
             ingredient,
-            quantity: Number(currentPurchaseSelection[ingredient.id] || 0),
+            // Świadomie nie schodzimy poniżej tego, co już przyjęto.
+            quantity: Math.max(Number(currentPurchaseSelection[ingredient.id] || 0), receivedInEditedOrder(ingredient.id)),
             step: getStep(ingredient)
           }));
 
@@ -3089,6 +3194,7 @@ const defaultState = window.KedaiConfig.defaultState;
           window.KedaiDatabase.updatePurchaseOrder(existing);
           editingPurchaseOrderId = null;
           currentPurchaseSelection = {};
+          closeOrderSheet();
           saveState();
           renderAll();
           setActiveTab('purchaseList');
@@ -3110,6 +3216,7 @@ const defaultState = window.KedaiConfig.defaultState;
 
         currentPurchaseSelection = {};
         editingPurchaseOrderId = null;
+        closeOrderSheet();
         saveState();
         renderAll();
         setActiveTab('purchaseList');
@@ -3120,12 +3227,12 @@ const defaultState = window.KedaiConfig.defaultState;
         showConfirmDialog(translate('confirmCancelPurchase'), () => {
           currentPurchaseSelection = {};
           editingPurchaseOrderId = null;
-          renderPurchase();
+          renderOrderUi();
           showToast(translate('purchaseCleared'), 'warning');
         });
       }
 
-      /** Powrót do zakładki Zamów z pozycjami wybranego zamówienia. */
+      /** Powrót do zakładki Magazyn z pozycjami wybranego zamówienia. */
       function editPurchaseOrder(orderId) {
         const order = (state.purchaseOrders || []).find(item => String(item.id) === String(orderId));
         if (!order) return;
@@ -3138,8 +3245,8 @@ const defaultState = window.KedaiConfig.defaultState;
         });
 
         editingPurchaseOrderId = order.id;
-        setActiveTab('purchase');
-        renderPurchase();
+        setActiveTab('warehouse');
+        renderAll();
         showToast(translate('purchaseEditNotice', { date: formatDateTime(order.createdAt) }), 'warning');
       }
 
@@ -3448,7 +3555,15 @@ const defaultState = window.KedaiConfig.defaultState;
         ingredientSectionColorInput.value = 0;
         renderIngredientSectionPreview();
       });
-      document.getElementById('acceptPurchaseBtn').addEventListener('click', acceptPurchaseOrder);
+      document.getElementById('acceptPurchaseBtn')?.addEventListener('click', acceptPurchaseOrder);
+      orderBarOpenBtn.addEventListener('click', openOrderSheet);
+      orderBarClearBtn.addEventListener('click', cancelPurchaseSelection);
+      orderSheetCloseBtn.addEventListener('click', closeOrderSheet);
+      orderSheetAcceptBtn.addEventListener('click', acceptPurchaseOrder);
+      orderSheetModal.addEventListener('click', event => {
+        // Kliknięcie w tło zamyka arkusz, ale nie kasuje wyboru.
+        if (event.target === orderSheetModal) closeOrderSheet();
+      });
       receiveAcceptBtn.addEventListener('click', acceptReceivedItems);
       receiveCancelBtn.addEventListener('click', closeReceiveModal);
       receiveList.addEventListener('change', event => {
@@ -3464,8 +3579,6 @@ const defaultState = window.KedaiConfig.defaultState;
         captureReceiveInputs();
         updateReceiveSummary();
       });
-      document.getElementById('cancelPurchaseBtn').addEventListener('click', cancelPurchaseSelection);
-
       document.getElementById('cancelProductEditBtn').addEventListener('click', cancelMenuEdit);
 
       document.getElementById('saveOrderBtn').addEventListener('click', saveCurrentOrder);
@@ -3626,10 +3739,6 @@ const defaultState = window.KedaiConfig.defaultState;
           deletePurchaseOrder(id);
         }
 
-        if (action === 'warehouse-view') {
-          setActiveTab(button.dataset.view);
-        }
-
         const tab = button.dataset.tab;
         if (tab) {
           setActiveTab(tab);
@@ -3647,9 +3756,55 @@ const defaultState = window.KedaiConfig.defaultState;
 
       document.getElementById('appDrawerBackdrop').addEventListener('click', closeDrawer);
 
+      /* --------------------------------------- przesuwanie zakładek palcem */
+
+      let swipeStart = null;
+
+      /** Czy otwarte jest jakieś okno? Wtedy gest należy do okna, nie do zakładek. */
+      function isAnyOverlayOpen() {
+        return [orderSheetModal, receiveModal, priceCalcModal, ingredientModal, ingredientSectionModal, confirmModal, recipeModal]
+          .some(node => node && !node.classList.contains('hidden'));
+      }
+
+      document.addEventListener('touchstart', event => {
+        swipeStart = null;
+        if (isAnyOverlayOpen() || isDrawerOpen()) return;
+        const touch = event.touches?.[0];
+        if (!touch) return;
+        // Suwaki i pola formularzy mają własne gesty (np. kolor zakładki).
+        if (event.target.closest?.('input, select, textarea, .color-range')) return;
+        swipeStart = { x: touch.clientX, y: touch.clientY };
+      }, { passive: true });
+
+      document.addEventListener('touchend', event => {
+        const start = swipeStart;
+        swipeStart = null;
+        if (!start) return;
+        const touch = event.changedTouches?.[0];
+        if (!touch) return;
+
+        const dx = touch.clientX - start.x;
+        const dy = touch.clientY - start.y;
+
+        // Ruch musi być zdecydowany i wyraźnie poziomy - pionowe przewijanie
+        // listy ma zostać przewijaniem, a krótkie muśnięcia klikaniem.
+        if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+
+        const index = MAIN_TABS.indexOf(activeTab);
+        if (index === -1) return;
+        const next = MAIN_TABS[index + (dx < 0 ? 1 : -1)];
+        if (!next) return;
+
+        setActiveTab(next, dx < 0 ? 'from-right' : 'from-left');
+      }, { passive: true });
+
       document.addEventListener('keydown', event => {
         if (event.key !== 'Escape') return;
-        // Zamykamy to, co jest na wierzchu - najpierw kalkulator, potem okna.
+        // Zamykamy to, co jest na wierzchu - najpierw arkusz zamówienia.
+        if (orderSheetModal && !orderSheetModal.classList.contains('hidden')) {
+          closeOrderSheet();
+          return;
+        }
         if (receiveModal && !receiveModal.classList.contains('hidden')) {
           closeReceiveModal();
           return;
